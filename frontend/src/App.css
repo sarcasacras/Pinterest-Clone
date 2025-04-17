@@ -1,0 +1,15 @@
+.navbar {
+    background-color: #d49292;
+}
+
+.container {
+    display: flex;
+    gap: 10px;
+    border: 1px solid black;
+    width: 100%;
+}
+
+.main {
+    flex: 1;
+    background-color: #9aa981;
+}
