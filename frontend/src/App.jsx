@@ -11,8 +11,8 @@ function App() {
           <Left />
         </div>
         <div className='main'>
-          <Right />
           <Top />
+          <Right />
         </div>
       </div>
     </>
