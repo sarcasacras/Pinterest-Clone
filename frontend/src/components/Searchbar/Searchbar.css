@@ -1,0 +1,22 @@
+.searchIcon {
+  width: 26px;
+  margin-right: 8px;
+}
+
+.search {
+  display: flex;
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.141);
+  flex: 1;
+}
+
+.searchInput {
+  outline: none;
+  border: none;
+  font-size: medium;
+}
+
+.searchInput::placeholder {
+    color: rgba(0, 0, 0, 0.291);
+}
