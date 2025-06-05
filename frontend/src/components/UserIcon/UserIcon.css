@@ -55,3 +55,9 @@
 .loginButton:hover {
   color: gray;
 }
+
+@media  (max-width: 385px) {
+  .user {
+    display: none;
+  }
+}
