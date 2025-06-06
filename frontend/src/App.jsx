@@ -14,9 +14,6 @@ function App() {
           <Top />
           <Right />
         </div>
-        <div className='justdiv'>
-          
-        </div>
       </div>
     </>
   )
