@@ -1,9 +1,10 @@
 import './Right.css';
+import Gallery from '../Gallery/Gallery';
 
 const Right = () => {
     return (
         <div>
-            <h1>Right</h1>
+            <Gallery />
         </div>
     )
 }
