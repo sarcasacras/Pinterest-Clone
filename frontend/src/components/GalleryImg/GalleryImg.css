@@ -6,4 +6,75 @@
 
 .galleryItem {
     display: flex;
+    position: relative;
+}
+
+.saveButton {
+    display: none;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    background-color: #FF3E68;
+    border-radius: 16px;
+    width: max-content;
+    font-weight: 500;
+    font-size: 14px;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.saveButton:hover {
+    background-color:#b92243
+}
+
+.overlay {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.galleryItem:hover .galleryImg {
+    filter: brightness(75%)
+}
+
+.galleryItem:hover .saveButton {
+    display: block;
+}
+
+.galleryItem:hover .overlayButtons {
+    display: flex;
+}
+
+.overlayButtons {
+    position: absolute;
+    display: none;
+    gap: 8px;
+    bottom: 16px;
+    right: 16px;
+}
+
+.overlayButton {
+    height: 28px;
+    width: 28px;
+    border-radius: 100%;
+    border: none;
+    cursor: pointer;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlayButton:hover {
+    background-color: #e2e2e2;
+}
+
+.buttonImage {
+    height:16px;
+    width: 16px;
 }

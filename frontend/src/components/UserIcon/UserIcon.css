@@ -8,8 +8,8 @@
 }
 
 .arrowDownIcon {
-    width: 20px;
-    cursor: pointer;
+  width: 20px;
+  cursor: pointer;
 }
 
 .userOptions {
@@ -23,6 +23,8 @@
   top: 120%;
   right: 0;
   background-color: white;
+  z-index: 2;
+  overflow: hidden;
 }
 
 .userOption {
@@ -32,14 +34,9 @@
   transition: background-color 0.3s ease;
   color: black;
   text-decoration: none;
-}
-
-.userOption:first-child {
-  border-radius: 20px 20px 0 0;
-}
-
-.userOption:last-child {
-  border-radius: 0 0 20px 20px;
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 
 .userOption:hover {
@@ -57,7 +54,7 @@
   color: gray;
 }
 
-@media  (max-width: 385px) {
+@media (max-width: 385px) {
   .user {
     display: none;
   }
