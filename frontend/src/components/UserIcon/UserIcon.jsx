@@ -1,3 +1,4 @@
+import Img from "../Image/Image";
 import "./UserIcon.css";
 import { useState } from "react";
 
@@ -8,8 +9,8 @@ export default function UserIcon() {
   if (loggedIn) {
     return (
       <div className="user">
-        <img src="/icons/user.svg" alt="" className="userIcon" />
-        <img
+        <Img src="/icons/user.svg" alt="" className="userIcon" />
+        <Img
           src="/icons/arrowDown.svg"
           alt=""
           className="arrowDownIcon"
