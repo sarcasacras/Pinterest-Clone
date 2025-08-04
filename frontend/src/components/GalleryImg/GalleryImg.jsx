@@ -14,7 +14,7 @@ export default function GalleryImg({ item }) {
         className="galleryImg"
         w={360}
       />
-      <Link to={`/pins/${item.id}`} className="overlay"></Link>
+      <Link to={`/pin/${item.id}`} className="overlay"></Link>
       <button className="saveButton">Save</button>
       <div className="overlayButtons">
         <button className="overlayButton">
