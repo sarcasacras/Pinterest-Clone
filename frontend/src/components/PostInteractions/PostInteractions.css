@@ -1,0 +1,36 @@
+.postInteractions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.interactionButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.saveButtonDiv {
+  display: flex;
+}
+
+.savePost {
+  background-color: #e60023;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.savePost:hover {
+  background-color: #d50000;
+}
+
+.buttonIcon {
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}

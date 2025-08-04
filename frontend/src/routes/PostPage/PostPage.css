@@ -1,3 +1,51 @@
-.postpage {
-    
+.post-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.post-container {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  width: 70%;
+}
+
+.left {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 16px 0 0 16px;
+}
+
+.pin-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.right {
+  flex: 1;
+  padding: 20px;
+}
+
+.user-section {
+  margin-top: 24px;
+}
+
+.user-profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
 }
