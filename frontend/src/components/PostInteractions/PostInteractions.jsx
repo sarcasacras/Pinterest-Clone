@@ -6,8 +6,9 @@ export default function PostInteractions() {
     <div className="postInteractions">
       <div className="interactionButtons">
         <Img src="/icons/like.svg" alt="Like" className="buttonIcon" />
-        <Img src="/icons/share.svg" alt="Share" className="buttonIcon" />
-        <Img src="/icons/more.svg" alt="More" className="buttonIcon" />
+        <span>230</span>
+        <Img src="/icons/share.svg" alt="Share" className="buttonIcon" id="shareButton" />
+        <Img src="/icons/more.svg" alt="More" className="buttonIcon" id="moreButton" />
       </div>
         <div className="saveButtonDiv">
           <button className="savePost">Save</button>

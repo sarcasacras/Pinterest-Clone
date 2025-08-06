@@ -25,5 +25,5 @@ export default function GalleryImg({ item }) {
         </button>
       </div>
     </div>
-  );
+  )
 }
