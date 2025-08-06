@@ -18,8 +18,8 @@ export default function ProfilePage() {
             w={100}
           />
         </div>
-        <h1 className="profile-name">Lizzie</h1>
-        <p className="profile-handle">@mouseclover</p>
+        <h1 className="profile-name">Anonymous</h1>
+        <p className="profile-handle">@anonymous</p>
         <div className="profile-stats">
           <span>2 followers</span>
           <span>•</span>
@@ -53,7 +53,7 @@ export default function ProfilePage() {
       <div className="profile-content">
         {activeSection === 'created' && (
           <div className="created-section">
-            <Gallery />
+            <Gallery variant={'profilePage'} />
           </div>
         )}
         

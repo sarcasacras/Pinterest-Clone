@@ -1,30 +1,31 @@
 import './Left.css';
 import Img from '../Image/Image';
+import { Link } from 'react-router'
 
 const Left = () => {
     return (
         <div className='left-container'>
             <div className="menu-icons">
-                <a href="/">
+                <Link to="/">
                     <Img src='icons/logo.png' alt="logo" className='logo' />
-                </a>
-                <a href="/">
+                </Link>
+                <Link to="/">
                     <Img src='icons/home.svg' alt="home" className='menu-item' />
-                </a>
-                <a href="/">
+                </Link>
+                <Link to="/">
                     <Img src='icons/add.svg' alt="add" className='menu-item' />
-                </a>
-                <a href="/">
+                </Link>
+                <Link to="/">
                     <Img src='icons/notification.svg' alt="notification" className='menu-item' />
-                </a>
-                <a href="/">
+                </Link>
+                <Link to="/">
                     <Img src='icons/message.svg' alt="messages" className='menu-item' />
-                </a>
+                </Link>
             </div>
             <div className="bottom-icon">
-                <a href="/">
+                <Link to="/">
                     <Img src='icons/settings.svg' alt="settings" className='menu-item' />
-                </a>
+                </Link>
             </div>
         </div>
     )

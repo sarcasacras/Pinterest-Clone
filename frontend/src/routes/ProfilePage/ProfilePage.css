@@ -126,3 +126,7 @@
 .btn-follow:hover {
   background-color: #b92243;
 }
+
+.profilePageGallery {
+    width: 70vw;
+}
