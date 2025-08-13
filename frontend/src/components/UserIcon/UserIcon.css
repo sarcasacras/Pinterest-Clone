@@ -25,6 +25,7 @@
   background-color: white;
   z-index: 2;
   overflow: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
 .userOption {

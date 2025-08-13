@@ -12,7 +12,7 @@ const Left = () => {
                 <Link to="/">
                     <Img src='icons/home.svg' alt="home" className='menu-item' />
                 </Link>
-                <Link to="/">
+                <Link to="/create">
                     <Img src='icons/add.svg' alt="add" className='menu-item' />
                 </Link>
                 <Link to="/">

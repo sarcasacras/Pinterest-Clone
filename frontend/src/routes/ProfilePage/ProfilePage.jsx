@@ -1,6 +1,7 @@
 import "./ProfilePage.css";
 import Img from "../../components/Image/Image";
 import Gallery from "../../components/Gallery/Gallery";
+import Collections from "../../components/Collections/Collections";
 import { useState } from 'react';
 
 export default function ProfilePage() {
@@ -59,8 +60,7 @@ export default function ProfilePage() {
         
         {activeSection === 'saved' && (
           <div className="saved-section">
-            <h3>Saved Content</h3>
-            <p>This is the Saved section with user's saved pins and boards.</p>
+            <Collections />
           </div>
         )}
       </div>

@@ -1,10 +1,27 @@
 import Img from "../Image/Image";
 import "./UserIcon.css";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function UserIcon() {
   const loggedIn = true;
   const [open, setOpen] = useState(false);
+  const userOptionsRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userOptionsRef.current && !userOptionsRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
 
   if (loggedIn) {
     return (
@@ -17,7 +34,7 @@ export default function UserIcon() {
           onClick={() => setOpen((prev) => !prev)}
         />
         {open && (
-          <div className="userOptions">
+          <div className="userOptions" ref={userOptionsRef}>
             <a className="userOption" href="/">Settings</a>
             <a className="userOption" href="/">Account</a>
             <a className="userOption" href="/">Log Out</a>

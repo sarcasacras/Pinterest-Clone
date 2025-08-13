@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap");
 
 .profile-page {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .profile-header {
@@ -60,7 +60,7 @@
 
 .nav-tab.active {
   color: #333;
-  border-bottom-color: #FF3E68;
+  border-bottom-color: #ff3e68;
 }
 
 .profile-content {
@@ -113,7 +113,7 @@
 }
 
 .btn-follow {
-  background-color: #FF3E68;
+  background-color: #ff3e68;
   color: white;
   border: none;
   padding: 12px 20px;
@@ -128,5 +128,10 @@
 }
 
 .profilePageGallery {
-    width: 70vw;
+  width: 70vw;
+}
+
+.created-section,
+.saved-section {
+  width: 70vw;
 }
