@@ -7,7 +7,7 @@ const Left = () => {
         <div className='left-container'>
             <div className="menu-icons">
                 <Link to="/">
-                    <Img src='icons/logo.png' alt="logo" className='logo' />
+                    <Img src='icons/website_logo.png' alt="logo" className='logo' />
                 </Link>
                 <Link to="/">
                     <Img src='icons/home.svg' alt="home" className='menu-item' />

@@ -25,7 +25,7 @@ export default function UserIcon() {
 
   if (loggedIn) {
     return (
-      <div className="user">
+      <div className="user"  ref={userOptionsRef}>
         <Img src="/icons/user.svg" alt="" className="userIcon" />
         <Img
           src="/icons/arrowDown.svg"
@@ -34,7 +34,7 @@ export default function UserIcon() {
           onClick={() => setOpen((prev) => !prev)}
         />
         {open && (
-          <div className="userOptions" ref={userOptionsRef}>
+          <div className="userOptions">
             <a className="userOption" href="/">Settings</a>
             <a className="userOption" href="/">Account</a>
             <a className="userOption" href="/">Log Out</a>

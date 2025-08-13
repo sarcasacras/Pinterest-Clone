@@ -13,7 +13,7 @@ export default function CreatePost() {
         <div className="upload-field">
           <Img src="general/upload.svg" alt="upload" className="upload-icon" />
           <div className="upload-text">
-            Choose a file or drag and drop it here
+            Choose a file
           </div>
           <div className="upload-info">
             We recommend using high quality .jpg files less than 20MB or .mp4
