@@ -16,6 +16,18 @@ const pinSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  width: {
+    type: Number,
+    default: 400
+  },
+  height: {
+    type: Number,
+    default: 600
+  },
+  imageKitFileId: {
+    type: String,
+    default: null
+  },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

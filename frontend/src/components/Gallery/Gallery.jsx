@@ -1,165 +1,90 @@
 import "./Gallery.css";
 import GalleryImg from "../GalleryImg/GalleryImg";
-
-const temp = [
-  {
-    id: 1,
-    link: "/pins/pin1.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 2,
-    link: "/pins/pin2.jpg",
-    width: 1920,
-    height: 1442,
-  },
-  {
-    id: 3,
-    link: "/pins/pin3.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 4,
-    link: "/pins/pin4.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 5,
-    link: "/pins/pin5.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 6,
-    link: "/pins/pin6.jpg",
-    width: 1920,
-    height: 2876,
-  },
-  {
-    id: 7,
-    link: "/pins/pin7.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 8,
-    link: "/pins/pin8.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 9,
-    link: "/pins/pin9.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 10,
-    link: "/pins/pin10.jpg",
-    width: 1920,
-    height: 2878,
-  },
-  {
-    id: 11,
-    link: "/pins/pin11.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 12,
-    link: "/pins/pin12.jpg",
-    width: 1920,
-    height: 2834,
-  },
-  {
-    id: 13,
-    link: "/pins/pin13.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 14,
-    link: "/pins/pin14.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 15,
-    link: "/pins/pin15.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 16,
-    link: "/pins/pin16.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 17,
-    link: "/pins/pin17.jpg",
-    width: 1920,
-    height: 2931,
-  },
-  {
-    id: 18,
-    link: "/pins/pin18.jpg",
-    width: 1920,
-    height: 2876,
-  },
-  {
-    id: 19,
-    link: "/pins/pin19.jpg",
-    width: 1920,
-    height: 2880,
-  },
-  {
-    id: 20,
-    link: "/pins/pin20.jpg",
-    width: 1920,
-    height: 1904,
-  },
-  {
-    id: 21,
-    link: "/pins/pin21.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 22,
-    link: "/pins/pin22.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 23,
-    link: "/pins/pin23.jpg",
-    width: 1920,
-    height: 1280,
-  },
-  {
-    id: 24,
-    link: "/pins/pin24.jpg",
-    width: 1920,
-    height: 1037,
-  },
-  {
-    id: 25,
-    link: "/pins/pin25.jpg",
-    width: 1920,
-    height: 1311,
-  },
-];
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { pinsApi } from "../../api/pinsApi";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
+import { useImagesLoaded } from "../../hooks/useImagesLoaded";
 
 export default function Gallery({ variant }) {
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["pins"],
+    queryFn: ({ pageParam = 1 }) => {
+      return pinsApi.getPins({ page: pageParam, limit: 10 });
+    },
+    getNextPageParam: (lastPage, loadedPages) =>
+      lastPage.hasMore ? loadedPages.length + 1 : undefined,
+    initialPageParam: 1,
+  });
+
+  const pins = data?.pages?.flatMap((page) => page.pins) || [];
+
+  const { imagesLoaded } = useImagesLoaded(pins);
+
+  const lastElementRef = useInfiniteScroll(
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    imagesLoaded
+  );
+
+  if (isLoading) {
+    return <div className="loading">Loading pins...</div>;
+  }
+
+  if (error) {
+    return <div className="error">Error loading pins: {error.message}</div>;
+  }
+
   return (
-    <div className={`galleryGrid ${variant === "profilePage" ? "profilePageGallery" : ""}`}>
-      {temp.map((item) => {
-        return <GalleryImg key={item.id} item={item} />;
-      })}
-    </div>
+    <>
+      <div
+        className={`galleryGrid ${
+          variant === "profilePage" ? "profilePageGallery" : ""
+        }`}
+      >
+        {pins?.map((pin) => {
+          const item = {
+            id: pin._id,
+            link: pin.imageUrl,
+            width: pin.width || 400,
+            height: pin.height || 600,
+            title: pin.title,
+            description: pin.description,
+          };
+          return <GalleryImg key={pin._id} item={item} />;
+        })}
+
+        <div
+          style={{
+            gridColumn: "1 / -1",
+            height: "50px",
+          }}
+        />
+
+        {hasNextPage && (
+          <div
+            ref={lastElementRef}
+            style={{
+              gridColumn: "1 / -1",
+              height: "1px",
+              background: "transparent",
+            }}
+          />
+        )}
+      </div>
+
+      {isFetchingNextPage && (
+        <div style={{ textAlign: "center", margin: "40px 0", color: "#666" }}>
+          Загружаем больше пинов...
+        </div>
+      )}
+    </>
   );
 }

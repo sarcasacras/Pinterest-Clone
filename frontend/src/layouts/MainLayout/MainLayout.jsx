@@ -1,6 +1,5 @@
 import "./MainLayout.css";
 import Left from "../../components/Left/Left";
-// import Right from '../../components/Right/Right'
 import Top from "../../components/Top/Top";
 import { Outlet } from "react-router";
 

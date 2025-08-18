@@ -1,9 +1,24 @@
-import Pin from '../models/Pin.js';
+import Pin from "../models/Pin.js";
 
 export const getPins = async (req, res) => {
   try {
-    const pins = await Pin.find();
-    res.json(pins);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
+    const pins = await Pin.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const totalPins = await Pin.countDocuments();
+
+    const hasMore = skip + pins.length < totalPins;
+
+    res.json({
+      pins,
+      hasMore,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -23,7 +38,7 @@ export const getPinById = async (req, res) => {
   try {
     const pin = await Pin.findById(req.params.id);
     if (!pin) {
-      return res.status(404).json({ error: 'Pin not found' });
+      return res.status(404).json({ error: "Pin not found" });
     }
     res.json(pin);
   } catch (error) {
@@ -33,9 +48,11 @@ export const getPinById = async (req, res) => {
 
 export const updatePin = async (req, res) => {
   try {
-    const pin = await Pin.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const pin = await Pin.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!pin) {
-      return res.status(404).json({ error: 'Pin not found' });
+      return res.status(404).json({ error: "Pin not found" });
     }
     res.json(pin);
   } catch (error) {
@@ -47,9 +64,9 @@ export const deletePin = async (req, res) => {
   try {
     const pin = await Pin.findByIdAndDelete(req.params.id);
     if (!pin) {
-      return res.status(404).json({ error: 'Pin not found' });
+      return res.status(404).json({ error: "Pin not found" });
     }
-    res.json({ message: 'Pin deleted successfully' });
+    res.json({ message: "Pin deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

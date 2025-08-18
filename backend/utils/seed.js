@@ -1,245 +1,320 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import connectDB from './db.js';
-import User from '../models/User.js';
-import Pin from '../models/Pin.js';
-import Board from '../models/Board.js';
-import Comment from '../models/Comment.js';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import connectDB from "./db.js";
+import User from "../models/User.js";
+import Pin from "../models/Pin.js";
+import Board from "../models/Board.js";
+import Comment from "../models/Comment.js";
 
 const seedDatabase = async () => {
   try {
-    console.log('Starting database seeding...');
+    console.log("Starting database seeding...");
 
-    // Clear existing data
     await User.deleteMany({});
     await Pin.deleteMany({});
     await Board.deleteMany({});
     await Comment.deleteMany({});
 
-    // Hash passwords
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash('password123', saltRounds);
+    const hashedPassword = await bcrypt.hash("password123", saltRounds);
 
-    // Create Users
     const users = await User.create([
       {
-        username: 'alice_art',
-        displayName: 'Alice Johnson',
-        email: 'alice@example.com',
+        username: "alice_art",
+        displayName: "Alice Johnson",
+        email: "alice@example.com",
         password: hashedPassword,
-        avatar: 'https://picsum.photos/200/200?random=1'
+        avatar: "general/noavatar.svg",
       },
       {
-        username: 'bob_photo',
-        displayName: 'Bob Smith',
-        email: 'bob@example.com',
+        username: "bob_photo",
+        displayName: "Bob Smith",
+        email: "bob@example.com",
         password: hashedPassword,
-        avatar: 'https://picsum.photos/200/200?random=2'
+        avatar: "general/noavatar.svg",
       },
       {
-        username: 'carol_design',
-        displayName: 'Carol Williams',
-        email: 'carol@example.com',
+        username: "carol_design",
+        displayName: "Carol Williams",
+        email: "carol@example.com",
         password: hashedPassword,
-        avatar: 'https://picsum.photos/200/200?random=3'
+        avatar: "general/noavatar.svg",
       },
       {
-        username: 'david_nature',
-        displayName: 'David Brown',
-        email: 'david@example.com',
+        username: "david_nature",
+        displayName: "David Brown",
+        email: "david@example.com",
         password: hashedPassword,
-        avatar: 'https://picsum.photos/200/200?random=4'
-      }
+        avatar: "general/noavatar.svg",
+      },
     ]);
 
-    // Create Boards
     const boards = await Board.create([
       {
-        title: 'Art & Inspiration',
-        description: 'Beautiful artwork and creative inspiration',
+        title: "Art & Inspiration",
+        description: "Beautiful artwork and creative inspiration",
         owner: users[0]._id,
-        coverImage: 'https://picsum.photos/400/300?random=10'
+        coverImage: "pins/pin1.jpg",
       },
       {
-        title: 'Photography',
-        description: 'Stunning photography from around the world',
+        title: "Photography",
+        description: "Stunning photography from around the world",
         owner: users[1]._id,
-        coverImage: 'https://picsum.photos/400/300?random=11'
+        coverImage: "pins/pin5.jpg",
       },
       {
-        title: 'UI/UX Design',
-        description: 'Modern design patterns and interfaces',
+        title: "UI/UX Design",
+        description: "Modern design patterns and interfaces",
         owner: users[2]._id,
-        coverImage: 'https://picsum.photos/400/300?random=12'
+        coverImage: "pins/pin10.jpg",
       },
       {
-        title: 'Nature & Landscapes',
-        description: 'Beautiful natural scenery',
+        title: "Nature & Landscapes",
+        description: "Beautiful natural scenery",
         owner: users[3]._id,
-        coverImage: 'https://picsum.photos/400/300?random=13'
+        coverImage: "pins/pin15.jpg",
       },
       {
-        title: 'Abstract Art',
-        description: 'Creative abstract compositions',
+        title: "Abstract Art",
+        description: "Creative abstract compositions",
         owner: users[0]._id,
-        isPrivate: true
-      }
+        isPrivate: true,
+      },
     ]);
 
-    // Create Pins
-    const pins = await Pin.create([
-      {
-        title: 'Sunset Painting',
-        description: 'Beautiful sunset landscape painting with warm colors',
-        imageUrl: 'https://picsum.photos/400/600?random=20',
-        owner: users[0]._id,
-        board: boards[0]._id,
-        tags: ['art', 'painting', 'sunset', 'landscape']
-      },
-      {
-        title: 'Mountain Photography',
-        description: 'Breathtaking mountain view captured at golden hour',
-        imageUrl: 'https://picsum.photos/400/600?random=21',
-        owner: users[1]._id,
-        board: boards[1]._id,
-        tags: ['photography', 'mountains', 'nature']
-      },
-      {
-        title: 'Modern UI Design',
-        description: 'Clean and minimal user interface design concept',
-        imageUrl: 'https://picsum.photos/400/600?random=22',
-        owner: users[2]._id,
-        board: boards[2]._id,
-        tags: ['ui', 'design', 'minimal', 'modern']
-      },
-      {
-        title: 'Forest Path',
-        description: 'Peaceful forest path in autumn',
-        imageUrl: 'https://picsum.photos/400/600?random=23',
-        owner: users[3]._id,
-        board: boards[3]._id,
-        tags: ['nature', 'forest', 'autumn', 'path']
-      },
-      {
-        title: 'Abstract Composition',
-        description: 'Colorful abstract geometric composition',
-        imageUrl: 'https://picsum.photos/400/600?random=24',
-        owner: users[0]._id,
-        board: boards[4]._id,
-        tags: ['abstract', 'geometric', 'colorful']
-      },
-      {
-        title: 'Ocean Waves',
-        description: 'Powerful ocean waves crashing on rocks',
-        imageUrl: 'https://picsum.photos/400/600?random=25',
-        owner: users[1]._id,
-        board: boards[1]._id,
-        tags: ['ocean', 'waves', 'seascape']
-      },
-      {
-        title: 'Mobile App Design',
-        description: 'Elegant mobile app interface design',
-        imageUrl: 'https://picsum.photos/400/600?random=26',
-        owner: users[2]._id,
-        board: boards[2]._id,
-        tags: ['mobile', 'app', 'interface', 'design']
-      },
-      {
-        title: 'Desert Landscape',
-        description: 'Vast desert landscape with sand dunes',
-        imageUrl: 'https://picsum.photos/400/600?random=27',
-        owner: users[3]._id,
-        board: boards[3]._id,
-        tags: ['desert', 'landscape', 'dunes']
-      }
-    ]);
+    const pinTitles = [
+      "Sunset Painting",
+      "Mountain Photography",
+      "Modern UI Design",
+      "Forest Path",
+      "Abstract Composition",
+      "Ocean Waves",
+      "Mobile App Design",
+      "Desert Landscape",
+      "City Skyline",
+      "Flower Garden",
+      "Vintage Car",
+      "Space Galaxy",
+      "Coffee Art",
+      "Beach Paradise",
+      "Winter Forest",
+      "Street Art",
+      "Architecture Study",
+      "Food Photography",
+      "Music Festival",
+      "Travel Journal",
+      "Minimal Design",
+      "Portrait Art",
+      "Nature Macro",
+      "Urban Style",
+      "Digital Art",
+      "Landscape View",
+      "Fashion Design",
+      "Art Installation",
+      "Product Design",
+      "Creative Illustration",
+      "Photography Series",
+      "Visual Arts",
+      "Modern Architecture",
+      "Nature Photography",
+      "Abstract Painting",
+      "Design Concept",
+      "Artistic Expression",
+      "Creative Process",
+      "Visual Storytelling",
+      "Design Inspiration",
+    ];
 
-    // Add pins to boards
-    await Board.findByIdAndUpdate(boards[0]._id, { $push: { pins: [pins[0]._id, pins[4]._id] } });
-    await Board.findByIdAndUpdate(boards[1]._id, { $push: { pins: [pins[1]._id, pins[5]._id] } });
-    await Board.findByIdAndUpdate(boards[2]._id, { $push: { pins: [pins[2]._id, pins[6]._id] } });
-    await Board.findByIdAndUpdate(boards[3]._id, { $push: { pins: [pins[3]._id, pins[7]._id] } });
-    await Board.findByIdAndUpdate(boards[4]._id, { $push: { pins: pins[4]._id } });
+    const descriptions = [
+      "Beautiful and inspiring visual content",
+      "Creative design with modern aesthetics",
+      "Stunning photography captured perfectly",
+      "Artistic expression at its finest",
+      "Innovative design concept and execution",
+      "Natural beauty in perfect composition",
+      "Contemporary art with unique perspective",
+      "Professional photography with great lighting",
+    ];
 
-    // Create Comments
+    const tagSets = [
+      ["art", "painting", "creative"],
+      ["photography", "nature", "landscape"],
+      ["design", "ui", "modern"],
+      ["abstract", "colorful", "artistic"],
+      ["minimal", "clean", "simple"],
+      ["vintage", "retro", "classic"],
+      ["urban", "city", "architecture"],
+      ["nature", "outdoor", "peaceful"],
+    ];
+
+    const imageKitPins = [
+      { file: "pin1.jpg", width: 400, height: 600 },
+      { file: "pin2.jpg", width: 400, height: 500 },
+      { file: "pin3.jpg", width: 400, height: 700 },
+      { file: "pin4.jpg", width: 400, height: 550 },
+      { file: "pin5.jpg", width: 400, height: 650 },
+      { file: "pin6.jpg", width: 400, height: 580 },
+      { file: "pin7.jpg", width: 400, height: 620 },
+      { file: "pin8.jpg", width: 400, height: 540 },
+      { file: "pin9.jpg", width: 400, height: 670 },
+      { file: "pin10.jpg", width: 400, height: 600 },
+      { file: "pin11.jpg", width: 400, height: 590 },
+      { file: "pin12.jpg", width: 400, height: 610 },
+      { file: "pin13.jpg", width: 400, height: 630 },
+      { file: "pin14.jpg", width: 400, height: 570 },
+      { file: "pin15.jpg", width: 400, height: 640 },
+      { file: "pin16.jpg", width: 400, height: 560 },
+      { file: "pin17.jpg", width: 400, height: 680 },
+      { file: "pin18.jpg", width: 400, height: 520 },
+      { file: "pin19.jpg", width: 400, height: 660 },
+      { file: "pin20.jpg", width: 400, height: 600 },
+      { file: "pin21.jpg", width: 400, height: 580 },
+      { file: "pin22.jpg", width: 400, height: 620 },
+      { file: "pin23.jpg", width: 400, height: 590 },
+      { file: "pin24.jpg", width: 400, height: 610 },
+      { file: "pin25.jpg", width: 400, height: 570 },
+    ];
+
+    const pinPromises = [];
+
+    for (let i = 0; i < 40; i++) {
+      const imageIndex = i % imageKitPins.length;
+      const imageData = imageKitPins[imageIndex];
+
+      const randomUser = users[Math.floor(Math.random() * users.length)];
+      const randomBoard = boards[Math.floor(Math.random() * boards.length)];
+      const randomTags = tagSets[Math.floor(Math.random() * tagSets.length)];
+      const randomDescription =
+        descriptions[Math.floor(Math.random() * descriptions.length)];
+
+      pinPromises.push({
+        title: pinTitles[i] || `Pin ${i + 1}`,
+        description: randomDescription,
+        imageUrl: `pins/${imageData.file}`,
+        width: imageData.width,
+        height: imageData.height,
+        owner: randomUser._id,
+        board: randomBoard._id,
+        tags: randomTags,
+      });
+    }
+
+    const pins = await Pin.create(pinPromises);
+
+    await Board.findByIdAndUpdate(boards[0]._id, {
+      $push: { pins: [pins[0]._id, pins[4]._id] },
+    });
+    await Board.findByIdAndUpdate(boards[1]._id, {
+      $push: { pins: [pins[1]._id, pins[5]._id] },
+    });
+    await Board.findByIdAndUpdate(boards[2]._id, {
+      $push: { pins: [pins[2]._id, pins[6]._id] },
+    });
+    await Board.findByIdAndUpdate(boards[3]._id, {
+      $push: { pins: [pins[3]._id, pins[7]._id] },
+    });
+    await Board.findByIdAndUpdate(boards[4]._id, {
+      $push: { pins: pins[4]._id },
+    });
+
     const comments = await Comment.create([
       {
-        content: 'This is absolutely gorgeous! Love the color palette.',
+        content: "This is absolutely gorgeous! Love the color palette.",
         author: users[1]._id,
-        pin: pins[0]._id
+        pin: pins[0]._id,
       },
       {
-        content: 'Amazing capture! The lighting is perfect.',
+        content: "Amazing capture! The lighting is perfect.",
         author: users[2]._id,
-        pin: pins[1]._id
+        pin: pins[1]._id,
       },
       {
-        content: 'Such a clean and modern design. Very inspiring!',
+        content: "Such a clean and modern design. Very inspiring!",
         author: users[3]._id,
-        pin: pins[2]._id
+        pin: pins[2]._id,
       },
       {
-        content: 'This makes me want to go hiking right now!',
+        content: "This makes me want to go hiking right now!",
         author: users[0]._id,
-        pin: pins[3]._id
+        pin: pins[3]._id,
       },
       {
-        content: 'The composition is really well balanced.',
+        content: "The composition is really well balanced.",
         author: users[1]._id,
-        pin: pins[4]._id
+        pin: pins[4]._id,
       },
       {
-        content: 'Nature at its finest. Beautiful shot!',
+        content: "Nature at its finest. Beautiful shot!",
         author: users[2]._id,
-        pin: pins[5]._id
-      }
+        pin: pins[5]._id,
+      },
     ]);
 
-    // Add comments to pins
-    await Pin.findByIdAndUpdate(pins[0]._id, { $push: { comments: comments[0]._id } });
-    await Pin.findByIdAndUpdate(pins[1]._id, { $push: { comments: comments[1]._id } });
-    await Pin.findByIdAndUpdate(pins[2]._id, { $push: { comments: comments[2]._id } });
-    await Pin.findByIdAndUpdate(pins[3]._id, { $push: { comments: comments[3]._id } });
-    await Pin.findByIdAndUpdate(pins[4]._id, { $push: { comments: comments[4]._id } });
-    await Pin.findByIdAndUpdate(pins[5]._id, { $push: { comments: comments[5]._id } });
+    await Pin.findByIdAndUpdate(pins[0]._id, {
+      $push: { comments: comments[0]._id },
+    });
+    await Pin.findByIdAndUpdate(pins[1]._id, {
+      $push: { comments: comments[1]._id },
+    });
+    await Pin.findByIdAndUpdate(pins[2]._id, {
+      $push: { comments: comments[2]._id },
+    });
+    await Pin.findByIdAndUpdate(pins[3]._id, {
+      $push: { comments: comments[3]._id },
+    });
+    await Pin.findByIdAndUpdate(pins[4]._id, {
+      $push: { comments: comments[4]._id },
+    });
+    await Pin.findByIdAndUpdate(pins[5]._id, {
+      $push: { comments: comments[5]._id },
+    });
 
-    // Add some likes
-    await Pin.findByIdAndUpdate(pins[0]._id, { $push: { likes: [users[1]._id, users[2]._id] } });
-    await Pin.findByIdAndUpdate(pins[1]._id, { $push: { likes: [users[0]._id, users[3]._id] } });
-    await Pin.findByIdAndUpdate(pins[2]._id, { $push: { likes: [users[1]._id, users[3]._id] } });
+    await Pin.findByIdAndUpdate(pins[0]._id, {
+      $push: { likes: [users[1]._id, users[2]._id] },
+    });
+    await Pin.findByIdAndUpdate(pins[1]._id, {
+      $push: { likes: [users[0]._id, users[3]._id] },
+    });
+    await Pin.findByIdAndUpdate(pins[2]._id, {
+      $push: { likes: [users[1]._id, users[3]._id] },
+    });
 
-    // Add some followers/following relationships
-    await User.findByIdAndUpdate(users[0]._id, { $push: { following: [users[1]._id, users[2]._id] } });
-    await User.findByIdAndUpdate(users[1]._id, { $push: { followers: users[0]._id, following: users[3]._id } });
-    await User.findByIdAndUpdate(users[2]._id, { $push: { followers: users[0]._id, following: users[3]._id } });
-    await User.findByIdAndUpdate(users[3]._id, { $push: { followers: [users[1]._id, users[2]._id] } });
+    await User.findByIdAndUpdate(users[0]._id, {
+      $push: { following: [users[1]._id, users[2]._id] },
+    });
+    await User.findByIdAndUpdate(users[1]._id, {
+      $push: { followers: users[0]._id, following: users[3]._id },
+    });
+    await User.findByIdAndUpdate(users[2]._id, {
+      $push: { followers: users[0]._id, following: users[3]._id },
+    });
+    await User.findByIdAndUpdate(users[3]._id, {
+      $push: { followers: [users[1]._id, users[2]._id] },
+    });
 
-    console.log('Database seeded successfully!');
+    console.log("Database seeded successfully!");
     console.log(`Created ${users.length} users`);
     console.log(`Created ${boards.length} boards`);
     console.log(`Created ${pins.length} pins`);
     console.log(`Created ${comments.length} comments`);
-
   } catch (error) {
-    console.error('Error seeding database:', error);
+    console.error("Error seeding database:", error);
     throw error;
   }
 };
 
-// Run the seed function if this file is executed directly
 const runSeed = async () => {
   try {
     await connectDB();
     await seedDatabase();
-    console.log('Seeding completed successfully!');
+    console.log("Seeding completed successfully!");
     process.exit(0);
   } catch (error) {
-    console.error('Seeding failed:', error);
+    console.error("Seeding failed:", error);
     process.exit(1);
   }
 };
 
-// Check if this file is being run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
   runSeed();
 }
