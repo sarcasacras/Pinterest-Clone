@@ -59,6 +59,17 @@
   color: inherit;
 }
 
+.pin-title {
+  margin: 0;
+  font-size: 24px;
+}
+
+.pin-description {
+  margin-bottom: 2rem;
+  color: #666;
+  line-height: 1.4;
+}
+
 .user-avatar {
   width: 40px;
   height: 40px;

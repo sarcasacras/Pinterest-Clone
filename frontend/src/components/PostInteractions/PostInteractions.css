@@ -36,15 +36,3 @@
   height: 30px;
   cursor: pointer;
 }
-
-@media (max-width: 500px) {
-  #moreButton {
-    display: none;
-  }
-}
-
-@media (max-width: 325px) {
-  #shareButton {
-    display: none;
-  }
-}

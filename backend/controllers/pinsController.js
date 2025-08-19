@@ -1,4 +1,6 @@
 import Pin from "../models/Pin.js";
+import User from "../models/User.js";
+import Comment from "../models/Comment.js";
 
 export const getPins = async (req, res) => {
   try {
@@ -48,7 +50,15 @@ export const createPin = async (req, res) => {
 
 export const getPinById = async (req, res) => {
   try {
-    const pin = await Pin.findById(req.params.id);
+    const pin = await Pin.findById(req.params.id)
+      .populate("owner", "username displayName avatar")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "username displayName avatar",
+        },
+      });
     if (!pin) {
       return res.status(404).json({ error: "Pin not found" });
     }

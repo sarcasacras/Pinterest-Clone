@@ -1,192 +1,87 @@
 import "./Comments.css";
 import Img from "../Image/Image";
-import EmojiPicker from 'emoji-picker-react';
-import { useState, useRef, useEffect } from 'react';
+import EmojiPicker from "emoji-picker-react";
+import { useState, useRef, useEffect } from "react";
 
-export default function Comments() {
-  const [comment, setComment] = useState('');
+export default function Comments({ pin }) {
+
+  const formatTimeAgo = (dateString) => {
+    const now = new Date();
+    const commentDate = new Date(dateString);
+    const diffInMs = now - commentDate;
+
+    const minutes = Math.floor(diffInMs / (1000 * 60));
+    const hours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const weeks = Math.floor(days / 7);
+
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes} minutes ago`;
+    if (hours < 24) return `${hours} hours ago`;
+    if (days < 7) return `${days} days ago`;
+    if (weeks < 4) return `${weeks} weeks ago`;
+
+    return commentDate.toLocaleDateString('en-EN');
+  }
+
+  const [comment, setComment] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
 
   const onEmojiClick = (emojiObject) => {
-    setComment(prevComment => prevComment + emojiObject.emoji);
+    setComment((prevComment) => prevComment + emojiObject.emoji);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+      if (
+        emojiPickerRef.current &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
         setShowEmojiPicker(false);
       }
     };
 
     if (showEmojiPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showEmojiPicker]);
 
   return (
     <div className="comments">
-      <span className="comments-count">9 comments</span>
+      <span className="comments-count">
+        {pin?.comments?.length || 0} Comments
+      </span>
 
       <div className="comments-list">
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Jane Smith</div>
-            <div className="comment-content">
-              This is such a beautiful pin! Love the colors and composition.
+        {pin?.comments && pin.comments.length > 0 ? (
+          pin.comments.map((comment) => (
+            <div className="comment" key={comment._id}>
+              <div className="comment-left">
+                <Img
+                  src={comment.author?.avatar || "/general/noavatar.svg"}
+                  alt="User Avatar"
+                  className="comment-avatar"
+                />
+              </div>
+              <div className="comment-right">
+                <div className="comment-nickname">
+                  {comment.author?.displayName ||
+                    comment.author?.username ||
+                    "Unknown User"}
+                </div>
+                <div className="comment-content">{comment.content}</div>
+                <div className="comment-timestamp">{formatTimeAgo(comment.createdAt)}</div>
+              </div>
             </div>
-            <div className="comment-timestamp">2 hours ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Mike Johnson</div>
-            <div className="comment-content">
-              Amazing work! Where did you take this photo?
-            </div>
-            <div className="comment-timestamp">1 day ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Sarah Wilson</div>
-            <div className="comment-content">
-              This reminds me of my trip to the mountains last summer. Great
-              capture!
-            </div>
-            <div className="comment-timestamp">3 days ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Alex Chen</div>
-            <div className="comment-content">
-              The lighting in this photo is absolutely perfect!
-            </div>
-            <div className="comment-timestamp">1 week ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Emma Davis</div>
-            <div className="comment-content">
-              Could you share the camera settings you used for this shot?
-            </div>
-            <div className="comment-timestamp">2 weeks ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">David Brown</div>
-            <div className="comment-content">
-              This would look great in my living room! Is it available as a
-              print?
-            </div>
-            <div className="comment-timestamp">3 weeks ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Lisa Martinez</div>
-            <div className="comment-content">
-              Absolutely stunning! The depth of field is incredible.
-            </div>
-            <div className="comment-timestamp">1 month ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Tom Anderson</div>
-            <div className="comment-content">
-              Great composition! What lens did you use for this?
-            </div>
-            <div className="comment-timestamp">1 month ago</div>
-          </div>
-        </div>
-
-        <div className="comment">
-          <div className="comment-left">
-            <Img
-              src="/general/noavatar.svg"
-              alt="User Avatar"
-              className="comment-avatar"
-            />
-          </div>
-          <div className="comment-right">
-            <div className="comment-nickname">Rachel Green</div>
-            <div className="comment-content">
-              Love the natural lighting in this shot!
-            </div>
-            <div className="comment-timestamp">2 months ago</div>
-          </div>
-        </div>
+          ))
+        ) : (
+          <div className="no-comments">No comments yet</div>
+        )}
       </div>
 
       <div className="comment-form" ref={emojiPickerRef}>
