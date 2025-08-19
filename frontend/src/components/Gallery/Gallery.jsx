@@ -82,7 +82,7 @@ export default function Gallery({ variant }) {
 
       {isFetchingNextPage && (
         <div style={{ textAlign: "center", margin: "40px 0", color: "#666" }}>
-          Загружаем больше пинов...
+          Loading more pins
         </div>
       )}
     </>

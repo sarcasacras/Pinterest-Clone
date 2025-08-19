@@ -21,9 +21,9 @@ export const getPins = async (req, res) => {
     const pins = await Pin.find(filter)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ _id: -1 });
 
-    const totalPins = await Pin.countDocuments();
+    const totalPins = await Pin.countDocuments(filter);
 
     const hasMore = skip + pins.length < totalPins;
 
