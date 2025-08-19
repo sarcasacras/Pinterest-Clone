@@ -63,7 +63,7 @@ export default function PostPage() {
             <PostInteractions pin={pin}/>
           </div>
           <div className="user-section">
-            <Link to="/john" className="user-profile">
+            <Link to={`/${pin.owner?.username}`} className="user-profile">
               <Img
                 src="/general/noavatar.svg"
                 alt="User Avatar"

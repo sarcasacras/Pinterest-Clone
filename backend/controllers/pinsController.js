@@ -93,3 +93,23 @@ export const deletePin = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getPinsByUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+
+    const pins = await Pin.find({ owner: userId })
+      .populate("owner", "username displayName avatar")
+      .sort({ _id: -1 })
+      .limit(limit)
+      .skip((page - 1) * limit);
+
+    const total = await Pin.countDocuments({ owner: userId });
+    const hasMore = page * limit < total;
+
+    res.json({ pins, hasMore, total });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

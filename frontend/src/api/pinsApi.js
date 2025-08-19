@@ -7,8 +7,15 @@ const apiClient = axios.create({
 });
 
 export const pinsApi = {
-  getPins: ({ page = 1, limit = 20, search = '' } = {}) =>
-    apiClient.get("/pins", { params: { page, limit, ...(search && {search}) } }).then((res) => res.data),
+  getPins: ({ page = 1, limit = 20, search = "" } = {}) =>
+    apiClient
+      .get("/pins", { params: { page, limit, ...(search && { search }) } })
+      .then((res) => res.data),
+
+  getPinsByUser: ({ userId, page = 1, limit = 10 }) =>
+    apiClient
+      .get(`/pins/user/${userId}`, { params: { page, limit } })
+      .then((res) => res.data),
 
   getPinById: (id) => apiClient.get(`/pins/${id}`).then((res) => res.data),
 

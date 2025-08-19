@@ -5,7 +5,7 @@ import { pinsApi } from "../../api/pinsApi";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import { useImagesLoaded } from "../../hooks/useImagesLoaded";
 
-export default function Gallery({ variant }) {
+export default function Gallery({ variant, userId }) {
   const {
     data,
     isLoading,
@@ -14,8 +14,11 @@ export default function Gallery({ variant }) {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["pins"],
+    queryKey: ["pins", userId],
     queryFn: ({ pageParam = 1 }) => {
+      if (userId) {
+        return pinsApi.getPinsByUser({ userId, page: pageParam, limit: 10 });
+      }
       return pinsApi.getPins({ page: pageParam, limit: 10 });
     },
     getNextPageParam: (lastPage, loadedPages) =>
