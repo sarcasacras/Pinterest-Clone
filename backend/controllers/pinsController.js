@@ -4,9 +4,21 @@ export const getPins = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
+    const search = req.query.search || "";
     const skip = (page - 1) * limit;
 
-    const pins = await Pin.find()
+    let filter = {};
+    if (search) {
+      filter = {
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+          { tags: { $in: [new RegExp(search, "i")] } },
+        ],
+      };
+    }
+
+    const pins = await Pin.find(filter)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
