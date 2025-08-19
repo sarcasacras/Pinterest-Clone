@@ -88,7 +88,7 @@ export default function ProfilePage() {
 
         {activeSection === "saved" && (
           <div className="saved-section">
-            <Collections />
+            <Collections userId={user._id} />
           </div>
         )}
       </div>

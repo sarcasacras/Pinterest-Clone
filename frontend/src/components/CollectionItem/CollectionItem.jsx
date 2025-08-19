@@ -7,7 +7,7 @@ export default function CollectionItem({ src, pinCount, timeAgo, alt, name }) {
     <div className="collection-item">
       <div className="collection-image-container">
         <Img src={src} alt={alt} w={300} className="collection-img" />
-        <Link to={`/pin/1`} className="overlay"></Link>
+        <Link to={`/`} className="overlay"></Link>
         <button className="saveButton">Save</button>
         <div className="overlayButtons">
           <button className="overlayButton">

@@ -4,7 +4,6 @@ import EmojiPicker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
 
 export default function Comments({ pin }) {
-
   const formatTimeAgo = (dateString) => {
     const now = new Date();
     const commentDate = new Date(dateString);
@@ -14,15 +13,18 @@ export default function Comments({ pin }) {
     const hours = Math.floor(diffInMs / (1000 * 60 * 60));
     const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
     const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
 
     if (minutes < 1) return "Just now";
     if (minutes < 60) return `${minutes} minutes ago`;
     if (hours < 24) return `${hours} hours ago`;
     if (days < 7) return `${days} days ago`;
     if (weeks < 4) return `${weeks} weeks ago`;
+    if (months < 12) return `${months} months ago`;
 
-    return commentDate.toLocaleDateString('en-EN');
-  }
+    return `${years} years ago`;
+  };
 
   const [comment, setComment] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -75,7 +77,9 @@ export default function Comments({ pin }) {
                     "Unknown User"}
                 </div>
                 <div className="comment-content">{comment.content}</div>
-                <div className="comment-timestamp">{formatTimeAgo(comment.createdAt)}</div>
+                <div className="comment-timestamp">
+                  {formatTimeAgo(comment.createdAt)}
+                </div>
               </div>
             </div>
           ))

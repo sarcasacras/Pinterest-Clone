@@ -1,73 +1,64 @@
 import "./Collections.css";
 import CollectionItem from "../CollectionItem/CollectionItem";
+import { useQuery } from "@tanstack/react-query";
+import { boardsApi } from "../../api/boardsApi";
 
-export default function Collections() {
+export default function Collections({ userId }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["boards", userId],
+    queryFn: () => boardsApi.getBoardsByUser(userId),
+    enabled: !!userId,
+  });
+
+  const formatTimeAgo = (dateString) => {
+    const now = new Date();
+    const commentDate = new Date(dateString);
+    const diffInMs = now - commentDate;
+
+    const minutes = Math.floor(diffInMs / (1000 * 60));
+    const hours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const days = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (minutes < 1) return "Just now";
+    if (minutes < 60) return `${minutes} min`;
+    if (hours < 24) return `${hours} hrs`;
+    if (days < 7) return `${days} d`;
+    if (weeks < 4) return `${weeks} w`;
+    if (months < 12) return `${months} mo`;
+
+    return `${years}y`;
+  };
+
+  if (isLoading) {
+    return <div>Loading boards...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading boards: {error.message}</div>;
+  }
+
+  const boards = data?.boards || [];
+
   return (
     <div className="collections">
       <div className="collections-grid">
-        <CollectionItem
-          src="/pins/pin1.jpg"
-          pinCount={15}
-          timeAgo="2w"
-          alt="Collection 1"
-          name="Travel Destinations"
-        />
-        <CollectionItem
-          src="/pins/pin2.jpg"
-          pinCount={8}
-          timeAgo="1mo"
-          alt="Collection 2"
-          name="Home Decor Ideas"
-        />
-        <CollectionItem
-          src="/pins/pin3.jpg"
-          pinCount={23}
-          timeAgo="3d"
-          alt="Collection 3"
-          name="Recipe Collection"
-        />
-        <CollectionItem
-          src="/pins/pin4.jpg"
-          pinCount={7}
-          timeAgo="5d"
-          alt="Collection 4"
-          name="Fashion Inspiration"
-        />
-        <CollectionItem
-          src="/pins/pin5.jpg"
-          pinCount={42}
-          timeAgo="1w"
-          alt="Collection 5"
-          name="DIY Projects"
-        />
-        <CollectionItem
-          src="/pins/pin6.jpg"
-          pinCount={3}
-          timeAgo="2mo"
-          alt="Collection 6"
-          name="Web Design"
-        />
-        <CollectionItem
-          src="/pins/pin7.jpg"
-          pinCount={19}
-          timeAgo="4d"
-          alt="Collection 7"
-          name="Art & Design"
-        />
-        <CollectionItem
-          src="/pins/pin8.jpg"
-          pinCount={11}
-          timeAgo="6d"
-          alt="Collection 8"
-          name="Photography Tips"
-        />
-        <CollectionItem
-          src="/pins/pin9.jpg"
-          pinCount={5}
-          timeAgo="3mo"
-          alt="Collection 9"
-          name="Wedding Planning"
-        />
+        {boards.length > 0 ? (
+          boards.map((board) => (
+            <CollectionItem
+              key={board._id}
+              src={board.coverImage || "/pins/pin1.jpg"}
+              pinCount={board.pins?.length || 0}
+              timeAgo={formatTimeAgo(board.updatedAt)}
+              alt={board.title}
+              name={board.title}
+            />
+          ))
+        ) : (
+          <div>No boards found!</div>
+        )}
       </div>
     </div>
   );
