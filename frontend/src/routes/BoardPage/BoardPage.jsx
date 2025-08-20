@@ -37,20 +37,21 @@ export default function BoardPage() {
   return (
     <div className="board-page">
       <div className="board-header">
-        <h1>{board.board.title}</h1>
         <div className="board-info">
-          <p>{board.board.pins?.length || 0} pins</p>
           <Link to={`/${board.board.owner?.username || ''}`} className="board-owner">
             <Img 
               src={board.board.owner?.avatar || "/general/noavatar.svg"}
               alt="Owner avatar"
               className="owner-avatar"
               w={24}
-            />
+              />
             <span className="owner-name">
               {board.board.owner?.displayName || board.board.owner?.username || "Unknown"}
             </span>
           </Link>
+        </div>
+        <div className="board-title-container">
+          <h1 className="board-title">{board.board.title}</h1>
         </div>
       </div>
       <Gallery variant="boardPage" staticPins={board.board.pins} />

@@ -21,12 +21,7 @@
   justify-content: center;
   flex-direction: column;
   gap: 20px;
-}
-
-.board-info p {
-  font-size: 1rem;
-  color: #666;
-  margin: 0;
+  margin-bottom: 20px;
 }
 
 .board-owner {
@@ -35,6 +30,7 @@
   gap: 20px;
   border-radius: 20px;
   text-decoration: none;
+  flex-direction: column;
 }
 
 .owner-avatar {
@@ -50,4 +46,16 @@
   color: #333;
 }
 
+.board-title-container {
+  display: flex;
+  justify-content: center;
+}
+
+.board-title {
+  padding: 20px;
+  width: 50%;
+  border-bottom: 1px solid #e0e0e0;
+  margin: 0;
+  text-align: center;
+}
 

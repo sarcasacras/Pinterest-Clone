@@ -50,7 +50,7 @@ export default function Collections({ userId }) {
             <CollectionItem
               key={board._id}
               boardId={board._id}
-              src={board.coverImage || "/pins/pin1.jpg"}
+              src={board.effectiveCoverImage || "/pins/pin1.jpg"}
               pinCount={board.pins?.length || 0}
               timeAgo={formatTimeAgo(board.updatedAt)}
               alt={board.title}
