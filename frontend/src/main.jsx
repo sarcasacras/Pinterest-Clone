@@ -10,6 +10,7 @@ import SearchPage from "./routes/SearchPage/SearchPage";
 import CreatePost from "./routes/CreatePost/CreatePost";
 import LoginPage from "./routes/LoginPage/LoginPage";
 import MainLayout from "./layouts/MainLayout/MainLayout";
+import BoardPage from "./routes/BoardPage/BoardPage";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="/pin/:id" element={<PostPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/create" element={<CreatePost />} />
+            <Route path="/board/:boardId" element={<BoardPage />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />
         </Routes>

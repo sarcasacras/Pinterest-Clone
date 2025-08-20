@@ -1,0 +1,53 @@
+.board-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.board-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.board-header h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+.board-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.board-info p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+.board-owner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-radius: 20px;
+  text-decoration: none;
+}
+
+.owner-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
+}
+
+.owner-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+

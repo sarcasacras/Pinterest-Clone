@@ -9,4 +9,6 @@ const apiClient = axios.create({
 export const boardsApi = {
   getBoardsByUser: (userId) =>
     apiClient.get(`/boards/user/${userId}`).then((res) => res.data),
+  getBoardById: (boardId) =>
+    apiClient.get(`/boards/${boardId}`).then((res) => res.data),
 };

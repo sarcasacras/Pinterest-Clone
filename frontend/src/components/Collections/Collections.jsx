@@ -49,6 +49,7 @@ export default function Collections({ userId }) {
           boards.map((board) => (
             <CollectionItem
               key={board._id}
+              boardId={board._id}
               src={board.coverImage || "/pins/pin1.jpg"}
               pinCount={board.pins?.length || 0}
               timeAgo={formatTimeAgo(board.updatedAt)}

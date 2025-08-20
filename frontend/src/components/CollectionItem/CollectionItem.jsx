@@ -2,12 +2,12 @@ import "./CollectionItem.css";
 import { Link } from "react-router";
 import Img from "../Image/Image";
 
-export default function CollectionItem({ src, pinCount, timeAgo, alt, name }) {
+export default function CollectionItem({ src, pinCount, timeAgo, alt, name, boardId }) {
   return (
     <div className="collection-item">
       <div className="collection-image-container">
         <Img src={src} alt={alt} w={300} className="collection-img" />
-        <Link to={`/`} className="overlay"></Link>
+        <Link to={`/board/${boardId}`} className="overlay"></Link>
         <button className="saveButton">Save</button>
         <div className="overlayButtons">
           <button className="overlayButton">

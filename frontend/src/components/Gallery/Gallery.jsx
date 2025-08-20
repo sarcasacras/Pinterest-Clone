@@ -5,7 +5,7 @@ import { pinsApi } from "../../api/pinsApi";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import { useImagesLoaded } from "../../hooks/useImagesLoaded";
 
-export default function Gallery({ variant, userId }) {
+export default function Gallery({ variant, userId, boardId, staticPins }) {
   const {
     data,
     isLoading,
@@ -24,9 +24,10 @@ export default function Gallery({ variant, userId }) {
     getNextPageParam: (lastPage, loadedPages) =>
       lastPage.hasMore ? loadedPages.length + 1 : undefined,
     initialPageParam: 1,
+    enabled: !staticPins,
   });
 
-  const pins = data?.pages?.flatMap((page) => page.pins) || [];
+  const pins = staticPins || data?.pages?.flatMap((page) => page.pins) || [];
 
   const { imagesLoaded } = useImagesLoaded(pins);
 
