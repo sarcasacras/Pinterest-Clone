@@ -1,10 +1,61 @@
 import "./LoginPage.css";
 import Img from "../../components/Image/Image";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "../../contexts/AuthContext";
+import { authApi } from "../../api/authApi";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
   const [isRegistered, setIsRegistered] = useState(true);
   const [error, setError] = useState("");
+  
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const loginMutation = useMutation({
+    mutationFn: ({ username, password }) => authApi.login(username, password),
+    onSuccess: (data) => {
+      login(data.user);
+      navigate('/');
+    },
+    onError: (error) => {
+      setError(error.message || 'Login failed');
+    },
+  });
+
+  const registerMutation = useMutation({
+    mutationFn: (userData) => authApi.register(userData),
+    onSuccess: (data) => {
+      login(data.user);
+      navigate('/');
+    },
+    onError: (error) => {
+      setError(error.message || 'Registration failed');
+    },
+  });
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setError('');
+    const formData = new FormData(e.target);
+    const username = formData.get('username');
+    const password = formData.get('password');
+    loginMutation.mutate({ username, password });
+  };
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+    setError('');
+    const formData = new FormData(e.target);
+    const userData = {
+      username: formData.get('username'),
+      displayName: formData.get('name'),
+      email: formData.get('register-email'),
+      password: formData.get('register-password'),
+    };
+    registerMutation.mutate(userData);
+  };
 
   return (
     <div className="login-page">
@@ -18,14 +69,14 @@ export default function LoginPage() {
         {isRegistered && (
           <>
             <h1 className="login-title">Log in to your account</h1>
-            <form className="login-form">
+            <form className="login-form" onSubmit={handleLogin}>
               <div className="form-field">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="username">Username</label>
                 <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
                   required
                 />
               </div>
@@ -41,8 +92,8 @@ export default function LoginPage() {
                 />
               </div>
 
-              <button type="submit" className="login-btn">
-                Log In
+              <button type="submit" className="login-btn" disabled={loginMutation.isPending}>
+                {loginMutation.isPending ? 'Logging in...' : 'Log In'}
               </button>
             </form>
             <div className="login-footer">
@@ -63,7 +114,7 @@ export default function LoginPage() {
           <>
             <h1 className="login-title">Create an account</h1>
             
-            <form className="login-form">
+            <form className="login-form" onSubmit={handleRegister}>
               <div className="form-field">
                 <label htmlFor="username">Username</label>
                 <input
@@ -108,8 +159,8 @@ export default function LoginPage() {
                 />
               </div>
 
-              <button type="submit" className="login-btn">
-                Register
+              <button type="submit" className="login-btn" disabled={registerMutation.isPending}>
+                {registerMutation.isPending ? 'Registering...' : 'Register'}
               </button>
             </form>
             

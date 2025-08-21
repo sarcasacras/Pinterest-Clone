@@ -1,31 +1,49 @@
 import Img from "../Image/Image";
 import "./UserIcon.css";
 import { useState, useRef, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "../../contexts/AuthContext";
+import { authApi } from "../../api/authApi";
 
 export default function UserIcon() {
-  const loggedIn = true;
+  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const userOptionsRef = useRef(null);
 
+  const logoutMutation = useMutation({
+    mutationFn: () => authApi.logout(),
+    onSuccess: () => {
+      logout();
+      setOpen(false);
+    },
+    onError: () => {
+      logout();
+      setOpen(false);
+    },
+  });
+
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (userOptionsRef.current && !userOptionsRef.current.contains(event.target)) {
+      if (
+        userOptionsRef.current &&
+        !userOptionsRef.current.contains(event.target)
+      ) {
         setOpen(false);
       }
     };
 
     if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [open]);
 
-  if (loggedIn) {
+  if (user) {
     return (
-      <div className="user"  ref={userOptionsRef}>
+      <div className="user" ref={userOptionsRef}>
         <Img src="/icons/user.svg" alt="" className="userIcon" />
         <Img
           src="/icons/arrowDown.svg"
@@ -35,9 +53,19 @@ export default function UserIcon() {
         />
         {open && (
           <div className="userOptions">
-            <a className="userOption" href="/">Settings</a>
-            <a className="userOption" href="/">Account</a>
-            <a className="userOption" href="/">Log Out</a>
+            <a className="userOption" href="/">
+              Settings
+            </a>
+            <a className="userOption" href="/">
+              Account
+            </a>
+            <button
+              className="userOption"
+              onClick={() => logoutMutation.mutate()}
+              disabled={logoutMutation.isPending}
+            >
+              {logoutMutation.isPending ? "Logging out..." : "Log Out"}
+            </button>
           </div>
         )}
       </div>
@@ -45,10 +73,10 @@ export default function UserIcon() {
   } else {
     return (
       <div>
-        <a href="/" className="loginButton">Log In / Sign Up</a>
+        <a href="/login" className="loginButton">
+          Log In / Sign Up
+        </a>
       </div>
-    )
+    );
   }
-
-  
 }

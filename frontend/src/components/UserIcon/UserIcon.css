@@ -44,6 +44,14 @@
   background-color: rgba(128, 128, 128, 0.233);
 }
 
+button.userOption {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+}
+
 .loginButton {
   padding: 0 20px;
   cursor: pointer;

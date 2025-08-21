@@ -49,6 +49,14 @@ export const register = async (req, res) => {
     });
     await user.save();
 
+    const token = generateToken(user._id);
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(201).json({
       message: "User registered successfully!",
       user: {
@@ -108,6 +116,18 @@ export const login = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const logout = (req, res) => {
+  res.clearCookie('authToken', {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'strict'
+  })
+
+  res.json({
+    message: "Logout successful"
+  })
+}
 
 export const getProfile = (req, res) => {
     res.json({
