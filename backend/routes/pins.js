@@ -1,13 +1,38 @@
-import express from 'express';
-import { getPins, createPin, getPinById, updatePin, deletePin, getPinsByUser } from '../controllers/pinsController.js';
+import express from "express";
+import {
+  getPins,
+  createPin,
+  getPinById,
+  updatePin,
+  deletePin,
+  getPinsByUser,
+} from "../controllers/pinsController.js";
+import { authenticateToken } from "../middleware/auth.js";
+import multer from "multer";
+import { uploadToImageKit } from "../utils/imagekit.js";
 
 const router = express.Router();
+const storage = multer.memoryStorage();
 
-router.get('/', getPins);
-router.post('/', createPin);
-router.get('/:id', getPinById);
-router.put('/:id', updatePin);
-router.delete('/:id', deletePin);
-router.get('/user/:userId', getPinsByUser);
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 20 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only images are allowed!'), false)
+    }
+  },
+});
+
+router.get("/", getPins);
+router.post("/", authenticateToken, upload.single('image'), createPin);
+router.get("/:id", getPinById);
+router.put("/:id", updatePin);
+router.delete("/:id", authenticateToken, deletePin);
+router.get("/user/:userId", getPinsByUser);
 
 export default router;

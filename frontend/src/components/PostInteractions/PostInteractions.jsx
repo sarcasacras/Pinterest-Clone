@@ -1,7 +1,13 @@
 import "./PostInteractions.css";
 import Img from "../Image/Image";
+import { useState } from "react";
 
-export default function PostInteractions({ pin }) {
+export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleMoreClick = () => {
+    setIsOpen(!isOpen);
+  };
   return (
     <div className="postInteractions">
       <div className="interactionButtons">
@@ -18,8 +24,16 @@ export default function PostInteractions({ pin }) {
           alt="More"
           className="buttonIcon"
           id="moreButton"
+          onClick={handleMoreClick}
         />
       </div>
+      {isOpen && isOwner && (
+        <div className="dropdown">
+          <button onClick={onDeletePin} disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : "Delete Pin"}
+          </button>
+        </div>
+      )}
       <div className="saveButtonDiv">
         <button className="savePost">Save</button>
       </div>

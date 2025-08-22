@@ -3,10 +3,14 @@ import { Link } from "react-router";
 import Img from "../Image/Image";
 
 export default function GalleryImg({ item }) {
+  const baseHeight = item.height || 600;
+  const scaledHeight = Math.min(baseHeight, 800); 
+  const gridSpan = Math.ceil(scaledHeight / 100);
+  
   return (
     <div
       className="galleryItem"
-      style={{ gridRowEnd: `span ${Math.ceil(item.height / 100)}` }}
+      style={{ gridRowEnd: `span ${gridSpan}` }}
     >
       <Img
         src={item.link}

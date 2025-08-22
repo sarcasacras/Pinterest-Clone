@@ -4,9 +4,10 @@ import { useState, useRef, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { authApi } from "../../api/authApi";
+import { Link } from "react-router";
 
 export default function UserIcon() {
-  const { user, logout } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const userOptionsRef = useRef(null);
 
@@ -41,10 +42,21 @@ export default function UserIcon() {
     };
   }, [open]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   if (user) {
     return (
       <div className="user" ref={userOptionsRef}>
-        <Img src="/icons/user.svg" alt="" className="userIcon" />
+        <Link to={`/${user.username}`}>
+          <Img
+            src={user.avatar || "/icons/user.svg"}
+            alt=""
+            className="userIcon"
+            w={64}
+          />
+        </Link>
         <Img
           src="/icons/arrowDown.svg"
           alt=""
@@ -56,9 +68,13 @@ export default function UserIcon() {
             <a className="userOption" href="/">
               Settings
             </a>
-            <a className="userOption" href="/">
+            <Link 
+              className="userOption" 
+              to={`/${user.username}`}
+              onClick={() => setOpen(false)}
+            >
               Account
-            </a>
+            </Link>
             <button
               className="userOption"
               onClick={() => logoutMutation.mutate()}

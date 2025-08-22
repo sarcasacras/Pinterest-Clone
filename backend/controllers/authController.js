@@ -64,6 +64,7 @@ export const register = async (req, res) => {
         username: user.username,
         displayName: user.displayName,
         email: user.email,
+        avatar: user.avatar,
       },
     });
   } catch (error) {
@@ -110,6 +111,7 @@ export const login = async (req, res) => {
         username: user.username,
         displayName: user.displayName,
         email: user.email,
+        avatar: user.avatar,
       },
     });
   } catch (error) {

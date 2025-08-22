@@ -3,12 +3,16 @@ import Img from "../../components/Image/Image";
 import { Link } from "react-router";
 import PostInteractions from "../../components/PostInteractions/PostInteractions";
 import Comments from "../../components/Comments/Comments";
-import { useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useParams, useNavigate } from "react-router";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { pinsApi } from "../../api/pinsApi";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function PostPage() {
   const { id } = useParams();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const {
     data: pin,
@@ -18,6 +22,27 @@ export default function PostPage() {
     queryKey: ["pin", id],
     queryFn: () => pinsApi.getPinById(id),
     enabled: !!id,
+  });
+
+  const handleDeletePin = () => {
+    if (window.confirm("Are you sure you want to delete this pin? This action cannot be undone.")) {
+      deletePinMutation.mutate(pin._id);
+    }
+  };
+
+  const isOwner = user && pin && user._id === pin.owner._id;
+
+  const deletePinMutation = useMutation({
+    mutationFn: (pinId) => pinsApi.deletePin(pinId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pins"] });
+      queryClient.invalidateQueries({ queryKey: ["pins", "user", user._id] });
+      navigate("/");
+    },
+    onError: (error) => {
+      console.error("Failed to delete pin:", error);
+      alert("Failed to delete pin");
+    },
   });
 
 
@@ -60,12 +85,17 @@ export default function PostPage() {
             {pin.description && <p className="pin-description">{pin.description}</p>}
           </div>
           <div className="interactions">
-            <PostInteractions pin={pin}/>
+            <PostInteractions 
+              pin={pin}
+              onDeletePin={handleDeletePin}
+              isOwner={isOwner}
+              isDeleting={deletePinMutation.isPending}
+            />
           </div>
           <div className="user-section">
             <Link to={`/${pin.owner?.username}`} className="user-profile">
               <Img
-                src="/general/noavatar.svg"
+                src={pin.owner?.avatar || "/general/noavatar.svg"}
                 alt="User Avatar"
                 className="user-avatar"
               />

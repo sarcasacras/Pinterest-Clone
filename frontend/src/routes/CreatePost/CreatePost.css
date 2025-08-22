@@ -19,6 +19,10 @@
     justify-content: center;
 }
 
+.content-section.has-preview {
+    gap: 48px;
+}
+
 .upload-form {
     display: flex;
     flex-direction: column;
@@ -39,6 +43,11 @@
     background-color: #e0e0e0;
     cursor: pointer;
     position: relative;
+}
+
+.upload-field.has-preview {
+    padding: 0;
+    background-color: transparent;
 }
 
 .form-field {
@@ -127,4 +136,15 @@
 
 .publish-btn:hover {
     background-color: #b92243;
+}
+
+.hidden-file-input {
+    display: none;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
 }
