@@ -1,6 +1,7 @@
 import Pin from "../models/Pin.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
+import Board from "../models/Board.js";
 import { uploadToImageKit, deleteFromImageKit } from '../utils/imagekit.js';
 
 export const getPins = async (req, res) => {
@@ -63,6 +64,16 @@ export const createPin = async (req, res) => {
     };
     const pin = new Pin(pinData);
     const savedPin = await pin.save();
+
+    // If a board is specified, add the pin to the board
+    if (req.body.board) {
+      const board = await Board.findById(req.body.board);
+      if (board && board.owner.toString() === req.user._id.toString()) {
+        board.pins.push(savedPin._id);
+        await board.save();
+      }
+    }
+
     res.status(201).json(savedPin);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -174,6 +185,72 @@ export const toggleLike = async (req, res) => {
       message: isLiked ? "Pin unliked" : "Pin liked",
       pin: updatedPin,
       isLiked: !isLiked
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const savePinToBoard = async (req, res) => {
+  try {
+    const { id: pinId } = req.params;
+    const { boardId } = req.body;
+    const userId = req.user._id;
+
+    const pin = await Pin.findById(pinId);
+    if (!pin) {
+      return res.status(404).json({ error: "Pin not found" });
+    }
+
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ error: "Board not found" });
+    }
+
+    if (board.owner.toString() !== userId.toString() && !req.user.isAdmin) {
+      return res.status(403).json({ error: "You can only save pins to your own boards" });
+    }
+
+    if (board.pins.includes(pinId)) {
+      return res.status(400).json({ error: "Pin is already saved to this board" });
+    }
+
+    board.pins.push(pinId);
+    await board.save();
+
+    res.json({ 
+      message: "Pin saved to board successfully",
+      board: board
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const removePinFromBoard = async (req, res) => {
+  try {
+    const { pinId, boardId } = req.params;
+    const userId = req.user._id;
+
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ error: "Board not found" });
+    }
+
+    if (board.owner.toString() !== userId.toString() && !req.user.isAdmin) {
+      return res.status(403).json({ error: "You can only remove pins from your own boards" });
+    }
+
+    if (!board.pins.includes(pinId)) {
+      return res.status(400).json({ error: "Pin is not in this board" });
+    }
+
+    board.pins.pull(pinId);
+    await board.save();
+
+    res.json({ 
+      message: "Pin removed from board successfully",
+      board: board
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

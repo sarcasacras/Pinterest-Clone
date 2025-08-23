@@ -1,9 +1,11 @@
 import Img from "../../components/Image/Image";
+import BoardSelector from "../../components/BoardSelector/BoardSelector";
 import "./CreatePost.css";
 import { useState, useRef, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { pinsApi } from "../../api/pinsApi";
+import { boardsApi } from "../../api/boardsApi";
 import { useNavigate } from "react-router";
 import { resizeImage } from "../../utils/imageUtils";
 
@@ -16,7 +18,16 @@ export default function CreatePost() {
     title: "",
     description: "",
     tags: "",
+    board: "",
     file: null,
+  });
+  const [selectedBoard, setSelectedBoard] = useState(null);
+  const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
+
+  const { data: boards } = useQuery({
+    queryKey: ["boards", user?._id],
+    queryFn: () => boardsApi.getBoardsByUser(user._id),
+    enabled: !!user?._id,
   });
 
   const createPinMutation = useMutation({
@@ -45,6 +56,9 @@ export default function CreatePost() {
     formDataToSend.append('title', formData.title);
     formDataToSend.append('description', formData.description);
     formDataToSend.append('tags', formData.tags);
+    if (selectedBoard) {
+      formDataToSend.append('board', selectedBoard._id);
+    }
 
 
     createPinMutation.mutate(formDataToSend);
@@ -83,7 +97,15 @@ export default function CreatePost() {
   };
 
   useEffect(() => {
+    // Add class to body and html for CreatePost page
+    document.body.classList.add('create-post-page');
+    document.documentElement.classList.add('create-post-page');
+
     return () => {
+      // Remove class when leaving the page
+      document.body.classList.remove('create-post-page');
+      document.documentElement.classList.remove('create-post-page');
+      
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
@@ -95,6 +117,14 @@ export default function CreatePost() {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  const handleBoardSelect = (board) => {
+    setSelectedBoard(board);
+    setFormData(prev => ({
+      ...prev,
+      board: board._id
     }));
   };
 
@@ -162,13 +192,14 @@ export default function CreatePost() {
 
           <div className="form-field">
             <label>Board</label>
-            <select>
-              <option value="">Choose a board</option>
-              <option value="general">General</option>
-              <option value="inspiration">Inspiration</option>
-              <option value="recipes">Recipes</option>
-              <option value="travel">Travel</option>
-            </select>
+            <button
+              type="button"
+              className={`board-selector-trigger ${selectedBoard ? 'has-selection' : ''}`}
+              onClick={() => setIsBoardSelectorOpen(true)}
+            >
+              {selectedBoard ? selectedBoard.title : "Choose a board"}
+              <span className="arrow-down">▼</span>
+            </button>
           </div>
 
           <div className="form-field">
@@ -183,6 +214,13 @@ export default function CreatePost() {
           </div>
         </div>
       </div>
+
+      <BoardSelector
+        isOpen={isBoardSelectorOpen}
+        onClose={() => setIsBoardSelectorOpen(false)}
+        selectedBoard={selectedBoard}
+        onBoardSelect={handleBoardSelect}
+      />
     </div>
   );
 }

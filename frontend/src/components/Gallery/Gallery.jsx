@@ -1,11 +1,12 @@
 import "./Gallery.css";
 import GalleryImg from "../GalleryImg/GalleryImg";
+import Img from "../Image/Image";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { pinsApi } from "../../api/pinsApi";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import { useImagesLoaded } from "../../hooks/useImagesLoaded";
 
-export default function Gallery({ variant, userId, boardId, staticPins }) {
+export default function Gallery({ variant, userId, boardId, staticPins, onRemoveFromBoard, canRemoveFromBoard }) {
   const {
     data,
     isLoading,
@@ -51,6 +52,15 @@ export default function Gallery({ variant, userId, boardId, staticPins }) {
     return <div className="error">Error loading pins: {error.message}</div>;
   }
 
+  if (pins.length === 0 && !isLoading) {
+    return (
+      <div className="empty-pins">
+        <Img src="/icons/sad.svg" alt="No pins" className="empty-icon" />
+        <p className="empty-text">There are no pins here</p>
+      </div>
+    );
+  }
+
   return (
     <>
       <div
@@ -67,7 +77,16 @@ export default function Gallery({ variant, userId, boardId, staticPins }) {
             title: pin.title,
             description: pin.description,
           };
-          return <GalleryImg key={pin._id} item={item} />;
+          return (
+            <GalleryImg 
+              key={pin._id} 
+              item={item} 
+              variant={variant}
+              boardId={boardId}
+              onRemoveFromBoard={onRemoveFromBoard}
+              canRemoveFromBoard={canRemoveFromBoard}
+            />
+          );
         })}
 
         <div
@@ -89,11 +108,6 @@ export default function Gallery({ variant, userId, boardId, staticPins }) {
         )}
       </div>
 
-      {isFetchingNextPage && (
-        <div style={{ textAlign: "center", margin: "40px 0", color: "#666" }}>
-          Loading more pins
-        </div>
-      )}
     </>
   );
 }

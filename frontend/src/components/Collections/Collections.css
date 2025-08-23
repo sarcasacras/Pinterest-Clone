@@ -9,6 +9,12 @@
   padding: 20px;
 }
 
+.collections-grid-modal {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 0;
+}
+
 
 @media (max-width: 1200px) {
   .collections-grid {

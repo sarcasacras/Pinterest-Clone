@@ -1,0 +1,192 @@
+.board-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.board-selector-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.modal-content {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.boards-selection-container {
+  margin-bottom: 24px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.create-board-btn {
+  flex: 1;
+  padding: 16px;
+  border: 2px dashed #d1d1d1;
+  background: transparent;
+  color: #111;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.create-board-btn:hover {
+  border-color: #FF3E68;
+  color: #FF3E68;
+  background-color: #fef7f7;
+}
+
+.confirm-btn {
+  padding: 16px 24px;
+  background-color: #FF3E68;
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.confirm-btn:hover:not(:disabled) {
+  background-color: #b92243;
+}
+
+.confirm-btn:disabled {
+  background-color: #e9e9e9;
+  color: #767676;
+  cursor: not-allowed;
+}
+
+.create-board-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-field label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-field input,
+.form-field textarea {
+  padding: 12px 16px;
+  border: 2px solid #cdcdcd;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: #FF3E68;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.cancel-btn,
+.create-btn {
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: none;
+  color: #767676;
+}
+
+.cancel-btn:hover {
+  background-color: #f1f1f1;
+}
+
+.create-btn {
+  background-color: #FF3E68;
+  color: white;
+  border: none;
+}
+
+.create-btn:hover:not(:disabled) {
+  background-color: #b92243;
+}
+
+.create-btn:disabled {
+  background-color: #e9e9e9;
+  color: #767676;
+  cursor: not-allowed;
+}

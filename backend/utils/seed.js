@@ -54,25 +54,25 @@ const seedDatabase = async () => {
         title: "Art & Inspiration",
         description: "Beautiful artwork and creative inspiration",
         owner: users[0]._id,
-        coverImage: "pins/pin1.jpg",
+        coverImage: "/pins/pin1.jpg",
       },
       {
         title: "Photography",
         description: "Stunning photography from around the world",
         owner: users[1]._id,
-        coverImage: "pins/pin5.jpg",
+        coverImage: "/pins/pin5.jpg",
       },
       {
         title: "UI/UX Design",
         description: "Modern design patterns and interfaces",
         owner: users[2]._id,
-        coverImage: "pins/pin10.jpg",
+        coverImage: "/pins/pin10.jpg",
       },
       {
         title: "Nature & Landscapes",
         description: "Beautiful natural scenery",
         owner: users[3]._id,
-        coverImage: "pins/pin15.jpg",
+        coverImage: "/pins/pin15.jpg",
       },
       {
         title: "Abstract Art",
@@ -190,7 +190,7 @@ const seedDatabase = async () => {
       pinPromises.push({
         title: pinTitles[i] || `Pin ${i + 1}`,
         description: randomDescription,
-        imageUrl: `pins/${imageData.file}`,
+        imageUrl: `/pins/${imageData.file}`,
         width: imageData.width,
         height: imageData.height,
         owner: randomUser._id,

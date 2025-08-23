@@ -29,4 +29,10 @@ export const pinsApi = {
   deletePin: (id) => apiClient.delete(`/pins/${id}`).then((res) => res.data),
 
   toggleLike: (id) => apiClient.post(`/pins/${id}/like`).then((res) => res.data),
+
+  savePinToBoard: (pinId, boardId) => 
+    apiClient.post(`/pins/${pinId}/save`, { boardId }).then((res) => res.data),
+
+  removePinFromBoard: (pinId, boardId) =>
+    apiClient.delete(`/pins/${pinId}/board/${boardId}`).then((res) => res.data),
 };

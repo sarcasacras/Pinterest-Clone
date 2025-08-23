@@ -1,14 +1,27 @@
 import "./Collections.css";
 import CollectionItem from "../CollectionItem/CollectionItem";
 import Img from "../Image/Image";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { boardsApi } from "../../api/boardsApi";
 
-export default function Collections({ userId }) {
+export default function Collections({ userId, selectionMode = false, selectedBoard, onBoardSelect, variant = "default", currentUser }) {
+  const queryClient = useQueryClient();
+  
   const { data, isLoading, error } = useQuery({
     queryKey: ["boards", userId],
     queryFn: () => boardsApi.getBoardsByUser(userId),
     enabled: !!userId,
+  });
+
+  const deleteBoardMutation = useMutation({
+    mutationFn: (boardId) => boardsApi.deleteBoard(boardId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards", userId] });
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    },
+    onError: (error) => {
+      alert(`Failed to delete board: ${error.response?.data?.error || error.message}`);
+    },
   });
 
   const formatTimeAgo = (dateString) => {
@@ -48,9 +61,15 @@ export default function Collections({ userId }) {
 
   const boards = data?.boards || [];
 
+  const handleDeleteBoard = (boardId, boardName) => {
+    if (window.confirm(`Are you sure you want to delete "${boardName}"? This action cannot be undone.`)) {
+      deleteBoardMutation.mutate(boardId);
+    }
+  };
+
   return (
     <div className="collections">
-      <div className="collections-grid">
+      <div className={`collections-grid ${variant === "modal" ? "collections-grid-modal" : ""}`}>
         {boards.length > 0 ? (
           boards.map((board) => (
             <CollectionItem
@@ -61,12 +80,18 @@ export default function Collections({ userId }) {
               timeAgo={formatTimeAgo(board.updatedAt)}
               alt={board.title}
               name={board.title}
+              selectionMode={selectionMode}
+              isSelected={selectedBoard?._id === board._id}
+              onSelect={selectionMode ? () => onBoardSelect(board) : undefined}
+              variant={variant}
+              canDelete={currentUser && (currentUser._id === board.owner || currentUser.isAdmin)}
+              onDelete={handleDeleteBoard}
             />
           ))
         ) : (
           <div className="empty-boards">
             <Img src="/icons/sad.svg" alt="No boards" className="empty-icon" />
-            <p className="empty-text">User has no boards saved!</p>
+            <p className="empty-text">There are no boards here</p>
           </div>
         )}
       </div>

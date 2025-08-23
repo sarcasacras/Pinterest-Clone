@@ -47,7 +47,11 @@ export default function PostPage() {
   };
 
   const getFullSizeImageUrl = (imageUrl) => {
-    return imageUrl.replace(/\/tr:.*?(?=\/)/g, '');
+    // Only remove transformations if they exist
+    if (imageUrl.includes('/tr:')) {
+      return imageUrl.replace(/\/tr:.*?(?=\/)/g, '');
+    }
+    return imageUrl;
   };
 
   useEffect(() => {

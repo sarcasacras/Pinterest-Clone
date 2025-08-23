@@ -1,5 +1,6 @@
 import "./PostInteractions.css";
 import Img from "../Image/Image";
+import BoardSelector from "../BoardSelector/BoardSelector";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,41 +8,33 @@ import { pinsApi } from "../../api/pinsApi";
 
 export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const isLiked = user && pin && pin.likes?.includes(user._id);
+  const [optimisticLiked, setOptimisticLiked] = useState(isLiked);
+  const [optimisticCount, setOptimisticCount] = useState(pin?.likes?.length || 0);
+
+  useEffect(() => {
+    if (pin) {
+      setOptimisticLiked(isLiked);
+      setOptimisticCount(pin.likes?.length || 0);
+    }
+  }, [pin?._id]);
 
   const likeMutation = useMutation({
     mutationFn: () => pinsApi.toggleLike(pin._id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["pin", pin._id] });
-      await queryClient.cancelQueries({ queryKey: ["pins"] });
-      
-      const previousPinData = queryClient.getQueryData(["pin", pin._id]);
-      
-      if (previousPinData) {
-        const updatedPin = { 
-          ...previousPinData, 
-          likes: isLiked 
-            ? previousPinData.likes.filter(id => id !== user._id)
-            : [...(previousPinData.likes || []), user._id]
-        };
-        queryClient.setQueryData(["pin", pin._id], updatedPin);
+    onSuccess: (data) => {
+      if (data?.pin) {
+        queryClient.setQueryData(["pin", pin._id], data.pin);
       }
-      
-      return { previousPinData };
-    },
-    onError: (err, variables, context) => {
-      if (context?.previousPinData) {
-        queryClient.setQueryData(["pin", pin._id], context.previousPinData);
-      }
-      console.error("Failed to toggle like:", err);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["pin", pin._id] });
       queryClient.invalidateQueries({ queryKey: ["pins"] });
+    },
+    onError: (err) => {
+      setOptimisticLiked(!optimisticLiked);
+      setOptimisticCount(optimisticLiked ? optimisticCount + 1 : optimisticCount - 1);
     },
   });
 
@@ -51,7 +44,15 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
 
   const handleLikeClick = () => {
     if (user) {
+      setOptimisticLiked(!optimisticLiked);
+      setOptimisticCount(optimisticLiked ? optimisticCount - 1 : optimisticCount + 1);
       likeMutation.mutate();
+    }
+  };
+
+  const handleSaveClick = () => {
+    if (user) {
+      setIsBoardSelectorOpen(true);
     }
   };
 
@@ -77,9 +78,9 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
           <Img 
             src="/icons/like.svg" 
             alt="Like" 
-            className={`buttonIcon like-icon ${isLiked ? 'liked' : ''}`}
+            className={`buttonIcon like-icon ${optimisticLiked ? 'liked' : ''}`}
           />
-          <span>{pin?.likes?.length || 0}</span>
+          <span>{optimisticCount}</span>
         </div>
         <Img
           src="/icons/share.svg"
@@ -105,8 +106,15 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
         </div>
       </div>
       <div className="saveButtonDiv">
-        <button className="savePost">Save</button>
+        <button className="savePost" onClick={handleSaveClick}>Save</button>
       </div>
+
+      <BoardSelector
+        isOpen={isBoardSelectorOpen}
+        onClose={() => setIsBoardSelectorOpen(false)}
+        mode="save"
+        pinId={pin._id}
+      />
     </div>
   );
 }
