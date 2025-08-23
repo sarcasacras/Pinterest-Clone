@@ -2,15 +2,22 @@ import "./ProfilePage.css";
 import Img from "../../components/Image/Image";
 import Gallery from "../../components/Gallery/Gallery";
 import Collections from "../../components/Collections/Collections";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usersApi } from "../../api/usersApi";
+import { useAuth } from "../../contexts/AuthContext";
+import { authApi } from "../../api/authApi";
+import { resizeImage } from "../../utils/imageUtils";
 
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState("created");
   const { username } = useParams();
-
+  const authData = useAuth();
+  const { user: currentUser, setUser } = authData;
+  const fileInputRef = useRef(null);
+  const queryClient = useQueryClient();
+  
   const {
     data: user,
     isLoading,
@@ -20,6 +27,20 @@ export default function ProfilePage() {
     queryFn: () => usersApi.getUserByUsername(username),
     enabled: !!username,
   });
+
+  const updateAvatarMutation = useMutation({
+    mutationFn: (avatarFile) => authApi.updateAvatar(avatarFile),
+    onSuccess: (data) => {
+      setUser(data.user);
+      queryClient.invalidateQueries({ queryKey: ["user", username] });
+    },
+    onError: (error) => {
+      console.error("Failed to update avatar:", error);
+      alert("Failed to update avatar");
+    },
+  });
+  
+  console.log('AuthData:', authData);
 
   if (isLoading) {
     return <div>Loading user profile</div>;
@@ -33,17 +54,62 @@ export default function ProfilePage() {
     return <div>User not found</div>;
   }
 
+  const isOwnProfile = currentUser && user && currentUser._id === user._id;
+
+  const handleAvatarClick = () => {
+    if (isOwnProfile) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    console.log('Selected file:', file);
+    console.log('Starting upload...');
+
+    try {
+      console.log('Resizing image...');
+      const resizedFile = await resizeImage(file, 400, 400, 0.9);
+      console.log('Resized file:', resizedFile);
+      updateAvatarMutation.mutate(resizedFile);
+    } catch (error) {
+      console.error("Failed to resize image:", error);
+      console.log('Using original file...');
+      updateAvatarMutation.mutate(file);
+    }
+  };
+
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <div className="profile-avatar">
+        <div 
+          className={`profile-avatar ${isOwnProfile ? 'editable' : ''}`}
+          onClick={handleAvatarClick}
+        >
           <Img
             src={user.avatar || "/general/noavatar.svg"}
             alt="Profile Avatar"
             className="avatar-image"
             w={100}
           />
+          {isOwnProfile && (
+            <div className="avatar-overlay">
+              <Img src="/icons/camera.svg" alt="Change Avatar" className="camera-icon" w={24} />
+            </div>
+          )}
+          {updateAvatarMutation.isPending && (
+            <div className="avatar-loading">Uploading...</div>
+          )}
         </div>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept="image/*"
+          style={{ display: 'none' }}
+        />
         <h1 className="profile-name">{user.displayName}</h1>
         <p className="profile-handle">@{user.username}</p>
         <div className="profile-stats">

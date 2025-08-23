@@ -19,4 +19,10 @@ export const authApi = {
   logout: () => apiClient.post("/auth/logout").then((res) => res.data),
 
   getProfile: () => apiClient.get("/auth/profile").then((res) => res.data),
+  
+  updateAvatar: (avatarFile) => {
+    const formData = new FormData();
+    formData.append('avatar', avatarFile);
+    return apiClient.put("/auth/avatar", formData).then((res) => res.data);
+  },
 };

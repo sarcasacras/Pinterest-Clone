@@ -16,6 +16,59 @@
   margin-bottom: 20px;
 }
 
+.profile-avatar {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.profile-avatar.editable {
+  cursor: pointer;
+}
+
+.avatar-image {
+  border-radius: 50%;
+  transition: filter 0.3s ease;
+}
+
+.profile-avatar.editable:hover .avatar-image {
+  filter: brightness(0.7);
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.profile-avatar.editable:hover .avatar-overlay {
+  opacity: 1;
+}
+
+.camera-icon {
+  filter: invert(1);
+  width: 24px;
+  height: 24px;
+}
+
+.avatar-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .profile-stats {
   display: flex;
   gap: 16px;

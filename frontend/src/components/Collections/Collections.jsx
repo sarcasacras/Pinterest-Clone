@@ -1,5 +1,6 @@
 import "./Collections.css";
 import CollectionItem from "../CollectionItem/CollectionItem";
+import Img from "../Image/Image";
 import { useQuery } from "@tanstack/react-query";
 import { boardsApi } from "../../api/boardsApi";
 
@@ -58,7 +59,10 @@ export default function Collections({ userId }) {
             />
           ))
         ) : (
-          <div>No boards found!</div>
+          <div className="empty-boards">
+            <Img src="/icons/sad.svg" alt="No boards" className="empty-icon" />
+            <p className="empty-text">User has no boards saved!</p>
+          </div>
         )}
       </div>
     </div>

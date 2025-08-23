@@ -27,4 +27,6 @@ export const pinsApi = {
     apiClient.put(`/pins/${id}`, pinData).then((res) => res.data),
 
   deletePin: (id) => apiClient.delete(`/pins/${id}`).then((res) => res.data),
+
+  toggleLike: (id) => apiClient.post(`/pins/${id}/like`).then((res) => res.data),
 };

@@ -6,6 +6,7 @@ import {
   updatePin,
   deletePin,
   getPinsByUser,
+  toggleLike,
 } from "../controllers/pinsController.js";
 import { authenticateToken } from "../middleware/auth.js";
 import multer from "multer";
@@ -33,6 +34,7 @@ router.post("/", authenticateToken, upload.single('image'), createPin);
 router.get("/:id", getPinById);
 router.put("/:id", updatePin);
 router.delete("/:id", authenticateToken, deletePin);
+router.post("/:id/like", authenticateToken, toggleLike);
 router.get("/user/:userId", getPinsByUser);
 
 export default router;

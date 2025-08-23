@@ -7,12 +7,14 @@ import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { pinsApi } from "../../api/pinsApi";
 import { useAuth } from "../../contexts/AuthContext";
+import { useState, useEffect } from "react";
 
 export default function PostPage() {
   const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const {
     data: pin,
@@ -30,7 +32,30 @@ export default function PostPage() {
     }
   };
 
-  const isOwner = user && pin && user._id === pin.owner._id;
+  const isOwner = user && pin && (user._id === pin.owner._id || user.isAdmin);
+
+  const handleFullscreenOpen = () => {
+    setIsFullscreen(true);
+    document.body.classList.add('fullscreen-mode');
+    document.documentElement.classList.add('fullscreen-mode');
+  };
+
+  const handleFullscreenClose = () => {
+    setIsFullscreen(false);
+    document.body.classList.remove('fullscreen-mode');
+    document.documentElement.classList.remove('fullscreen-mode');
+  };
+
+  const getFullSizeImageUrl = (imageUrl) => {
+    return imageUrl.replace(/\/tr:.*?(?=\/)/g, '');
+  };
+
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('fullscreen-mode');
+      document.documentElement.classList.remove('fullscreen-mode');
+    };
+  }, []);
 
   const deletePinMutation = useMutation({
     mutationFn: (pinId) => pinsApi.deletePin(pinId),
@@ -77,7 +102,14 @@ export default function PostPage() {
       </Link>
       <div className="post-container">
         <div className="left">
-          <Img src={pin.imageUrl} className="pin-image" w={376} />
+          <div className="image-container" onClick={handleFullscreenOpen}>
+            <Img src={pin.imageUrl} className="pin-image" w={376} />
+            <div className="image-overlay">
+              <button className="fullscreen-btn" onClick={handleFullscreenOpen}>
+                <Img src="/icons/fullscreen.svg" alt="Fullscreen" />
+              </button>
+            </div>
+          </div>
         </div>
         <div className="right">
           <div>
@@ -109,6 +141,21 @@ export default function PostPage() {
           </div>
         </div>
       </div>
+      
+      {isFullscreen && (
+        <div className="fullscreen-modal" onClick={handleFullscreenClose}>
+          <button className="close-btn" onClick={handleFullscreenClose}>
+            <Img src="/icons/close.svg" alt="Close" />
+          </button>
+          <div className="fullscreen-content" onClick={(e) => e.stopPropagation()}>
+            <img 
+              src={getFullSizeImageUrl(pin.imageUrl)} 
+              className="fullscreen-image" 
+              alt={pin.title || "Pin image"}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

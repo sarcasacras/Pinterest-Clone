@@ -1,6 +1,7 @@
 import { hashPassword, comparePassword } from "../utils/hashPassword.js";
 import User from "../models/User.js";
 import { generateToken, verifyToken } from "../utils/generateToken.js";
+import { uploadToImageKit } from "../utils/imagekit.js";
 
 export const testAuth = async (req, res) => {
   try {
@@ -65,6 +66,7 @@ export const register = async (req, res) => {
         displayName: user.displayName,
         email: user.email,
         avatar: user.avatar,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {
@@ -112,6 +114,7 @@ export const login = async (req, res) => {
         displayName: user.displayName,
         email: user.email,
         avatar: user.avatar,
+        isAdmin: user.isAdmin,
       },
     });
   } catch (error) {
@@ -137,3 +140,27 @@ export const getProfile = (req, res) => {
         user: req.user
     })
 }
+
+export const updateAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Avatar file is required' });
+    }
+
+    const fileName = `avatar-${req.user._id}-${Date.now()}-${req.file.originalname}`;
+    const uploadResult = await uploadToImageKit(req.file, fileName, 'avatars');
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: uploadResult.url },
+      { new: true }
+    ).select("-password");
+
+    res.json({
+      message: "Avatar updated successfully",
+      user: updatedUser
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

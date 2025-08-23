@@ -110,7 +110,7 @@ export const deletePin = async (req, res) => {
       return res.status(404).json({ error: "Pin not found" });
     }
 
-    if (pin.owner.toString() !== req.user._id.toString()) {
+    if (pin.owner.toString() !== req.user._id.toString() && !req.user.isAdmin) {
       return res.status(403).json({ error: "You can only delete your own pins" });
     }
 
@@ -144,6 +144,37 @@ export const getPinsByUser = async (req, res) => {
     const hasMore = page * limit < total;
 
     res.json({ pins, hasMore, total });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const toggleLike = async (req, res) => {
+  try {
+    const pin = await Pin.findById(req.params.id);
+    if (!pin) {
+      return res.status(404).json({ error: "Pin not found" });
+    }
+
+    const userId = req.user._id;
+    const isLiked = pin.likes.includes(userId);
+
+    if (isLiked) {
+      pin.likes.pull(userId);
+    } else {
+      pin.likes.push(userId);
+    }
+
+    await pin.save();
+    
+    const updatedPin = await Pin.findById(req.params.id)
+      .populate("owner", "username displayName avatar");
+
+    res.json({
+      message: isLiked ? "Pin unliked" : "Pin liked",
+      pin: updatedPin,
+      isLiked: !isLiked
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

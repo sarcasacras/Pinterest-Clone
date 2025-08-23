@@ -8,7 +8,7 @@
 .interactionButtons {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
 }
 
 .saveButtonDiv {
@@ -35,4 +35,53 @@
   width: 30px;
   height: 30px;
   cursor: pointer;
+}
+
+.moreButtonContainer {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.dropdown button:hover {
+  background-color: #f5f5f5;
+}
+
+.like-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.like-container span {
+  font-variant-numeric: tabular-nums;
+}
+
+.like-icon.liked {
+  filter: brightness(0) saturate(100%) invert(17%) sepia(91%) saturate(7417%) hue-rotate(357deg) brightness(99%) contrast(118%);
 }
