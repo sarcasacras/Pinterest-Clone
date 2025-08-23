@@ -43,7 +43,12 @@ export default function ProfilePage() {
   console.log('AuthData:', authData);
 
   if (isLoading) {
-    return <div>Loading user profile</div>;
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+        <p className="loading-text">Loading user profile...</p>
+      </div>
+    );
   }
 
   if (error) {

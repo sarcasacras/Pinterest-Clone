@@ -39,7 +39,12 @@ export default function Gallery({ variant, userId, boardId, staticPins }) {
   );
 
   if (isLoading) {
-    return <div className="loading">Loading pins...</div>;
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+        <p className="loading-text">Loading pins...</p>
+      </div>
+    );
   }
 
   if (error) {

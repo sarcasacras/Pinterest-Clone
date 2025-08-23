@@ -1,8 +1,14 @@
 .topContainer {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
+  padding: 10px 20px;
   align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 100;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 16px 16px;
 }
 
 .userSettings {

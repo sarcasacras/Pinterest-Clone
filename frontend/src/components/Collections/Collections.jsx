@@ -34,7 +34,12 @@ export default function Collections({ userId }) {
   };
 
   if (isLoading) {
-    return <div>Loading boards...</div>;
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+        <p className="loading-text">Loading boards...</p>
+      </div>
+    );
   }
 
   if (error) {

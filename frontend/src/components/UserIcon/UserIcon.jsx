@@ -68,8 +68,8 @@ export default function UserIcon() {
             <a className="userOption" href="/">
               Settings
             </a>
-            <Link 
-              className="userOption" 
+            <Link
+              className="userOption"
               to={`/${user.username}`}
               onClick={() => setOpen(false)}
             >

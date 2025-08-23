@@ -18,7 +18,12 @@ export default function BoardPage() {
   });
 
   if (isLoading) {
-    return <div>Loading board...</div>;
+    return (
+      <div className="loading-container">
+        <div className="loader"></div>
+        <p className="loading-text">Loading board...</p>
+      </div>
+    );
   }
 
   if (error) {

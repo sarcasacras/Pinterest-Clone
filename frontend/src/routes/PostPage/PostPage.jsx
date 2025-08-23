@@ -73,8 +73,9 @@ export default function PostPage() {
 
   if (isLoading) {
     return (
-      <div style={{ textAlign: "center", padding: "50px" }}>
-        Pin is Loading...
+      <div className="loading-container">
+        <div className="loader"></div>
+        <p className="loading-text">Pin is Loading...</p>
       </div>
     );
   }
