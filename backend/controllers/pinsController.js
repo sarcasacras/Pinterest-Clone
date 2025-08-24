@@ -49,6 +49,16 @@ export const createPin = async (req, res) => {
     const fileName = `${Date.now()}-${req.file.originalname}`;
     const uploadResult = await uploadToImageKit(req.file, fileName);
 
+    const aspectRatio = uploadResult.height / uploadResult.width;
+    const maxAspectRatio = 1.5;
+    
+    if (aspectRatio > maxAspectRatio) {
+      await deleteFromImageKit(uploadResult.fileId);
+      return res.status(400).json({ 
+        error: `Image aspect ratio too large. Maximum allowed is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(2)}:1. Please use a less tall image.` 
+      });
+    }
+
     const tags = req.body.tags ? 
       req.body.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : 
       [];
@@ -129,7 +139,7 @@ export const deletePin = async (req, res) => {
       try {
         await deleteFromImageKit(pin.imageKitFileId);
       } catch (imageKitError) {
-        console.error('Failed to delete image from ImageKit:', imageKitError);
+        // Failed to delete from ImageKit - continue with pin deletion
       }
     }
 

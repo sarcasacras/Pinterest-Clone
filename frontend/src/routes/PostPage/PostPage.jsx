@@ -69,7 +69,6 @@ export default function PostPage() {
       navigate("/");
     },
     onError: (error) => {
-      console.error("Failed to delete pin:", error);
       alert("Failed to delete pin");
     },
   });
@@ -108,7 +107,13 @@ export default function PostPage() {
       <div className="post-container">
         <div className="left">
           <div className="image-container" onClick={handleFullscreenOpen}>
-            <Img src={pin.imageUrl} className="pin-image" w={376} />
+            <Img 
+              src={pin.imageUrl} 
+              className="pin-image" 
+              w={500}
+              originalWidth={pin.width}
+              originalHeight={pin.height}
+            />
             <div className="image-overlay">
               <button className="fullscreen-btn" onClick={handleFullscreenOpen}>
                 <Img src="/icons/fullscreen.svg" alt="Fullscreen" />

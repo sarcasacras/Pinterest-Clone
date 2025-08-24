@@ -35,12 +35,10 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["user", username] });
     },
     onError: (error) => {
-      console.error("Failed to update avatar:", error);
       alert("Failed to update avatar");
     },
   });
   
-  console.log('AuthData:', authData);
 
   if (isLoading) {
     return (
@@ -71,17 +69,10 @@ export default function ProfilePage() {
     const file = event.target.files[0];
     if (!file) return;
 
-    console.log('Selected file:', file);
-    console.log('Starting upload...');
-
     try {
-      console.log('Resizing image...');
       const resizedFile = await resizeImage(file, 400, 400, 0.9);
-      console.log('Resized file:', resizedFile);
       updateAvatarMutation.mutate(resizedFile);
     } catch (error) {
-      console.error("Failed to resize image:", error);
-      console.log('Using original file...');
       updateAvatarMutation.mutate(file);
     }
   };

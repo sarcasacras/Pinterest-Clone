@@ -1,5 +1,5 @@
 import express from "express";
-import { testAuth, register, login, getProfile, logout, updateAvatar } from "../controllers/authController.js";
+import { register, login, getProfile, logout, updateAvatar } from "../controllers/authController.js";
 import { authenticateToken } from "../middleware/auth.js";
 import multer from "multer";
 
@@ -19,8 +19,6 @@ const upload = multer({
     }
   },
 });
-
-router.get('/test', testAuth);
 
 router.post('/register', register);
 router.post('/login', login);

@@ -28,9 +28,6 @@ export const AuthProvider = ({ children }) => {
       const response = await authApi.getProfile();
       setUser(response.user);
     } catch (error) {
-      if (error.response?.status !== 401) {
-        console.error('Auth check error:', error);
-      }
       setUser(null);
     } finally {
       setLoading(false);

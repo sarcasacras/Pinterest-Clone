@@ -1,35 +1,8 @@
 import { hashPassword, comparePassword } from "../utils/hashPassword.js";
 import User from "../models/User.js";
-import { generateToken, verifyToken } from "../utils/generateToken.js";
+import { generateToken } from "../utils/generateToken.js";
 import { uploadToImageKit } from "../utils/imagekit.js";
 
-export const testAuth = async (req, res) => {
-  try {
-    const password = "testPassword123";
-    const hashedPassword = await hashPassword(password);
-    const isMatch = await comparePassword(password, hashedPassword);
-
-    const testUserId = "60d5ec49f1b2c8b1f8e4e1a1";
-    const token = generateToken(testUserId);
-    const decoded = verifyToken(token);
-
-    res.json({
-      message: "Auth route is still working!",
-      test: {
-        originalPassword: password,
-        hashedPassword: hashedPassword,
-        passwordMatch: isMatch,
-      },
-      jwtTest: {
-        generatedToken: token,
-        decodedToken: decoded,
-        tokenValid: decoded.userId === testUserId,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 
 export const register = async (req, res) => {
   try {

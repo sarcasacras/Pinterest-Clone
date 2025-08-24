@@ -15,7 +15,6 @@ export const getUsersByUsername = async (req, res) => {
     }
     res.json(user);
   } catch (error) {
-    console.log("Unexpected error occured", error.message);
     res.status(500).json({ error: error.message });
   }
 };

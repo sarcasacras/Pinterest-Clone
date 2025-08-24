@@ -30,7 +30,14 @@ export default function GalleryImg({ item, variant, boardId, onRemoveFromBoard, 
   };
   return (
     <div className="galleryItem" style={{ gridRowEnd: `span ${gridSpan}` }}>
-      <Img src={item.link} alt="placeholder" className="galleryImg" w={360} />
+      <Img 
+        src={item.link} 
+        alt="placeholder" 
+        className="galleryImg" 
+        w={360} 
+        originalWidth={item.width}
+        originalHeight={item.height}
+      />
       <Link to={`/pin/${item.id}`} className="overlay"></Link>
       
       {canRemoveFromBoard && (

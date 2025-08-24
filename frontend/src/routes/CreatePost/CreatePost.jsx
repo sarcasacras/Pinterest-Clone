@@ -36,7 +36,7 @@ export default function CreatePost() {
       navigate("/");
     },
     onError: (error) => {
-      console.error("Error creating pin:", error);
+      alert("Error creating pin");
     },
   });
 
@@ -60,7 +60,6 @@ export default function CreatePost() {
       formDataToSend.append('board', selectedBoard._id);
     }
 
-
     createPinMutation.mutate(formDataToSend);
   };
 
@@ -81,18 +80,32 @@ export default function CreatePost() {
         return;
       }
 
-      let processedFile = file;
-      if (file.size > 2 * 1024 * 1024) {
-        processedFile = await resizeImage(file);
-      }
+      const img = new Image();
+      img.onload = async () => {
+        const aspectRatio = img.height / img.width;
+        const maxAspectRatio = 1.5;
+        
+        if (aspectRatio > maxAspectRatio) {
+          alert(`Image is too tall. Maximum allowed ratio is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(2)}:1. Please use a less tall image.`);
+          return;
+        }
 
-      const url = URL.createObjectURL(processedFile);
-      setPreviewUrl(url);
+        let processedFile = file;
+        if (file.size > 2 * 1024 * 1024) {
+          processedFile = await resizeImage(file);
+        }
 
-      setFormData((prev) => ({
-        ...prev,
-        file: processedFile,
-      }));
+        const url = URL.createObjectURL(processedFile);
+        setPreviewUrl(url);
+        setSelectedFile(processedFile);
+        
+        setFormData((prev) => ({
+          ...prev,
+          file: processedFile,
+        }));
+      };
+      
+      img.src = URL.createObjectURL(file);
     }
   };
 
@@ -127,6 +140,7 @@ export default function CreatePost() {
       board: board._id
     }));
   };
+
 
   return (
     <div className="create-post-container">

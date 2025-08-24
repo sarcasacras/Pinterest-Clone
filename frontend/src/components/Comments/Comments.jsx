@@ -84,7 +84,10 @@ export default function Comments({ pin }) {
             </div>
           ))
         ) : (
-          <div className="no-comments">No comments yet</div>
+          <div className="empty-comments">
+            <Img src="/icons/sad.svg" alt="No comments" className="empty-icon" />
+            <p className="empty-text">No comments yet</p>
+          </div>
         )}
       </div>
 

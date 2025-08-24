@@ -1,0 +1,101 @@
+.image-error-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.image-error-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.image-error-modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px 0 24px;
+}
+
+.image-error-modal .modal-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+.image-error-modal .modal-content {
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.image-error-modal .error-icon {
+  font-size: 48px;
+  opacity: 0.8;
+}
+
+.image-error-modal .error-message {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.image-error-modal .modal-actions {
+  padding: 0 24px 24px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.image-error-modal .try-another-btn {
+  padding: 12px 20px;
+  background-color: #FF3E68;
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.image-error-modal .try-another-btn:hover {
+  background-color: #b92243;
+}
+
+.image-error-modal .cancel-btn {
+  padding: 12px 20px;
+  background: transparent;
+  color: #666;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+}
+
+.image-error-modal .cancel-btn:hover {
+  background-color: #f1f1f1;
+}

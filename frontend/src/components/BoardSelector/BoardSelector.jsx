@@ -42,7 +42,7 @@ export default function BoardSelector({
       }
     },
     onError: (error) => {
-      console.error("Error creating board:", error);
+      alert("Error creating board");
     },
   });
 
