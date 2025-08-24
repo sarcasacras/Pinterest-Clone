@@ -37,7 +37,16 @@ export default function GalleryImg({
   };
   const itemSlug = item.slug || item.id;
 
-  console.log(item);
+  const handleDownload = async () => {
+    const link = document.createElement("a");
+    const response = await fetch(item.link);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    link.href = url;
+    link.download = `${item.title || "image"}.jpg`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="galleryItem" style={{ gridRowEnd: `span ${gridSpan}` }}>
@@ -64,7 +73,7 @@ export default function GalleryImg({
         <button className="overlayButton">
           <Img src="icons/menu.svg" alt="" className="buttonImage" />
         </button>
-        <button className="overlayButton">
+        <button className="overlayButton" onClick={handleDownload}>
           <Img src="icons/download.svg" alt="" className="buttonImage" />
         </button>
       </div>
