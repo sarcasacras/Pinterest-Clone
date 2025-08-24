@@ -2,6 +2,10 @@ import "./Comments.css";
 import Img from "../Image/Image";
 import EmojiPicker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router";
+import { commentsApi } from "../../api/commentsApi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function Comments({ pin }) {
   const formatTimeAgo = (dateString) => {
@@ -29,6 +33,8 @@ export default function Comments({ pin }) {
   const [comment, setComment] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
+  const user = useAuth().user;
+
 
   const onEmojiClick = (emojiObject) => {
     setComment((prevComment) => prevComment + emojiObject.emoji);
@@ -52,6 +58,45 @@ export default function Comments({ pin }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showEmojiPicker]);
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: ({ pinId, content }) => {
+      return commentsApi.createComment(pinId, content);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["pins", params.id]);
+      setComment("");
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: ({ commentId }) => {
+      return commentsApi.deleteComment(commentId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["pins"]);
+    },
+  });
+
+  const params = useParams();
+
+  const handleSubmit = () => {
+    if (!comment.trim()) return;
+    mutation.mutate({ pinId: params.id, content: comment });
+  };
+
+  const handleDelete = (commentId) => {
+    deleteMutation.mutate({commentId});
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && comment.trim() !== '') {
+      e.preventDefault();
+      handleSubmit();
+    }
+  }
 
   return (
     <div className="comments">
@@ -80,12 +125,26 @@ export default function Comments({ pin }) {
                 <div className="comment-timestamp">
                   {formatTimeAgo(comment.createdAt)}
                 </div>
+                {comment.author._id === user._id ? (
+                  <button className="close-button">
+                    <Img
+                      src={"/icons/close.svg"}
+                      w={80}
+                      className={"close-button-image"}
+                      onClick={() => handleDelete(comment._id)}
+                    />
+                  </button>
+                ) : null}
               </div>
             </div>
           ))
         ) : (
           <div className="empty-comments">
-            <Img src="/icons/sad.svg" alt="No comments" className="empty-icon" />
+            <Img
+              src="/icons/sad.svg"
+              alt="No comments"
+              className="empty-icon"
+            />
             <p className="empty-text">No comments yet</p>
           </div>
         )}
@@ -99,14 +158,25 @@ export default function Comments({ pin }) {
             className="comment-input"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
-          <button
-            type="button"
-            className="emoji-button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          >
-            😊
-          </button>
+          <div className="comment-right">
+            <button
+              type="button"
+              className="emoji-button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            >
+              😊
+            </button>
+
+            <Img
+              src={"/icons/send.svg"}
+              alt="Submit Button"
+              className={"submit-button"}
+              w={80}
+              onClick={handleSubmit}
+            />
+          </div>
         </div>
         {showEmojiPicker && (
           <div className="emoji-picker-container">

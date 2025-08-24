@@ -190,3 +190,8 @@
   color: #767676;
   cursor: not-allowed;
 }
+
+.close-button-image {
+  width: 20px;
+  height: 20px;
+}

@@ -49,7 +49,7 @@ export default function UserIcon() {
   if (user) {
     return (
       <div className="user" ref={userOptionsRef}>
-        <Link to={`/${user.username}`}>
+        <Link to={`/${user.username}`} className="avatar-link">
           <Img
             src={user.avatar || "/icons/user.svg"}
             alt=""

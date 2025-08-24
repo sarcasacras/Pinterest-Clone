@@ -5,6 +5,7 @@ import { boardsApi } from "../../api/boardsApi";
 import { pinsApi } from "../../api/pinsApi";
 import Collections from "../Collections/Collections";
 import "./BoardSelector.css";
+import Img from "../Image/Image";
 
 export default function BoardSelector({ 
   isOpen, 
@@ -100,7 +101,9 @@ export default function BoardSelector({
       <div className="board-selector-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{mode === "save" ? "Save to board" : "Choose board"}</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={onClose}>
+            <Img src={"/icons/close.svg"} w={80} className={"close-button-image"}/>
+          </button>
         </div>
 
         <div className="modal-content">

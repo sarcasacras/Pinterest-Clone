@@ -2,7 +2,7 @@ import Pin from "../models/Pin.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 import Board from "../models/Board.js";
-import { uploadToImageKit, deleteFromImageKit } from '../utils/imagekit.js';
+import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
 
 export const getPins = async (req, res) => {
   try {
@@ -43,7 +43,7 @@ export const getPins = async (req, res) => {
 export const createPin = async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'Image file is required' });
+      return res.status(400).json({ error: "Image file is required" });
     }
 
     const fileName = `${Date.now()}-${req.file.originalname}`;
@@ -51,17 +51,22 @@ export const createPin = async (req, res) => {
 
     const aspectRatio = uploadResult.height / uploadResult.width;
     const maxAspectRatio = 1.5;
-    
+
     if (aspectRatio > maxAspectRatio) {
       await deleteFromImageKit(uploadResult.fileId);
-      return res.status(400).json({ 
-        error: `Image aspect ratio too large. Maximum allowed is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(2)}:1. Please use a less tall image.` 
+      return res.status(400).json({
+        error: `Image aspect ratio too large. Maximum allowed is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(
+          2
+        )}:1. Please use a less tall image.`,
       });
     }
 
-    const tags = req.body.tags ? 
-      req.body.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : 
-      [];
+    const tags = req.body.tags
+      ? req.body.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag)
+      : [];
 
     const pinData = {
       ...req.body,
@@ -70,7 +75,7 @@ export const createPin = async (req, res) => {
       imageKitFileId: uploadResult.fileId,
       width: uploadResult.width,
       height: uploadResult.height,
-      owner: req.user._id
+      owner: req.user._id,
     };
     const pin = new Pin(pinData);
     const savedPin = await pin.save();
@@ -132,14 +137,17 @@ export const deletePin = async (req, res) => {
     }
 
     if (pin.owner.toString() !== req.user._id.toString() && !req.user.isAdmin) {
-      return res.status(403).json({ error: "You can only delete your own pins" });
+      return res
+        .status(403)
+        .json({ error: "You can only delete your own pins" });
     }
 
     if (pin.imageKitFileId) {
       try {
         await deleteFromImageKit(pin.imageKitFileId);
       } catch (imageKitError) {
-        // Failed to delete from ImageKit - continue with pin deletion
+        console.log(imageKitError);
+        res.json({ error: imageKitError });
       }
     }
 
@@ -187,14 +195,21 @@ export const toggleLike = async (req, res) => {
     }
 
     await pin.save();
-    
+
     const updatedPin = await Pin.findById(req.params.id)
-      .populate("owner", "username displayName avatar");
+      .populate("owner", "username displayName avatar")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "username displayName avatar",
+        },
+      });
 
     res.json({
       message: isLiked ? "Pin unliked" : "Pin liked",
       pin: updatedPin,
-      isLiked: !isLiked
+      isLiked: !isLiked,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -218,19 +233,23 @@ export const savePinToBoard = async (req, res) => {
     }
 
     if (board.owner.toString() !== userId.toString() && !req.user.isAdmin) {
-      return res.status(403).json({ error: "You can only save pins to your own boards" });
+      return res
+        .status(403)
+        .json({ error: "You can only save pins to your own boards" });
     }
 
     if (board.pins.includes(pinId)) {
-      return res.status(400).json({ error: "Pin is already saved to this board" });
+      return res
+        .status(400)
+        .json({ error: "Pin is already saved to this board" });
     }
 
     board.pins.push(pinId);
     await board.save();
 
-    res.json({ 
+    res.json({
       message: "Pin saved to board successfully",
-      board: board
+      board: board,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -248,7 +267,9 @@ export const removePinFromBoard = async (req, res) => {
     }
 
     if (board.owner.toString() !== userId.toString() && !req.user.isAdmin) {
-      return res.status(403).json({ error: "You can only remove pins from your own boards" });
+      return res
+        .status(403)
+        .json({ error: "You can only remove pins from your own boards" });
     }
 
     if (!board.pins.includes(pinId)) {
@@ -258,9 +279,9 @@ export const removePinFromBoard = async (req, res) => {
     board.pins.pull(pinId);
     await board.save();
 
-    res.json({ 
+    res.json({
       message: "Pin removed from board successfully",
-      board: board
+      board: board,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
