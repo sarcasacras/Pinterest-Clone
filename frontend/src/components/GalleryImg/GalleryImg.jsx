@@ -5,11 +5,18 @@ import BoardSelector from "../BoardSelector/BoardSelector";
 import { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-export default function GalleryImg({ item, variant, boardId, onRemoveFromBoard, canRemoveFromBoard }) {
+export default function GalleryImg({
+  item,
+  variant,
+  boardId,
+  onRemoveFromBoard,
+  canRemoveFromBoard,
+}) {
   const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
   const { user } = useAuth();
-  
-  const aspectRatio = item.height && item.width ? item.height / item.width : 1.5;
+
+  const aspectRatio =
+    item.height && item.width ? item.height / item.width : 1.5;
   const cardWidth = 360;
   const calculatedHeight = cardWidth * aspectRatio;
   const clampedHeight = Math.min(Math.max(calculatedHeight, 200), 800);
@@ -28,25 +35,31 @@ export default function GalleryImg({ item, variant, boardId, onRemoveFromBoard, 
       onRemoveFromBoard(item.id, boardId);
     }
   };
+  const itemSlug = item.slug || item.id;
+
+  console.log(item);
+
   return (
     <div className="galleryItem" style={{ gridRowEnd: `span ${gridSpan}` }}>
-      <Img 
-        src={item.link} 
-        alt="placeholder" 
-        className="galleryImg" 
-        w={360} 
+      <Img
+        src={item.link}
+        alt="placeholder"
+        className="galleryImg"
+        w={360}
         originalWidth={item.width}
         originalHeight={item.height}
       />
-      <Link to={`/pin/${item.id}`} className="overlay"></Link>
-      
+      <Link to={`/pin/${itemSlug}`} className="overlay"></Link>
+
       {canRemoveFromBoard && (
         <button className="remove-pin-btn" onClick={handleRemoveFromBoard}>
           ×
         </button>
       )}
-      
-      <button className="saveButton" onClick={handleSaveClick}>Save</button>
+
+      <button className="saveButton" onClick={handleSaveClick}>
+        Save
+      </button>
       <div className="overlayButtons">
         <button className="overlayButton">
           <Img src="icons/menu.svg" alt="" className="buttonImage" />

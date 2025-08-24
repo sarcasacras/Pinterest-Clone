@@ -19,6 +19,7 @@ export default function CreatePost() {
     description: "",
     tags: "",
     board: "",
+    slug:"",
     file: null,
   });
   const [selectedBoard, setSelectedBoard] = useState(null);
@@ -52,12 +53,15 @@ export default function CreatePost() {
     }
 
     const formDataToSend = new FormData();
-    formDataToSend.append('image', formData.file);
-    formDataToSend.append('title', formData.title);
-    formDataToSend.append('description', formData.description);
-    formDataToSend.append('tags', formData.tags);
+    formDataToSend.append("image", formData.file);
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("description", formData.description);
+    formDataToSend.append("tags", formData.tags);
     if (selectedBoard) {
-      formDataToSend.append('board', selectedBoard._id);
+      formDataToSend.append("board", selectedBoard._id);
+    }
+    if (formData.slug) {
+      formDataToSend.append("slug", formData.slug);
     }
 
     createPinMutation.mutate(formDataToSend);
@@ -84,9 +88,13 @@ export default function CreatePost() {
       img.onload = async () => {
         const aspectRatio = img.height / img.width;
         const maxAspectRatio = 1.5;
-        
+
         if (aspectRatio > maxAspectRatio) {
-          alert(`Image is too tall. Maximum allowed ratio is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(2)}:1. Please use a less tall image.`);
+          alert(
+            `Image is too tall. Maximum allowed ratio is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(
+              2
+            )}:1. Please use a less tall image.`
+          );
           return;
         }
 
@@ -97,28 +105,27 @@ export default function CreatePost() {
 
         const url = URL.createObjectURL(processedFile);
         setPreviewUrl(url);
-        setSelectedFile(processedFile);
-        
+
         setFormData((prev) => ({
           ...prev,
           file: processedFile,
         }));
       };
-      
+
       img.src = URL.createObjectURL(file);
     }
   };
 
   useEffect(() => {
     // Add class to body and html for CreatePost page
-    document.body.classList.add('create-post-page');
-    document.documentElement.classList.add('create-post-page');
+    document.body.classList.add("create-post-page");
+    document.documentElement.classList.add("create-post-page");
 
     return () => {
       // Remove class when leaving the page
-      document.body.classList.remove('create-post-page');
-      document.documentElement.classList.remove('create-post-page');
-      
+      document.body.classList.remove("create-post-page");
+      document.documentElement.classList.remove("create-post-page");
+
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }
@@ -135,12 +142,11 @@ export default function CreatePost() {
 
   const handleBoardSelect = (board) => {
     setSelectedBoard(board);
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      board: board._id
+      board: board._id,
     }));
   };
-
 
   return (
     <div className="create-post-container">
@@ -155,21 +161,28 @@ export default function CreatePost() {
         </button>
       </div>
 
-      <div className={`content-section ${previewUrl ? 'has-preview' : ''}`}>
-        <div className={`upload-field ${previewUrl ? 'has-preview' : ''}`} onClick={handleDivClick}>
-          <input 
-            type="file" 
+      <div className={`content-section ${previewUrl ? "has-preview" : ""}`}>
+        <div
+          className={`upload-field ${previewUrl ? "has-preview" : ""}`}
+          onClick={handleDivClick}
+        >
+          <input
+            type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="image/*"
             className="hidden-file-input"
           />
-          
+
           {previewUrl ? (
             <img src={previewUrl} alt="Preview" className="preview-image" />
           ) : (
             <>
-              <Img src="general/upload.svg" alt="upload" className="upload-icon" />
+              <Img
+                src="general/upload.svg"
+                alt="upload"
+                className="upload-icon"
+              />
               <div className="upload-text">Choose a file</div>
             </>
           )}
@@ -200,15 +213,23 @@ export default function CreatePost() {
           </div>
 
           <div className="form-field">
-            <label>Link</label>
-            <input type="url" placeholder="Add a destination link" />
+            <label>Custom URL (optional)</label>
+            <input
+              name="slug"
+              type="text"
+              placeholder="my-awesome-pin"
+              onChange={handleInputChange}
+              value={formData.slug}
+            />
           </div>
 
           <div className="form-field">
             <label>Board</label>
             <button
               type="button"
-              className={`board-selector-trigger ${selectedBoard ? 'has-selection' : ''}`}
+              className={`board-selector-trigger ${
+                selectedBoard ? "has-selection" : ""
+              }`}
               onClick={() => setIsBoardSelectorOpen(true)}
             >
               {selectedBoard ? selectedBoard.title : "Choose a board"}

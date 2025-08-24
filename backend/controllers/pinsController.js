@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 import Board from "../models/Board.js";
 import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
+import mongoose from "mongoose";
 
 export const getPins = async (req, res) => {
   try {
@@ -51,6 +52,20 @@ export const createPin = async (req, res) => {
 
     const aspectRatio = uploadResult.height / uploadResult.width;
     const maxAspectRatio = 1.5;
+    const slug = req.body.slug;
+    let preparedSlug = null;
+
+    if (slug) {
+      preparedSlug = slug.trim().toLowerCase();
+    }
+
+    const sameSlug = await Pin.findOne({ slug: preparedSlug });
+
+    if (sameSlug && preparedSlug !== null) {
+      return res
+        .status(400)
+        .json({ error: "There is another pin with this slug" });
+    }
 
     if (aspectRatio > maxAspectRatio) {
       await deleteFromImageKit(uploadResult.fileId);
@@ -75,6 +90,7 @@ export const createPin = async (req, res) => {
       imageKitFileId: uploadResult.fileId,
       width: uploadResult.width,
       height: uploadResult.height,
+      slug: preparedSlug,
       owner: req.user._id,
     };
     const pin = new Pin(pinData);
@@ -92,20 +108,34 @@ export const createPin = async (req, res) => {
     res.status(201).json(savedPin);
   } catch (error) {
     res.status(400).json({ error: error.message });
+    console.log(error);
   }
 };
 
 export const getPinById = async (req, res) => {
   try {
-    const pin = await Pin.findById(req.params.id)
-      .populate("owner", "username displayName avatar")
+    let pin = await Pin.findOne({ slug: req.params.id })
       .populate({
         path: "comments",
         populate: {
           path: "author",
           select: "username displayName avatar",
         },
-      });
+      })
+      .populate("owner");
+
+    if (!pin && mongoose.Types.ObjectId.isValid(req.params.id)) {
+      pin = await Pin.findById(req.params.id)
+        .populate({
+          path: "comments",
+          populate: {
+            path: "author",
+            select: "username displayName avatar",
+          },
+        })
+        .populate("owner");
+    }
+
     if (!pin) {
       return res.status(404).json({ error: "Pin not found" });
     }

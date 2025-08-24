@@ -76,6 +76,7 @@ export default function Gallery({ variant, userId, boardId, staticPins, onRemove
             height: pin.height || 600,
             title: pin.title,
             description: pin.description,
+            slug: pin.slug
           };
           return (
             <GalleryImg 
