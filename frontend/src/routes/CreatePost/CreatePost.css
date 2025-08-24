@@ -7,6 +7,10 @@ body.create-post-page {
     scrollbar-gutter: unset !important;
 }
 
+.create-post-container {
+    position: relative;
+}
+
 .header-section {
     display: flex;
     justify-content: space-between;

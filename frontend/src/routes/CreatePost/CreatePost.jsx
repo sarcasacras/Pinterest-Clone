@@ -8,6 +8,7 @@ import { pinsApi } from "../../api/pinsApi";
 import { boardsApi } from "../../api/boardsApi";
 import { useNavigate } from "react-router";
 import { resizeImage } from "../../utils/imageUtils";
+import CustomError from "../../components/CustomError/CustomError";
 
 export default function CreatePost() {
   const { user } = useAuth();
@@ -19,11 +20,13 @@ export default function CreatePost() {
     description: "",
     tags: "",
     board: "",
-    slug:"",
+    slug: "",
     file: null,
   });
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState(null);
 
   const { data: boards } = useQuery({
     queryKey: ["boards", user?._id],
@@ -37,7 +40,9 @@ export default function CreatePost() {
       navigate("/");
     },
     onError: (error) => {
-      alert("Error creating pin");
+      console.log(error);
+      setError(error.response.data.error);
+      setIsError(true);
     },
   });
 
@@ -148,8 +153,16 @@ export default function CreatePost() {
     }));
   };
 
+  const handleCloseError = (e) => {
+    setIsError(false);
+  };
+
   return (
     <div className="create-post-container">
+      {isError ? (
+        <CustomError message={error} close={handleCloseError} />
+      ) : null}
+
       <div className="header-section">
         <h1>Create Post</h1>
         <button
