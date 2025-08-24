@@ -14,17 +14,23 @@ export const createComment = async (req, res) => {
         .status(400)
         .json({ error: "Content and Pin ID are required!" });
     }
+
+    let pin = await Pin.findOne({ slug: pinId });
+
+    if (!pin) {
+      pin = await Pin.findById(pinId);
+    }
+
     const userId = req.user._id;
     const newComment = new Comment({
       content: content,
       author: userId,
-      pin: pinId,
+      pin: pin._id,
     });
     const savedComment = await newComment.save();
 
-    const currentPin = await Pin.findById(pinId);
-    currentPin.comments.push(savedComment._id);
-    await currentPin.save();
+    pin.comments.push(savedComment._id);
+    await pin.save();
     const populatedComment = await Comment.findById(savedComment._id).populate(
       "author"
     );
@@ -39,12 +45,15 @@ export const deleteComment = async (req, res) => {
     const commentId = req.params.id;
     const comment = await Comment.findById(commentId).populate("author");
     if (!comment) {
-      return res.status(404).json({message: "Comment not found!"});
+      return res.status(404).json({ message: "Comment not found!" });
     }
     const pinId = comment.pin.toString();
     const pin = await Pin.findById(pinId);
     const user = req.user;
-    if (comment.author._id.toString() !== user._id.toString() && !user.isAdmin) {
+    if (
+      comment.author._id.toString() !== user._id.toString() &&
+      !user.isAdmin
+    ) {
       return res
         .status(403)
         .json({ message: "You can only delete your own comments!" });
@@ -52,7 +61,7 @@ export const deleteComment = async (req, res) => {
     pin.comments.pull(commentId);
     await Comment.findByIdAndDelete(commentId);
     await pin.save();
-    res.json({message: "The comment was successfully deleted!"});
+    res.json({ message: "The comment was successfully deleted!" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

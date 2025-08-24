@@ -26,7 +26,6 @@ export default function PostPage() {
     enabled: !!id,
   });
 
-  console.log(pin);
   const handleDeletePin = () => {
     if (window.confirm("Are you sure you want to delete this pin? This action cannot be undone.")) {
       deletePinMutation.mutate(pin._id);
