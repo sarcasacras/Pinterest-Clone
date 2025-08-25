@@ -9,6 +9,7 @@ import { boardsApi } from "../../api/boardsApi";
 import { useNavigate } from "react-router";
 import { resizeImage } from "../../utils/imageUtils";
 import CustomError from "../../components/CustomError/CustomError";
+import ImageEditor from "../../components/ImageEditor/ImageEditor";
 
 export default function CreatePost() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ export default function CreatePost() {
   const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState(null);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const { data: boards } = useQuery({
     queryKey: ["boards", user?._id],
@@ -157,6 +159,10 @@ export default function CreatePost() {
     setIsError(false);
   };
 
+  const openEditImage = () => {
+    setIsEditorOpen(true);
+  };
+
   return (
     <div className="create-post-container">
       {isError ? (
@@ -188,7 +194,20 @@ export default function CreatePost() {
           />
 
           {previewUrl ? (
-            <img src={previewUrl} alt="Preview" className="preview-image" />
+            <div className="preview-container">
+              <img src={previewUrl} alt="Preview" className="preview-image" />
+              <div onClick={(e) => e.stopPropagation()}>
+                <button className="edit-image-button" onClick={openEditImage}>
+                  <Img
+                    src={"icons/edit-image.svg"}
+                    className={"fullscreen-button"}
+                  />
+                </button>
+                {isEditorOpen && (
+                  <ImageEditor close={() => setIsEditorOpen(false)} src={previewUrl} />
+                )}
+              </div>
+            </div>
           ) : (
             <>
               <Img
