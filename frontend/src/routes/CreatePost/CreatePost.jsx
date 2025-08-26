@@ -124,12 +124,10 @@ export default function CreatePost() {
   };
 
   useEffect(() => {
-    // Add class to body and html for CreatePost page
     document.body.classList.add("create-post-page");
     document.documentElement.classList.add("create-post-page");
 
     return () => {
-      // Remove class when leaving the page
       document.body.classList.remove("create-post-page");
       document.documentElement.classList.remove("create-post-page");
 
@@ -162,6 +160,21 @@ export default function CreatePost() {
   const openEditImage = () => {
     setIsEditorOpen(true);
   };
+
+  const handleImageSave = (editedFile) => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
+    const newUrl = URL.createObjectURL(editedFile);
+    setPreviewUrl(newUrl);
+    setFormData((prev) => ({
+      ...prev,
+      file: editedFile
+    }));
+    setIsEditorOpen(false);
+  }
+  
 
   return (
     <div className="create-post-container">
@@ -204,7 +217,11 @@ export default function CreatePost() {
                   />
                 </button>
                 {isEditorOpen && (
-                  <ImageEditor close={() => setIsEditorOpen(false)} src={previewUrl} />
+                  <ImageEditor
+                    close={() => setIsEditorOpen(false)}
+                    src={previewUrl}
+                    onSave={handleImageSave}
+                  />
                 )}
               </div>
             </div>
