@@ -3,6 +3,7 @@ import Img from "../../components/Image/Image";
 import Gallery from "../../components/Gallery/Gallery";
 import Collections from "../../components/Collections/Collections";
 import CustomError from "../../components/CustomError/CustomError";
+import ShareModal from "../../components/ShareModal/ShareModal";
 import { useState, useRef } from "react";
 import { useParams } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { resizeImage } from "../../utils/imageUtils";
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState("created");
   const { username } = useParams();
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const authData = useAuth();
   const { user: currentUser, setUser } = authData;
   const fileInputRef = useRef(null);
@@ -78,6 +80,10 @@ export default function ProfilePage() {
     }
   };
 
+  const handleShareProfile = () => {
+    setIsShareModalOpen(true);
+  };
+
   return (
     <div className="profile-page">
       <div className="profile-header">
@@ -120,6 +126,7 @@ export default function ProfilePage() {
             alt="Share"
             className="btn-share"
             w={24}
+            onClick={handleShareProfile}
           />
           <button className="btn-message">Message</button>
           <button className="btn-follow">Follow</button>
@@ -155,6 +162,12 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        profileUsername={user.username}
+      />
     </div>
   );
 }

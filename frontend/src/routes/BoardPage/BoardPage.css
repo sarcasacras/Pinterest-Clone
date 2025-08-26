@@ -7,6 +7,7 @@
 .board-header {
   text-align: center;
   margin-bottom: 40px;
+  position: relative;
 }
 
 .board-header h1 {
@@ -48,15 +49,58 @@
 
 .board-title-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.board-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
   justify-content: center;
+  margin-top: 8px;
 }
 
 .board-title {
-  padding: 20px;
-  width: 50%;
-  border-bottom: 1px solid #e0e0e0;
+  font-size: 2.5rem;
+  font-weight: 600;
   margin: 0;
   text-align: center;
+}
+
+.board-description {
+  font-size: 1.1rem;
+  color: #666;
+  margin: 0;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.board-stats {
+  font-size: 1rem;
+  color: #767676;
+  font-weight: 500;
+}
+
+
+.btn-share,
+.btn-more {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 4px;
+}
+
+.btn-share:hover,
+.btn-more:hover {
+  background-color: #f0f0f0;
 }
 
 .loading-container {

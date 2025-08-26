@@ -1,6 +1,7 @@
 import "./PostInteractions.css";
 import Img from "../Image/Image";
 import BoardSelector from "../BoardSelector/BoardSelector";
+import ShareModal from "../ShareModal/ShareModal";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +10,7 @@ import { pinsApi } from "../../api/pinsApi";
 export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -56,6 +58,10 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
     }
   };
 
+  const handleShareClick = () => {
+    setIsShareModalOpen(true);
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -87,6 +93,7 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
           alt="Share"
           className="buttonIcon"
           id="shareButton"
+          onClick={handleShareClick}
         />
         <div className="moreButtonContainer" ref={dropdownRef}>
           <Img
@@ -114,6 +121,13 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
         onClose={() => setIsBoardSelectorOpen(false)}
         mode="save"
         pinId={pin._id}
+      />
+
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        pinId={pin._id}
+        pinSlug={pin.slug}
       />
     </div>
   );

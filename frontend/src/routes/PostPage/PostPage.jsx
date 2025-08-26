@@ -104,11 +104,20 @@ export default function PostPage() {
     );
   }
 
+  const handleBackClick = (e) => {
+    e.preventDefault();
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <div className="post-page">
-      <Link to="/">
+      <button onClick={handleBackClick} className="back-button-wrapper">
         <Img src="/icons/back.svg" alt="Back" className="back-button" />
-      </Link>
+      </button>
       <div className="post-container">
         <div className="left">
           <div className="image-container" onClick={handleFullscreenOpen}>
