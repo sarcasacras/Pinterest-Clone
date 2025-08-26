@@ -1,11 +1,15 @@
 import "./Collections.css";
 import CollectionItem from "../CollectionItem/CollectionItem";
 import Img from "../Image/Image";
+import CustomAlert from "../CustomAlert/CustomAlert";
+import CustomError from "../CustomError/CustomError";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { boardsApi } from "../../api/boardsApi";
+import { useState } from "react";
 
 export default function Collections({ userId, selectionMode = false, selectedBoard, onBoardSelect, variant = "default", currentUser }) {
   const queryClient = useQueryClient();
+  const [deleteAlert, setDeleteAlert] = useState(null);
   
   const { data, isLoading, error } = useQuery({
     queryKey: ["boards", userId],
@@ -56,15 +60,24 @@ export default function Collections({ userId, selectionMode = false, selectedBoa
   }
 
   if (error) {
-    return <div>Error loading boards: {error.message}</div>;
+    return <CustomError message={`Error loading boards: ${error.message}`} close={() => window.location.href = '/'} />;
   }
 
   const boards = data?.boards || [];
 
   const handleDeleteBoard = (boardId, boardName) => {
-    if (window.confirm(`Are you sure you want to delete "${boardName}"? This action cannot be undone.`)) {
-      deleteBoardMutation.mutate(boardId);
+    setDeleteAlert({ boardId, boardName });
+  };
+
+  const confirmDelete = () => {
+    if (deleteAlert) {
+      deleteBoardMutation.mutate(deleteAlert.boardId);
+      setDeleteAlert(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteAlert(null);
   };
 
   return (
@@ -95,6 +108,15 @@ export default function Collections({ userId, selectionMode = false, selectedBoa
           </div>
         )}
       </div>
+
+      {deleteAlert && (
+        <CustomAlert
+          title="Delete Board"
+          message={`Are you sure you want to delete "${deleteAlert.boardName}"? This action cannot be undone.`}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
+      )}
     </div>
   );
 }

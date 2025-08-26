@@ -3,6 +3,8 @@ import Img from "../../components/Image/Image";
 import { Link } from "react-router";
 import PostInteractions from "../../components/PostInteractions/PostInteractions";
 import Comments from "../../components/Comments/Comments";
+import CustomAlert from "../../components/CustomAlert/CustomAlert";
+import CustomError from "../../components/CustomError/CustomError";
 import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { pinsApi } from "../../api/pinsApi";
@@ -15,6 +17,7 @@ export default function PostPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   const {
     data: pin,
@@ -27,9 +30,16 @@ export default function PostPage() {
   });
 
   const handleDeletePin = () => {
-    if (window.confirm("Are you sure you want to delete this pin? This action cannot be undone.")) {
-      deletePinMutation.mutate(pin._id);
-    }
+    setShowDeleteAlert(true);
+  };
+
+  const confirmDelete = () => {
+    deletePinMutation.mutate(pin._id);
+    setShowDeleteAlert(false);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteAlert(false);
   };
 
   const isOwner = user && pin && (user._id === pin.owner._id || user.isAdmin);
@@ -47,7 +57,6 @@ export default function PostPage() {
   };
 
   const getFullSizeImageUrl = (imageUrl) => {
-    // Only remove transformations if they exist
     if (imageUrl.includes('/tr:')) {
       return imageUrl.replace(/\/tr:.*?(?=\/)/g, '');
     }
@@ -84,11 +93,7 @@ export default function PostPage() {
   }
 
   if (error) {
-    return (
-      <div style={{ textAlign: "center", padding: "50px" }}>
-        Error: {error.message}
-      </div>
-    );
+    return <CustomError message={`Error: ${error.message}`} close={() => window.location.href = '/'} />;
   }
 
   if (!pin) {
@@ -165,6 +170,15 @@ export default function PostPage() {
             />
           </div>
         </div>
+      )}
+
+      {showDeleteAlert && (
+        <CustomAlert
+          title="Delete Pin"
+          message="Are you sure you want to delete this pin? This action cannot be undone."
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
       )}
     </div>
   );

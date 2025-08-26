@@ -98,19 +98,29 @@ export default function CreatePost() {
         const aspectRatio = img.height / img.width;
         const maxAspectRatio = 1.5;
 
-        if (aspectRatio > maxAspectRatio) {
-          setError(
-            `Image is too tall. Maximum allowed ratio is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(
-              2
-            )}:1. Please use a less tall image.`
-          );
-          setIsError(true);
-          return;
-        }
-
         let processedFile = file;
-        if (file.size > 2 * 1024 * 1024) {
-          processedFile = await resizeImage(file);
+        
+        if (aspectRatio > maxAspectRatio) {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          const newWidth = img.height / maxAspectRatio;
+          canvas.width = newWidth;
+          canvas.height = img.height;
+          
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          const offsetX = (newWidth - img.width) / 2;
+          ctx.drawImage(img, offsetX, 0);
+          
+          processedFile = await new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/jpeg', 0.9);
+          });
+        }
+        
+        if (processedFile.size > 2 * 1024 * 1024) {
+          processedFile = await resizeImage(processedFile);
         }
 
         const url = URL.createObjectURL(processedFile);
@@ -156,7 +166,7 @@ export default function CreatePost() {
     }));
   };
 
-  const handleCloseError = (e) => {
+  const handleCloseError = () => {
     setIsError(false);
   };
 
@@ -211,22 +221,24 @@ export default function CreatePost() {
 
           {previewUrl ? (
             <div className="preview-container">
-              <img src={previewUrl} alt="Preview" className="preview-image" />
-              <div onClick={(e) => e.stopPropagation()}>
-                <button className="edit-image-button" onClick={openEditImage}>
-                  <Img
-                    src={"icons/edit-image.svg"}
-                    className={"fullscreen-button"}
-                  />
-                </button>
-                {isEditorOpen && (
-                  <ImageEditor
-                    close={() => setIsEditorOpen(false)}
-                    src={previewUrl}
-                    onSave={handleImageSave}
-                  />
-                )}
+              <div className="image-wrapper">
+                <img src={previewUrl} alt="Preview" className="preview-image" />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <button className="edit-image-button" onClick={openEditImage}>
+                    <Img
+                      src={"icons/edit-image.svg"}
+                      className={"fullscreen-button"}
+                    />
+                  </button>
+                </div>
               </div>
+              {isEditorOpen && (
+                <ImageEditor
+                  close={() => setIsEditorOpen(false)}
+                  src={previewUrl}
+                  onSave={handleImageSave}
+                />
+              )}
             </div>
           ) : (
             <>

@@ -6,6 +6,7 @@ import { pinsApi } from "../../api/pinsApi";
 import { useAuth } from "../../contexts/AuthContext";
 import Gallery from "../../components/Gallery/Gallery";
 import Img from "../../components/Image/Image";
+import CustomError from "../../components/CustomError/CustomError";
 
 export default function BoardPage() {
   const { boardId } = useParams();
@@ -53,10 +54,10 @@ export default function BoardPage() {
 
   if (error) {
     return (
-      <div>
-        Error loading board:
-        {error.message}
-      </div>
+      <CustomError 
+        message={`Error loading board: ${error.message}`} 
+        close={() => window.location.href = '/'} 
+      />
     );
   }
 

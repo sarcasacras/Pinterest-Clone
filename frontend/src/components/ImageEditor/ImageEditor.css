@@ -22,6 +22,9 @@
   border-radius: 16px;
   gap: 20px;
   padding: 20px;
+  max-width: 95vw;
+  max-height: 95vh;
+  overflow: auto;
 }
 
 .image-area {
@@ -51,6 +54,23 @@
   white-space: nowrap;
 }
 
+@media (max-width: 480px) {
+  .image-editor-window {
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .button-group {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .done-button {
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+}
+
 .done-button:hover {
   background-color: #b92243;
 }
@@ -72,11 +92,31 @@
   object-fit: contain;
 }
 
+@media (max-width: 768px) {
+  .edit-image-container {
+    max-width: 80vw;
+    max-height: 50vh;
+    padding: 10px;
+  }
+  
+  .edited-image {
+    max-width: 80vw;
+    max-height: 50vh;
+  }
+}
+
 .top {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .top {
+    flex-direction: column;
+    gap: 15px;
+  }
 }
 
 .edit-button {
@@ -103,4 +143,13 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .edit-area {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
 }

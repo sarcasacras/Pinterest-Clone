@@ -1,4 +1,5 @@
 import Gallery from "../../components/Gallery/Gallery";
+import CustomError from "../../components/CustomError/CustomError";
 import { useSearchParams } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { pinsApi } from "../../api/pinsApi";
@@ -45,7 +46,7 @@ export default function SearchPage() {
       )}
 
       {isLoading && <div style={{ textAlign: 'center', padding: '40px' }}>Searching...</div>}
-      {error && <div style={{ textAlign: 'center', padding: '40px', color: 'red' }}>Error: {error.message}</div>}
+      {error && <CustomError message={`Error: ${error.message}`} close={() => window.location.href = '/'} />}
 
       {pins.length > 0 && (
         <div className="galleryGrid">

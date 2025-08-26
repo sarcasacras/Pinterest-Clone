@@ -2,6 +2,7 @@ import "./ProfilePage.css";
 import Img from "../../components/Image/Image";
 import Gallery from "../../components/Gallery/Gallery";
 import Collections from "../../components/Collections/Collections";
+import CustomError from "../../components/CustomError/CustomError";
 import { useState, useRef } from "react";
 import { useParams } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -50,7 +51,7 @@ export default function ProfilePage() {
   }
 
   if (error) {
-    return <div>Error loading profile: {error.message}</div>;
+    return <CustomError message={`Error loading profile: ${error.message}`} close={() => window.location.href = '/'} />;
   }
 
   if (!user) {
