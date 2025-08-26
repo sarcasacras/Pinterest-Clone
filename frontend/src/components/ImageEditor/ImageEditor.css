@@ -78,3 +78,29 @@
   align-items: center;
   gap: 20px;
 }
+
+.edit-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-button:hover {
+    background-color: #e2e2e2;
+}
+
+.button-image {
+  width: 36px;
+  height: 36px;
+}
+
+.edit-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}

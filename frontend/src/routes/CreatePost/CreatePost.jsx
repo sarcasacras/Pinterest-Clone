@@ -82,12 +82,14 @@ export default function CreatePost() {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
-        alert("Please select an image file!");
+        setError("Please select an image file!");
+        setIsError(true);
         return;
       }
 
       if (file.size > 20 * 1024 * 1024) {
-        alert("File too large. Please select a file under 20MB");
+        setError("File too large. Please select a file under 20MB");
+        setIsError(true);
         return;
       }
 
@@ -97,11 +99,12 @@ export default function CreatePost() {
         const maxAspectRatio = 1.5;
 
         if (aspectRatio > maxAspectRatio) {
-          alert(
+          setError(
             `Image is too tall. Maximum allowed ratio is ${maxAspectRatio}:1, but your image is ${aspectRatio.toFixed(
               2
             )}:1. Please use a less tall image.`
           );
+          setIsError(true);
           return;
         }
 

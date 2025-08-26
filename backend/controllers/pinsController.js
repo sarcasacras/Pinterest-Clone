@@ -57,14 +57,18 @@ export const createPin = async (req, res) => {
 
     if (slug) {
       preparedSlug = slug.trim().toLowerCase();
-    }
 
-    const sameSlug = await Pin.findOne({ slug: preparedSlug });
-
-    if (sameSlug && preparedSlug !== null) {
-      return res
-        .status(400)
-        .json({ error: "There is another pin with this slug" });
+      if (preparedSlug !== "") {
+        const sameSlug = await Pin.findOne({ slug: preparedSlug });
+        if (sameSlug) {
+          console.log(preparedSlug);
+          return res
+            .status(400)
+            .json({ error: "There is another pin with this slug" });
+        } 
+      } else {
+        preparedSlug = null;
+      }
     }
 
     if (aspectRatio > maxAspectRatio) {
@@ -90,9 +94,13 @@ export const createPin = async (req, res) => {
       imageKitFileId: uploadResult.fileId,
       width: uploadResult.width,
       height: uploadResult.height,
-      slug: preparedSlug,
       owner: req.user._id,
     };
+
+    if (preparedSlug !== null) {
+      pinData.slug = preparedSlug;
+    }
+    
     const pin = new Pin(pinData);
     const savedPin = await pin.save();
 
