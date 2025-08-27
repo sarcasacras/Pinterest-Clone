@@ -120,6 +120,8 @@ export default function PostPage() {
     }
   };
 
+  console.log(pin);
+
   return (
     <div className="post-page">
       <button onClick={handleBackClick} className="back-button-wrapper">

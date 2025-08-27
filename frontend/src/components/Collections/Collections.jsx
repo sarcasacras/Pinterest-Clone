@@ -90,7 +90,7 @@ export default function Collections({ userId, selectionMode = false, selectedBoa
             <CollectionItem
               key={board._id}
               boardId={board._id}
-              src={board.effectiveCoverImage || "/pins/pin1.jpg"}
+              src={board.effectiveCoverImage || "/general/placeholder-image.jpg"}
               pinCount={board.pins?.length || 0}
               timeAgo={formatTimeAgo(board.updatedAt)}
               alt={board.title}

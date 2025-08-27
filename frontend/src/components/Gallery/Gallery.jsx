@@ -90,6 +90,7 @@ export default function Gallery({
             title: pin.title,
             description: pin.description,
             slug: pin.slug,
+            owner: pin.owner, // Add owner field
           };
           return (
             <GalleryImg

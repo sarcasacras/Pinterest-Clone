@@ -206,29 +206,37 @@ export default function ProfilePage() {
 
         {!isEditing && (
           <div className="profile-buttons">
-            <Img
-              src="/icons/share.svg"
-              alt="Share"
-              className="btn-share"
-              w={24}
-              onClick={handleShareProfile}
-            />
-            <button className="btn-message">Message</button>
-            <button className="btn-follow">Follow</button>
-            <Img
-              src="/icons/more.svg"
-              alt="More"
-              className="btn-more"
-              w={24}
-              onClick={handleMoreClick}
-            />
+            {isOwnProfile && (
+              <>
+                <Img
+                  src="/icons/share.svg"
+                  alt="Share"
+                  className="btn-share"
+                  w={24}
+                  onClick={handleShareProfile}
+                />
+                <Img
+                  src="/icons/profile-edit.svg"
+                  alt="More"
+                  className="btn-more"
+                  w={24}
+                  onClick={handleMoreClick}
+                />
+              </>
+            )}
+            {!isOwnProfile && (
+              <>
+                <button className="btn-message">Message</button>
+                <button className="btn-follow">Follow</button>
+              </>
+            )}
           </div>
         )}
 
         {isEditing && (
           <div className="edit-controls">
             <button className="btn-confirm" onClick={handleSaveChanges}>
-              <Img src="/icons/check.svg" alt="Save" w={20} />
+              <Img src="/icons/done.svg" alt="Save" w={20} />
             </button>
           </div>
         )}

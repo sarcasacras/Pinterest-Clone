@@ -68,9 +68,7 @@ export default function GalleryImg({
   const handleMenuClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isOwner) {
-      setIsDropdownOpen(!isDropdownOpen);
-    }
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleEditImageClick = () => {
@@ -163,21 +161,23 @@ export default function GalleryImg({
         Save
       </button>
       <div className="overlayButtons">
-        <div className="overlayButton menu-button-container" ref={dropdownRef}>
-          <button className="overlayButton" onClick={handleMenuClick}>
-            <Img src="icons/menu.svg" alt="" className="buttonImage" />
-          </button>
-          {isDropdownOpen && isOwner && (
-            <div className="dropdown">
-              <button onClick={handleEditImageClick}>
-                Edit Image
-              </button>
-              <button onClick={handleDeleteClick} disabled={deletePinMutation.isPending}>
-                {deletePinMutation.isPending ? "Deleting..." : "Delete Pin"}
-              </button>
-            </div>
-          )}
-        </div>
+        {isOwner && (
+          <div className="overlayButton menu-button-container" ref={dropdownRef}>
+            <button className="overlayButton" onClick={handleMenuClick}>
+              <Img src="icons/menu.svg" alt="" className="buttonImage" />
+            </button>
+            {isDropdownOpen && (
+              <div className="dropdown">
+                <button onClick={handleEditImageClick}>
+                  Edit Image
+                </button>
+                <button onClick={handleDeleteClick} disabled={deletePinMutation.isPending}>
+                  {deletePinMutation.isPending ? "Deleting..." : "Delete Pin"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         <button className="overlayButton" onClick={handleDownload}>
           <Img src="icons/download.svg" alt="" className="buttonImage" />
         </button>

@@ -81,7 +81,7 @@ export default function BoardSelector({
     createBoardMutation.mutate({
       title: newBoardData.title,
       description: newBoardData.description,
-      owner: user._id
+      owner: actualUser._id
     });
   };
 

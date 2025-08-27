@@ -1,33 +1,22 @@
 import "./LoginPage.css";
 import Img from "../../components/Image/Image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { authApi } from "../../api/authApi";
-import { useNavigate, useLocation } from "react-router";
-
 export default function LoginPage() {
   const [isRegistered, setIsRegistered] = useState(true);
   const [error, setError] = useState("");
   
-  const { login, user } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  
-  const from = location.state?.from?.pathname || '/';
+  const { login } = useAuth();
 
-  // Navigate after user is set
-  useEffect(() => {
-    if (user) {
-      navigate(from, { replace: true });
-    }
-  }, [user, from, navigate, location.state]);
 
   const loginMutation = useMutation({
     mutationFn: ({ username, password }) => authApi.login(username, password),
     onSuccess: (data) => {
       login(data.user);
-      // Navigation will be handled by useEffect when user state updates
+      // Always redirect to home page to ensure all components get fresh auth data
+      window.location.href = '/';
     },
     onError: (error) => {
       setError(error.message || 'Login failed');
@@ -38,7 +27,8 @@ export default function LoginPage() {
     mutationFn: (userData) => authApi.register(userData),
     onSuccess: (data) => {
       login(data.user);
-      // Navigation will be handled by useEffect when user state updates
+      // Always redirect to home page to ensure all components get fresh auth data
+      window.location.href = '/';
     },
     onError: (error) => {
       setError(error.message || 'Registration failed');

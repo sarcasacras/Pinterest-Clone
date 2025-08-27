@@ -24,6 +24,7 @@ export const getPins = async (req, res) => {
     }
 
     const pins = await Pin.find(filter)
+      .populate("owner", "username displayName avatar")
       .skip(skip)
       .limit(limit)
       .sort({ _id: -1 });
