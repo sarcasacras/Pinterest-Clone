@@ -131,7 +131,7 @@ export default function Comments({ pin }) {
                 <div className="comment-timestamp">
                   {formatTimeAgo(comment.createdAt)}
                 </div>
-                {comment.author._id === user._id ? (
+                {comment.author?._id && user?._id && comment.author._id === user._id ? (
                   <button className="close-button">
                     <Img
                       src={"/icons/close.svg"}
