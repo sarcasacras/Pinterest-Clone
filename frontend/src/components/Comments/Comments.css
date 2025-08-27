@@ -16,12 +16,16 @@
   min-height: 0;
   overflow-y: auto;
   flex: 1;
+  padding-right: 5px;
+  scrollbar-gutter: stable;
 }
 
 .comment {
   display: flex;
   flex-direction: row;
   gap: 12px;
+  position: relative;
+  padding-right: 30px;
   /* align-items: center; */
 }
 
@@ -143,8 +147,10 @@
   cursor: pointer;
   text-decoration: none;
   position: absolute;
-  right: 10px;
-  transform: translateY(-5px)
+  right: 0;
+  top: 0;
+  transform: translateY(-2px);
+  z-index: 10;
 }
 
 .close-button-image {
