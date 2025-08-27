@@ -90,7 +90,7 @@ export default function ProfilePage() {
     return <div>User not found</div>;
   }
 
-  const isOwnProfile = currentUser && user && currentUser._id === user._id;
+  const isOwnProfile = currentUser && user && (currentUser._id === user._id || currentUser.username === user.username);
 
   const handleAvatarClick = () => {
     if (isOwnProfile) {
@@ -115,7 +115,11 @@ export default function ProfilePage() {
   };
 
   const handleMoreClick = () => {
-    if (isOwnProfile) {
+    // Double-check ownership with both ID and username
+    const isOwner = currentUser && user && 
+      (currentUser._id === user._id || currentUser.username === user.username);
+    
+    if (isOwner) {
       setIsEditing(true);
       setEditedUsername(user.username || "");
       setEditedDisplayName(user.displayName || "");
