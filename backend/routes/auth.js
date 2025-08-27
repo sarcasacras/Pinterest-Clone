@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, getProfile, logout, updateAvatar } from "../controllers/authController.js";
+import { register, login, getProfile, logout, updateAvatar, updateProfile } from "../controllers/authController.js";
 import { authenticateToken } from "../middleware/auth.js";
 import multer from "multer";
 
@@ -26,4 +26,5 @@ router.post('/logout', logout);
 
 router.get('/profile', authenticateToken, getProfile);
 router.put('/avatar', authenticateToken, upload.single('avatar'), updateAvatar);
+router.put('/profile', authenticateToken, updateProfile);
 export default router;

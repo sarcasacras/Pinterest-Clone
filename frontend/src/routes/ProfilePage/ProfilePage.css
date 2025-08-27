@@ -14,6 +14,15 @@
   align-items: center;
   text-align: center;
   margin-bottom: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.profile-header.editing {
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 20px;
+  background-color: #fafafa;
 }
 
 .profile-avatar {
@@ -225,4 +234,81 @@
 .created-section,
 .saved-section {
   width: 70vw;
+}
+
+/* Profile editing styles */
+.profile-name-input {
+  font-size: 32px;
+  font-weight: 600;
+  text-align: center;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 24px 0 0 0;
+  background: white;
+  font-family: "Inter", sans-serif;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.profile-name-input:focus {
+  border-color: #ff3e68;
+}
+
+.profile-handle-input {
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin: 12px 0;
+  background: white;
+  font-family: "Inter", sans-serif;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.profile-handle-input:focus {
+  border-color: #ff3e68;
+}
+
+.profile-handle-input::placeholder {
+  color: #999;
+}
+
+.profile-name-input::placeholder {
+  color: #999;
+}
+
+.edit-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-confirm {
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-confirm:hover {
+  background-color: #45a049;
+}
+
+.btn-confirm img {
+  filter: invert(1);
+  width: 24px;
+  height: 24px;
 }

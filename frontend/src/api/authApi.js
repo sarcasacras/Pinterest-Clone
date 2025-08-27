@@ -25,4 +25,7 @@ export const authApi = {
     formData.append('avatar', avatarFile);
     return apiClient.put("/auth/avatar", formData).then((res) => res.data);
   },
+
+  updateProfile: (profileData) =>
+    apiClient.put("/auth/profile", profileData).then((res) => res.data),
 };

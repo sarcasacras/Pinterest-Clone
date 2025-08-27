@@ -5,7 +5,7 @@ import Collections from "../../components/Collections/Collections";
 import CustomError from "../../components/CustomError/CustomError";
 import ShareModal from "../../components/ShareModal/ShareModal";
 import { useState, useRef } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usersApi } from "../../api/usersApi";
 import { useAuth } from "../../contexts/AuthContext";
@@ -15,12 +15,17 @@ import { resizeImage } from "../../utils/imageUtils";
 export default function ProfilePage() {
   const [activeSection, setActiveSection] = useState("created");
   const { username } = useParams();
+  const navigate = useNavigate();
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedUsername, setEditedUsername] = useState("");
+  const [editedDisplayName, setEditedDisplayName] = useState("");
+  const [profileUpdateError, setProfileUpdateError] = useState(null);
   const authData = useAuth();
   const { user: currentUser, setUser } = authData;
   const fileInputRef = useRef(null);
   const queryClient = useQueryClient();
-  
+
   const {
     data: user,
     isLoading,
@@ -41,7 +46,27 @@ export default function ProfilePage() {
       alert("Failed to update avatar");
     },
   });
-  
+
+  const updateProfileMutation = useMutation({
+    mutationFn: (profileData) => authApi.updateProfile(profileData),
+    onSuccess: (data) => {
+      setUser(data.user);
+      queryClient.invalidateQueries({ queryKey: ["user", username] });
+      queryClient.invalidateQueries({ queryKey: ["user", data.user.username] });
+      setIsEditing(false);
+      setProfileUpdateError(null);
+      
+      // If username changed, navigate to new URL
+      if (data.user.username !== username) {
+        navigate(`/${data.user.username}`, { replace: true });
+      }
+    },
+    onError: (error) => {
+      setProfileUpdateError(
+        error.response?.data?.message || "Failed to update profile"
+      );
+    },
+  });
 
   if (isLoading) {
     return (
@@ -53,7 +78,12 @@ export default function ProfilePage() {
   }
 
   if (error) {
-    return <CustomError message={`Error loading profile: ${error.message}`} close={() => window.location.href = '/'} />;
+    return (
+      <CustomError
+        message={`Error loading profile: ${error.message}`}
+        close={() => (window.location.href = "/")}
+      />
+    );
   }
 
   if (!user) {
@@ -84,11 +114,32 @@ export default function ProfilePage() {
     setIsShareModalOpen(true);
   };
 
+  const handleMoreClick = () => {
+    if (isOwnProfile) {
+      setIsEditing(true);
+      setEditedUsername(user.username || "");
+      setEditedDisplayName(user.displayName || "");
+    }
+  };
+
+  const handleSaveChanges = () => {
+    if (!editedUsername.trim() || !editedDisplayName.trim()) {
+      setProfileUpdateError("Username and display name cannot be empty");
+      return;
+    }
+
+    updateProfileMutation.mutate({
+      username: editedUsername.trim(),
+      displayName: editedDisplayName.trim(),
+    });
+  };
+
+
   return (
     <div className="profile-page">
-      <div className="profile-header">
-        <div 
-          className={`profile-avatar ${isOwnProfile ? 'editable' : ''}`}
+      <div className={`profile-header ${isEditing ? "editing" : ""}`}>
+        <div
+          className={`profile-avatar ${isOwnProfile ? "editable" : ""}`}
           onClick={handleAvatarClick}
         >
           <Img
@@ -99,7 +150,12 @@ export default function ProfilePage() {
           />
           {isOwnProfile && (
             <div className="avatar-overlay">
-              <Img src="/icons/camera.svg" alt="Change Avatar" className="camera-icon" w={24} />
+              <Img
+                src="/icons/camera.svg"
+                alt="Change Avatar"
+                className="camera-icon"
+                w={24}
+              />
             </div>
           )}
           {updateAvatarMutation.isPending && (
@@ -111,27 +167,67 @@ export default function ProfilePage() {
           ref={fileInputRef}
           onChange={handleFileChange}
           accept="image/*"
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
         />
-        <h1 className="profile-name">{user.displayName}</h1>
-        <p className="profile-handle">@{user.username}</p>
-        <div className="profile-stats">
-          <span>{user.followers?.length || 0} followers</span>
-          <span>•</span>
-          <span>{user.following?.length || 0} following</span>
-        </div>
-        <div className="profile-buttons">
-          <Img
-            src="/icons/share.svg"
-            alt="Share"
-            className="btn-share"
-            w={24}
-            onClick={handleShareProfile}
+        {isEditing ? (
+          <input
+            type="text"
+            className="profile-name-input"
+            value={editedDisplayName}
+            onChange={(e) => setEditedDisplayName(e.target.value)}
+            placeholder="Display name"
           />
-          <button className="btn-message">Message</button>
-          <button className="btn-follow">Follow</button>
-          <Img src="/icons/more.svg" alt="More" className="btn-more" w={24} />
-        </div>
+        ) : (
+          <h1 className="profile-name">{user.displayName}</h1>
+        )}
+
+        {isEditing ? (
+          <input
+            type="text"
+            className="profile-handle-input"
+            value={editedUsername}
+            onChange={(e) => setEditedUsername(e.target.value)}
+            placeholder="username"
+          />
+        ) : (
+          <p className="profile-handle">@{user.username}</p>
+        )}
+        {!isEditing && (
+          <div className="profile-stats">
+            <span>{user.followers?.length || 0} followers</span>
+            <span>•</span>
+            <span>{user.following?.length || 0} following</span>
+          </div>
+        )}
+
+        {!isEditing && (
+          <div className="profile-buttons">
+            <Img
+              src="/icons/share.svg"
+              alt="Share"
+              className="btn-share"
+              w={24}
+              onClick={handleShareProfile}
+            />
+            <button className="btn-message">Message</button>
+            <button className="btn-follow">Follow</button>
+            <Img
+              src="/icons/more.svg"
+              alt="More"
+              className="btn-more"
+              w={24}
+              onClick={handleMoreClick}
+            />
+          </div>
+        )}
+
+        {isEditing && (
+          <div className="edit-controls">
+            <button className="btn-confirm" onClick={handleSaveChanges}>
+              <Img src="/icons/check.svg" alt="Save" w={20} />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="profile-nav">
@@ -168,6 +264,13 @@ export default function ProfilePage() {
         onClose={() => setIsShareModalOpen(false)}
         profileUsername={user.username}
       />
+
+      {profileUpdateError && (
+        <CustomError 
+          message={profileUpdateError} 
+          close={() => setProfileUpdateError(null)} 
+        />
+      )}
     </div>
   );
 }

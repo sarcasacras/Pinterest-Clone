@@ -154,3 +154,45 @@ export const updateAvatar = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { username, displayName } = req.body;
+
+    if (!username || !displayName) {
+      return res.status(400).json({
+        error: "Username and display name are required"
+      });
+    }
+
+    // Check if the new username is already taken by another user
+    if (username !== req.user.username) {
+      const existingUser = await User.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({
+          error: "Username is already taken"
+        });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { 
+        username: username.trim(),
+        displayName: displayName.trim()
+      },
+      { new: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      message: "Profile updated successfully",
+      user: updatedUser
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
