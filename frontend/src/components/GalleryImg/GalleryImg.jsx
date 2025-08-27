@@ -1,5 +1,5 @@
 import "../GalleryImg/GalleryImg.css";
-import { Link } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import Img from "../Image/Image";
 import BoardSelector from "../BoardSelector/BoardSelector";
 import { useState } from "react";
@@ -14,6 +14,8 @@ export default function GalleryImg({
 }) {
   const [isBoardSelectorOpen, setIsBoardSelectorOpen] = useState(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const aspectRatio =
     item.height && item.width ? item.height / item.width : 1.5;
@@ -25,6 +27,8 @@ export default function GalleryImg({
   const handleSaveClick = () => {
     if (user) {
       setIsBoardSelectorOpen(true);
+    } else {
+      navigate('/login', { state: { from: location } });
     }
   };
 
@@ -78,12 +82,15 @@ export default function GalleryImg({
         </button>
       </div>
 
-      <BoardSelector
-        isOpen={isBoardSelectorOpen}
-        onClose={() => setIsBoardSelectorOpen(false)}
-        mode="save"
-        pinId={item.id}
-      />
+      {isBoardSelectorOpen && (
+        <BoardSelector
+          isOpen={isBoardSelectorOpen}
+          onClose={() => setIsBoardSelectorOpen(false)}
+          mode="save"
+          pinId={item.id}
+          user={user}
+        />
+      )}
     </div>
   );
 }

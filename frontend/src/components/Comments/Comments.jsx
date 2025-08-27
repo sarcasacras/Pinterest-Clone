@@ -2,7 +2,7 @@ import "./Comments.css";
 import Img from "../Image/Image";
 import EmojiPicker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate, useLocation } from "react-router";
 import { commentsApi } from "../../api/commentsApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
@@ -34,6 +34,8 @@ export default function Comments({ pin }) {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const emojiPickerRef = useRef(null);
   const user = useAuth().user;
+  const navigate = useNavigate();
+  const location = useLocation();
 
 
   const onEmojiClick = (emojiObject) => {
@@ -83,6 +85,10 @@ export default function Comments({ pin }) {
   const params = useParams();
 
   const handleSubmit = () => {
+    if (!user) {
+      navigate('/login', { state: { from: location } });
+      return;
+    }
     if (!comment.trim()) return;
     mutation.mutate({ pinId: params.id, content: comment });
   };
@@ -159,6 +165,11 @@ export default function Comments({ pin }) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (!user) {
+                navigate('/login', { state: { from: location } });
+              }
+            }}
           />
           <div className="comment-right">
             <button

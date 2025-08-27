@@ -64,9 +64,16 @@ export default function PostPage() {
   };
 
   useEffect(() => {
+    // Add classes on mount for mobile scrollbar fix
+    document.body.classList.add('post-page-open');
+    document.documentElement.classList.add('post-page-open');
+    
     return () => {
+      // Remove classes on unmount
       document.body.classList.remove('fullscreen-mode');
       document.documentElement.classList.remove('fullscreen-mode');
+      document.body.classList.remove('post-page-open');
+      document.documentElement.classList.remove('post-page-open');
     };
   }, []);
 

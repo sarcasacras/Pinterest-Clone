@@ -15,6 +15,8 @@ export default function Collections({ userId, selectionMode = false, selectedBoa
     queryKey: ["boards", userId],
     queryFn: () => boardsApi.getBoardsByUser(userId),
     enabled: !!userId,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const deleteBoardMutation = useMutation({

@@ -1,5 +1,5 @@
 import "./BoardPage.css";
-import { useParams, Link } from "react-router";
+import { useParams, Link, useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { boardsApi } from "../../api/boardsApi";
 import { pinsApi } from "../../api/pinsApi";
@@ -9,15 +9,19 @@ import Img from "../../components/Image/Image";
 import CustomError from "../../components/CustomError/CustomError";
 import ShareModal from "../../components/ShareModal/ShareModal";
 import CustomAlert from "../../components/CustomAlert/CustomAlert";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function BoardPage() {
   const { boardId } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [removePinAlert, setRemovePinAlert] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const dropdownRef = useRef(null);
   
   const {
     data: board,
@@ -36,7 +40,19 @@ export default function BoardPage() {
       queryClient.invalidateQueries(["boards", user._id]);
     },
     onError: (error) => {
-      alert(`Failed to remove pin: ${error.response?.data?.error || error.message}`);
+      setDeleteError(`Failed to remove pin: ${error.response?.data?.error || error.message}`);
+    },
+  });
+
+  const deleteBoardMutation = useMutation({
+    mutationFn: (boardId) => boardsApi.deleteBoard(boardId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
+      queryClient.invalidateQueries({ queryKey: ["boards", user._id] });
+      navigate('/');
+    },
+    onError: (error) => {
+      setDeleteError(`Failed to delete board: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -62,18 +78,39 @@ export default function BoardPage() {
     setIsShareModalOpen(true);
   };
 
+  const handleMoreClick = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
   const handleDeleteBoard = () => {
     setShowDeleteAlert(true);
+    setIsDropdownOpen(false);
   };
 
   const confirmDelete = () => {
-    // TODO: Implement board deletion
+    deleteBoardMutation.mutate(boardId);
     setShowDeleteAlert(false);
   };
 
   const cancelDelete = () => {
     setShowDeleteAlert(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   const canRemoveFromBoard = user && board?.board && 
     (user._id === board.board.owner._id || user.isAdmin);
@@ -125,13 +162,25 @@ export default function BoardPage() {
           )}
           <div className="board-buttons">
             {isOwner && (
-              <Img 
-                src="/icons/more.svg" 
-                alt="More" 
-                className="btn-more" 
-                w={24}
-                onClick={handleDeleteBoard}
-              />
+              <div className="moreButtonContainer" ref={dropdownRef}>
+                <Img 
+                  src="/icons/more.svg" 
+                  alt="More" 
+                  className="btn-more" 
+                  w={24}
+                  onClick={handleMoreClick}
+                />
+                {isDropdownOpen && (
+                  <div className="dropdown">
+                    <button 
+                      onClick={handleDeleteBoard}
+                      disabled={deleteBoardMutation.isPending}
+                    >
+                      {deleteBoardMutation.isPending ? "Deleting..." : "Delete Board"}
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
             <Img
               src="/icons/share.svg"
@@ -173,6 +222,13 @@ export default function BoardPage() {
           message="Are you sure you want to remove this pin from the board?"
           onConfirm={confirmRemovePin}
           onCancel={cancelRemovePin}
+        />
+      )}
+
+      {deleteError && (
+        <CustomError
+          message={deleteError}
+          close={() => setDeleteError(null)}
         />
       )}
     </div>

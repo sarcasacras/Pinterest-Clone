@@ -34,7 +34,7 @@ const upload = multer({
 router.get("/", getPins);
 router.post("/", authenticateToken, upload.single('image'), createPin);
 router.get("/:id", getPinById);
-router.put("/:id", updatePin);
+router.put("/:id", authenticateToken, upload.single('image'), updatePin);
 router.delete("/:id", authenticateToken, deletePin);
 router.post("/:id/like", authenticateToken, toggleLike);
 router.post("/:id/save", authenticateToken, savePinToBoard);

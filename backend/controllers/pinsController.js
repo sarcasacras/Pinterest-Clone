@@ -155,13 +155,40 @@ export const getPinById = async (req, res) => {
 
 export const updatePin = async (req, res) => {
   try {
-    const pin = await Pin.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const pin = await Pin.findById(req.params.id);
     if (!pin) {
       return res.status(404).json({ error: "Pin not found" });
     }
-    res.json(pin);
+
+    if (pin.owner.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    let updateData = { ...req.body };
+
+    if (req.file) {
+      // Delete old image from ImageKit if it exists
+      if (pin.imageKitFileId) {
+        try {
+          await deleteFromImageKit(pin.imageKitFileId);
+        } catch (error) {
+          console.error('Failed to delete old image:', error);
+        }
+      }
+
+      const fileName = `pin-${req.params.id}-${Date.now()}.jpg`;
+      const imageResult = await uploadToImageKit(req.file, fileName);
+      updateData.imageUrl = imageResult.url;
+      updateData.imageKitFileId = imageResult.fileId;
+      updateData.width = imageResult.width;
+      updateData.height = imageResult.height;
+    }
+
+    const updatedPin = await Pin.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+    }).populate('owner', 'username displayName avatar');
+
+    res.json({ pin: updatedPin });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

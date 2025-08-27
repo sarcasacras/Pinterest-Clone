@@ -1,7 +1,7 @@
 import { hashPassword, comparePassword } from "../utils/hashPassword.js";
 import User from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
-import { uploadToImageKit } from "../utils/imagekit.js";
+import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
 
 
 export const register = async (req, res) => {
@@ -120,12 +120,29 @@ export const updateAvatar = async (req, res) => {
       return res.status(400).json({ error: 'Avatar file is required' });
     }
 
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete old avatar from ImageKit if it exists
+    if (user.avatarImageKitFileId) {
+      try {
+        await deleteFromImageKit(user.avatarImageKitFileId);
+      } catch (error) {
+        console.error('Failed to delete old avatar:', error);
+      }
+    }
+
     const fileName = `avatar-${req.user._id}-${Date.now()}-${req.file.originalname}`;
     const uploadResult = await uploadToImageKit(req.file, fileName, 'avatars');
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
-      { avatar: uploadResult.url },
+      { 
+        avatar: uploadResult.url,
+        avatarImageKitFileId: uploadResult.fileId
+      },
       { new: true }
     ).select("-password");
 

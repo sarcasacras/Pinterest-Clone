@@ -26,6 +26,7 @@ export default function ImageEditor({ close, src, onSave }) {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       canvas.width = img.width;
       canvas.height = img.height;
@@ -127,6 +128,7 @@ export default function ImageEditor({ close, src, onSave }) {
       croppedCanvas.height = cropArea.height;
       
       const img = new Image();
+      img.crossOrigin = "anonymous";
       img.onload = () => {
         croppedCtx.save();
         croppedCtx.translate(croppedCanvas.width / 2, croppedCanvas.height / 2);

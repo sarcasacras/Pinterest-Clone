@@ -96,10 +96,12 @@ export default function CreatePost() {
       const img = new Image();
       img.onload = async () => {
         const aspectRatio = img.height / img.width;
-        const maxAspectRatio = 1.5;
+        const maxAspectRatio = 1.5; // Max height ratio (too tall)
+        const maxWidthRatio = 2.5;  // Max width ratio (too wide)
 
         let processedFile = file;
         
+        // Handle images that are too tall
         if (aspectRatio > maxAspectRatio) {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
@@ -113,6 +115,25 @@ export default function CreatePost() {
           
           const offsetX = (newWidth - img.width) / 2;
           ctx.drawImage(img, offsetX, 0);
+          
+          processedFile = await new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/jpeg', 0.9);
+          });
+        }
+        // Handle images that are too wide
+        else if (img.width / img.height > maxWidthRatio) {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          const newHeight = img.width / maxWidthRatio;
+          canvas.width = img.width;
+          canvas.height = newHeight;
+          
+          ctx.fillStyle = '#000000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          const offsetY = (newHeight - img.height) / 2;
+          ctx.drawImage(img, 0, offsetY);
           
           processedFile = await new Promise(resolve => {
             canvas.toBlob(resolve, 'image/jpeg', 0.9);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
 import { boardsApi } from "../../api/boardsApi";
 import { pinsApi } from "../../api/pinsApi";
@@ -13,9 +13,14 @@ export default function BoardSelector({
   selectedBoard, 
   onBoardSelect,
   mode = "select", // "select" or "save"
-  pinId = null // for save mode
+  pinId = null, // for save mode
+  user = null // pass user as prop to avoid context issues
 }) {
-  const { user } = useAuth();
+  const authContext = useAuth();
+  const { loading } = authContext;
+  const actualUser = user || authContext.user; // use prop first, fallback to context
+  const userId = actualUser?.id || actualUser?._id; // handle both id formats
+  
   const queryClient = useQueryClient();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newBoardData, setNewBoardData] = useState({
@@ -24,16 +29,25 @@ export default function BoardSelector({
   });
   const [tempSelectedBoard, setTempSelectedBoard] = useState(selectedBoard);
 
+  // Prefetch boards when modal opens
+  const { data: boards } = useQuery({
+    queryKey: ["boards", userId],
+    queryFn: () => boardsApi.getBoardsByUser(userId),
+    enabled: isOpen && !!userId,
+    staleTime: 5 * 60 * 1000,
+  });
+
   useEffect(() => {
     if (isOpen) {
       setTempSelectedBoard(selectedBoard);
     }
   }, [isOpen, selectedBoard]);
 
+
   const createBoardMutation = useMutation({
     mutationFn: (boardData) => boardsApi.createBoard(boardData),
     onSuccess: (data) => {
-      queryClient.invalidateQueries(["boards", user._id]);
+      queryClient.invalidateQueries(["boards", userId]);
       if (mode === "save" && pinId) {
         savePinMutation.mutate({ pinId, boardId: data.board._id });
       } else {
@@ -50,7 +64,7 @@ export default function BoardSelector({
   const savePinMutation = useMutation({
     mutationFn: ({ pinId, boardId }) => pinsApi.savePinToBoard(pinId, boardId),
     onSuccess: () => {
-      queryClient.invalidateQueries(["boards", user._id]);
+      queryClient.invalidateQueries(["boards", userId]);
       setNewBoardData({ title: "", description: "" });
       setShowCreateForm(false);
       onClose();
@@ -110,14 +124,21 @@ export default function BoardSelector({
           {!showCreateForm ? (
             <>
               <div className="boards-selection-container">
-                <Collections 
-                  userId={user._id}
-                  selectionMode={true}
-                  selectedBoard={tempSelectedBoard}
-                  onBoardSelect={handleBoardSelect}
-                  variant="modal"
-                  currentUser={user}
-                />
+                {loading ? (
+                  <div className="loading-container">
+                    <div className="loader"></div>
+                    <p className="loading-text">Loading boards...</p>
+                  </div>
+                ) : actualUser && userId ? (
+                  <Collections 
+                    userId={userId}
+                    selectionMode={true}
+                    selectedBoard={tempSelectedBoard}
+                    onBoardSelect={handleBoardSelect}
+                    variant="modal"
+                    currentUser={actualUser}
+                  />
+                ) : null}
               </div>
 
               <div className="modal-actions">

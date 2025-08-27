@@ -30,6 +30,16 @@ export const pinsApi = {
 
   toggleLike: (id) => apiClient.post(`/pins/${id}/like`).then((res) => res.data),
 
+  updatePinImage: (id, imageFile) => {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    return apiClient.put(`/pins/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }).then((res) => res.data);
+  },
+
   savePinToBoard: (pinId, boardId) => 
     apiClient.post(`/pins/${pinId}/save`, { boardId }).then((res) => res.data),
 

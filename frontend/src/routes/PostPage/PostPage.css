@@ -7,6 +7,8 @@
   align-items: center;
   margin-top: 40px;
   font-family: 'Inter', sans-serif;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .post-container {
@@ -16,9 +18,11 @@
   border: 1px solid #e0e0e0;
   border-radius: 16px;
   width: 70%;
+  max-width: calc(100vw - 40px);
   overflow: hidden;
   height: 80vh;
   min-height: 400px;
+  box-sizing: border-box;
 }
 
 .left {
@@ -163,8 +167,22 @@
 }
 
 @media (max-width: 600px) {
+  html.post-page-open {
+    scrollbar-gutter: auto !important;
+  }
+  
+  body.post-page-open {
+    scrollbar-gutter: auto !important;
+  }
+  
+  .post-page {
+    padding: 0 10px;
+    margin-top: 20px;
+  }
+  
   .post-container {
     width: 100%;
+    max-width: calc(100vw - 20px);
   }
 
   .back-button-wrapper {
