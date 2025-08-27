@@ -2,6 +2,7 @@ import Pin from "../models/Pin.js";
 import User from "../models/User.js";
 import Comment from "../models/Comment.js";
 import Board from "../models/Board.js";
+import Notification from "../models/Notification.js";
 import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
 import mongoose from "mongoose";
 
@@ -246,7 +247,7 @@ export const getPinsByUser = async (req, res) => {
 
 export const toggleLike = async (req, res) => {
   try {
-    const pin = await Pin.findById(req.params.id);
+    const pin = await Pin.findById(req.params.id).populate("owner");
     if (!pin) {
       return res.status(404).json({ error: "Pin not found" });
     }
@@ -258,6 +259,15 @@ export const toggleLike = async (req, res) => {
       pin.likes.pull(userId);
     } else {
       pin.likes.push(userId);
+      
+      if (pin.owner._id.toString() !== userId.toString()) {
+        await Notification.createNotification({
+          recipient: pin.owner._id,
+          sender: userId,
+          type: 'like',
+          pin: pin._id
+        });
+      }
     }
 
     await pin.save();
@@ -288,7 +298,7 @@ export const savePinToBoard = async (req, res) => {
     const { boardId } = req.body;
     const userId = req.user._id;
 
-    const pin = await Pin.findById(pinId);
+    const pin = await Pin.findById(pinId).populate("owner");
     if (!pin) {
       return res.status(404).json({ error: "Pin not found" });
     }
@@ -312,6 +322,16 @@ export const savePinToBoard = async (req, res) => {
 
     board.pins.push(pinId);
     await board.save();
+
+    if (pin.owner._id.toString() !== userId.toString()) {
+      await Notification.createNotification({
+        recipient: pin.owner._id,
+        sender: userId,
+        type: 'save',
+        pin: pin._id,
+        board: board._id
+      });
+    }
 
     res.json({
       message: "Pin saved to board successfully",

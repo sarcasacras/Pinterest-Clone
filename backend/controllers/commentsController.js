@@ -1,5 +1,6 @@
 import Comment from "../models/Comment.js";
 import Pin from "../models/Pin.js";
+import Notification from "../models/Notification.js";
 
 export const getComments = (req, res) => {
   res.json({ message: "Comments route working!" });
@@ -15,10 +16,10 @@ export const createComment = async (req, res) => {
         .json({ error: "Content and Pin ID are required!" });
     }
 
-    let pin = await Pin.findOne({ slug: pinId });
+    let pin = await Pin.findOne({ slug: pinId }).populate("owner");
 
     if (!pin) {
-      pin = await Pin.findById(pinId);
+      pin = await Pin.findById(pinId).populate("owner");
     }
 
     const userId = req.user._id;
@@ -31,6 +32,17 @@ export const createComment = async (req, res) => {
 
     pin.comments.push(savedComment._id);
     await pin.save();
+    
+    if (pin.owner._id.toString() !== userId.toString()) {
+      await Notification.createNotification({
+        recipient: pin.owner._id,
+        sender: userId,
+        type: 'comment',
+        pin: pin._id,
+        comment: savedComment._id
+      });
+    }
+    
     const populatedComment = await Comment.findById(savedComment._id).populate(
       "author"
     );
