@@ -3,29 +3,49 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
+    required: [true, 'Username is required'],
     unique: true,
     trim: true,
-    minlength: 3,
-    maxlength: 20
+    minlength: [3, 'Username must be at least 3 characters long'],
+    maxlength: [20, 'Username cannot exceed 20 characters'],
+    validate: {
+      validator: function(v) {
+        return /^[a-zA-Z0-9_]+$/.test(v);
+      },
+      message: 'Username can only contain letters, numbers, and underscores'
+    }
   },
   displayName: {
     type: String,
-    required: true,
+    required: [true, 'Display name is required'],
     trim: true,
-    maxlength: 50
+    minlength: [1, 'Display name cannot be empty'],
+    maxlength: [50, 'Display name cannot exceed 50 characters'],
+    validate: {
+      validator: function(v) {
+        return v.trim().length > 0;
+      },
+      message: 'Display name cannot be empty or just whitespace'
+    }
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
     lowercase: true,
-    trim: true
+    trim: true,
+    validate: {
+      validator: function(v) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+      },
+      message: 'Please enter a valid email address'
+    }
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6
+    required: [true, 'Password is required'],
+    minlength: [6, 'Password must be at least 6 characters long'],
+    maxlength: [128, 'Password is too long']
   },
   avatar: {
     type: String,
@@ -41,11 +61,23 @@ const userSchema = new mongoose.Schema({
   },
   followers: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    validate: {
+      validator: function(arr) {
+        return arr.length <= 10000;
+      },
+      message: 'Too many followers'
+    }
   }],
   following: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    validate: {
+      validator: function(arr) {
+        return arr.length <= 5000;
+      },
+      message: 'Following too many users'
+    }
   }]
 }, {
   timestamps: true

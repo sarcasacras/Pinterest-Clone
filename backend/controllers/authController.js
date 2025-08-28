@@ -143,7 +143,11 @@ export const updateAvatar = async (req, res) => {
         avatar: uploadResult.url,
         avatarImageKitFileId: uploadResult.fileId
       },
-      { new: true }
+      { 
+        new: true,
+        runValidators: true,
+        context: 'query'
+      }
     ).select("-password");
 
     res.json({
@@ -181,7 +185,11 @@ export const updateProfile = async (req, res) => {
         username: username.trim(),
         displayName: displayName.trim()
       },
-      { new: true }
+      { 
+        new: true,
+        runValidators: true,
+        context: 'query'
+      }
     ).select("-password");
 
     if (!updatedUser) {

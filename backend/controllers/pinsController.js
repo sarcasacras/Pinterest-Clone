@@ -188,6 +188,8 @@ export const updatePin = async (req, res) => {
 
     const updatedPin = await Pin.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
+      runValidators: true,
+      context: 'query'
     }).populate('owner', 'username displayName avatar');
 
     res.json({ pin: updatedPin });

@@ -281,6 +281,44 @@
   color: #999;
 }
 
+/* Validation Styles */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.input-group .validation-error-slot {
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  max-width: 300px;
+  min-height: 20px; /* Reserve space to prevent layout shift */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.input-group .validation-error-slot.has-error {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.profile-name-input.error,
+.profile-handle-input.error {
+  border-color: #e74c3c;
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+}
+
+.profile-name-input.error:focus,
+.profile-handle-input.error:focus {
+  border-color: #e74c3c;
+}
+
 .edit-controls {
   position: absolute;
   top: 10px;
@@ -311,4 +349,38 @@
   filter: invert(1);
   width: 24px;
   height: 24px;
+}
+
+.btn-cancel {
+  background-color: #e74c3c;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-cancel:hover {
+  background-color: #c0392b;
+}
+
+.btn-cancel img {
+  filter: invert(1);
+  width: 24px;
+  height: 24px;
+}
+
+.btn-confirm:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-confirm:disabled:hover {
+  background-color: #cccccc;
 }

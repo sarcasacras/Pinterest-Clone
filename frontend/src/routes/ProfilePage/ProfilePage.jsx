@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const [editedUsername, setEditedUsername] = useState("");
   const [editedDisplayName, setEditedDisplayName] = useState("");
   const [profileUpdateError, setProfileUpdateError] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
   const authData = useAuth();
   const { user: currentUser, setUser } = authData;
   const fileInputRef = useRef(null);
@@ -55,6 +56,7 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["user", data.user.username] });
       setIsEditing(false);
       setProfileUpdateError(null);
+      setValidationErrors({});
       
       // If username changed, navigate to new URL
       if (data.user.username !== username) {
@@ -62,9 +64,24 @@ export default function ProfilePage() {
       }
     },
     onError: (error) => {
-      setProfileUpdateError(
-        error.response?.data?.message || "Failed to update profile"
-      );
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || "Failed to update profile";
+      
+      // Handle validation errors from backend
+      if (errorMessage.includes('Username can only contain') || 
+          errorMessage.includes('Username must be') || 
+          errorMessage.includes('Username cannot exceed')) {
+        setValidationErrors(prev => ({
+          ...prev,
+          username: errorMessage.replace('Validation failed: username: ', '')
+        }));
+      } else if (errorMessage.includes('Display name')) {
+        setValidationErrors(prev => ({
+          ...prev,
+          displayName: errorMessage.replace('Validation failed: displayName: ', '')
+        }));
+      } else {
+        setProfileUpdateError(errorMessage);
+      }
     },
   });
 
@@ -126,9 +143,61 @@ export default function ProfilePage() {
     }
   };
 
+  const validateUsername = (username) => {
+    const trimmed = username.trim();
+    if (!trimmed) return "Username is required";
+    if (trimmed.length < 3) return "Username must be at least 3 characters long";
+    if (trimmed.length > 20) return "Username cannot exceed 20 characters";
+    if (!/^[a-zA-Z0-9_]+$/.test(trimmed)) return "Username can only contain letters, numbers, and underscores";
+    return null;
+  };
+
+  const validateDisplayName = (displayName) => {
+    const trimmed = displayName.trim();
+    if (!trimmed) return "Display name is required";
+    if (trimmed.length > 50) return "Display name cannot exceed 50 characters";
+    return null;
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    const usernameError = validateUsername(editedUsername);
+    if (usernameError) errors.username = usernameError;
+    
+    const displayNameError = validateDisplayName(editedDisplayName);
+    if (displayNameError) errors.displayName = displayNameError;
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleUsernameChange = (e) => {
+    const value = e.target.value;
+    setEditedUsername(value);
+    
+    // Real-time validation
+    const error = validateUsername(value);
+    setValidationErrors(prev => ({
+      ...prev,
+      username: error
+    }));
+  };
+
+  const handleDisplayNameChange = (e) => {
+    const value = e.target.value;
+    setEditedDisplayName(value);
+    
+    // Real-time validation
+    const error = validateDisplayName(value);
+    setValidationErrors(prev => ({
+      ...prev,
+      displayName: error
+    }));
+  };
+
   const handleSaveChanges = () => {
-    if (!editedUsername.trim() || !editedDisplayName.trim()) {
-      setProfileUpdateError("Username and display name cannot be empty");
+    if (!validateForm()) {
       return;
     }
 
@@ -136,6 +205,15 @@ export default function ProfilePage() {
       username: editedUsername.trim(),
       displayName: editedDisplayName.trim(),
     });
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setValidationErrors({});
+    setProfileUpdateError(null);
+    // Reset to original values
+    setEditedUsername(user.username || "");
+    setEditedDisplayName(user.displayName || "");
   };
 
 
@@ -174,25 +252,35 @@ export default function ProfilePage() {
           style={{ display: "none" }}
         />
         {isEditing ? (
-          <input
-            type="text"
-            className="profile-name-input"
-            value={editedDisplayName}
-            onChange={(e) => setEditedDisplayName(e.target.value)}
-            placeholder="Display name"
-          />
+          <div className="input-group">
+            <input
+              type="text"
+              className={`profile-name-input ${validationErrors.displayName ? 'error' : ''}`}
+              value={editedDisplayName}
+              onChange={handleDisplayNameChange}
+              placeholder="Display name"
+            />
+            <span className={`validation-error-slot ${validationErrors.displayName ? 'has-error' : ''}`}>
+              {validationErrors.displayName || '\u00A0'}
+            </span>
+          </div>
         ) : (
           <h1 className="profile-name">{user.displayName}</h1>
         )}
 
         {isEditing ? (
-          <input
-            type="text"
-            className="profile-handle-input"
-            value={editedUsername}
-            onChange={(e) => setEditedUsername(e.target.value)}
-            placeholder="username"
-          />
+          <div className="input-group">
+            <input
+              type="text"
+              className={`profile-handle-input ${validationErrors.username ? 'error' : ''}`}
+              value={editedUsername}
+              onChange={handleUsernameChange}
+              placeholder="username"
+            />
+            <span className={`validation-error-slot ${validationErrors.username ? 'has-error' : ''}`}>
+              {validationErrors.username || '\u00A0'}
+            </span>
+          </div>
         ) : (
           <p className="profile-handle">@{user.username}</p>
         )}
@@ -235,7 +323,14 @@ export default function ProfilePage() {
 
         {isEditing && (
           <div className="edit-controls">
-            <button className="btn-confirm" onClick={handleSaveChanges}>
+            <button className="btn-cancel" onClick={handleCancelEdit}>
+              <Img src="/icons/close.svg" alt="Cancel" w={20} />
+            </button>
+            <button 
+              className="btn-confirm" 
+              onClick={handleSaveChanges}
+              disabled={Object.keys(validationErrors).some(key => validationErrors[key])}
+            >
               <Img src="/icons/done.svg" alt="Save" w={20} />
             </button>
           </div>

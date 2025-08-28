@@ -48,6 +48,8 @@ export default function CreatePost() {
     },
   });
 
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
