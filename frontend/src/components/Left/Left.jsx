@@ -8,11 +8,12 @@ import { notificationsApi } from '../../api/notificationsApi';
 
 const Left = () => {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
     const queryClient = useQueryClient();
 
     const { data: notifications, isLoading, error } = useQuery({
-        queryKey: ["notifications"],
-        queryFn: () => notificationsApi.getNotifications(),
+        queryKey: ["notifications", currentPage],
+        queryFn: () => notificationsApi.getNotifications({ page: currentPage, limit: 6 }),
     });
 
     const markAllAsReadMutation = useMutation({
@@ -36,6 +37,10 @@ const Left = () => {
             markAllAsReadMutation.mutate();
         }
         setIsNotificationsOpen(!isNotificationsOpen);
+    };
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -69,6 +74,9 @@ const Left = () => {
                             isLoading={isLoading}
                             error={error}
                             onDeleteAll={deleteAllNotificationsMutation.mutate}
+                            currentPage={currentPage}
+                            totalPages={notifications?.totalPages || 1}
+                            onPageChange={handlePageChange}
                         />
                     )}
                 </button>

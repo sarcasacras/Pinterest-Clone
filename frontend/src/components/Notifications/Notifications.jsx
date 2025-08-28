@@ -10,6 +10,9 @@ export default function Notifications({
   isLoading,
   error,
   onDeleteAll,
+  currentPage,
+  totalPages,
+  onPageChange,
 }) {
   console.log("Notifications data:", notifications);
 
@@ -37,15 +40,16 @@ export default function Notifications({
       {notifications?.notifications?.length > 0 && (
         <button className="delete-all-btn" onClick={onDeleteAll}>Delete all</button>
       )}
-      {isLoading ? (
-        <div>Loading notifications...</div>
-      ) : error ? (
-        <div>Error loading notifications</div>
-      ) : (
-        <div>
-          {notifications?.notifications?.length > 0 ? (
-            <div>
-              {notifications.notifications.map((notification) => (
+      <div className="notifications-content">
+        {isLoading ? (
+          <div>Loading notifications...</div>
+        ) : error ? (
+          <div>Error loading notifications</div>
+        ) : (
+          <div>
+            {notifications?.notifications?.length > 0 ? (
+              <div>
+                {notifications.notifications.map((notification) => (
                 <div key={notification._id} className="notification-item">
                   {notification.message}
                   {notification.type === "comment" && (
@@ -146,6 +150,20 @@ export default function Notifications({
               <p className="empty-text">No notifications yet</p>
             </div>
           )}
+        </div>
+        )}
+      </div>
+      {notifications?.notifications?.length > 0 && totalPages > 1 && (
+        <div className="notifications-pagination">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <span
+              key={page}
+              className={`page-number ${page === currentPage ? 'active' : ''}`}
+              onClick={() => onPageChange(page)}
+            >
+              {page}
+            </span>
+          ))}
         </div>
       )}
     </div>,

@@ -124,6 +124,8 @@ notificationSchema.statics.getUserNotifications = async function(userId, options
     notifications,
     total,
     unreadCount,
+    totalPages: Math.ceil(total / limit),
+    currentPage: page,
     hasMore: page * limit < total
   };
 };
