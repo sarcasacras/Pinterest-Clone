@@ -1,0 +1,93 @@
+/* Notifications component styles */
+
+.notifications-dropdown {
+  position: fixed;
+  left: 75px;
+  top: 200px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  min-width: 250px;
+  z-index: 10001;
+}
+
+.notification-comment {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  margin-top: 8px;
+}
+
+.notification-comment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.notification-comment-left {
+  flex-shrink: 0;
+}
+
+.notification-comment-right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.notification-like-right {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.notification-comment-nickname {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.notification-comment-content {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.notification-text {
+    font-weight: 400;
+}
+
+.notification-item {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.notification-pin-thumbnail {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.notification-unread-indicator {
+  position: absolute;
+  top: 2px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff3e68;
+  border-radius: 50%;
+}
