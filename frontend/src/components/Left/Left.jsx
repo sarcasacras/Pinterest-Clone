@@ -23,6 +23,14 @@ const Left = () => {
         },
     });
 
+    const deleteAllNotificationsMutation = useMutation({
+        mutationFn: notificationsApi.deleteAllNotifications,
+        onSuccess: (data) => {
+            console.log('All notifications deleted:', data);
+            queryClient.invalidateQueries(['notifications']);
+        },
+    });
+
     const toggleNotifications = () => {
         if (!isNotificationsOpen) {
             markAllAsReadMutation.mutate();
@@ -60,6 +68,7 @@ const Left = () => {
                             notifications={notifications}
                             isLoading={isLoading}
                             error={error}
+                            onDeleteAll={deleteAllNotificationsMutation.mutate}
                         />
                     )}
                 </button>

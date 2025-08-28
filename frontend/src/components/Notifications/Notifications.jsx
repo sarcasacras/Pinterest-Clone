@@ -9,6 +9,7 @@ export default function Notifications({
   notifications,
   isLoading,
   error,
+  onDeleteAll,
 }) {
   console.log("Notifications data:", notifications);
 
@@ -34,7 +35,7 @@ export default function Notifications({
   return createPortal(
     <div className="notifications-dropdown" ref={notificationsRef}>
       {notifications?.notifications?.length > 0 && (
-        <button className="delete-all-btn">Delete all</button>
+        <button className="delete-all-btn" onClick={onDeleteAll}>Delete all</button>
       )}
       {isLoading ? (
         <div>Loading notifications...</div>
