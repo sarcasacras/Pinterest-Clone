@@ -1,21 +1,15 @@
 import "./Notifications.css";
 import { createPortal } from "react-dom";
-import { useQuery } from "@tanstack/react-query";
-import { notificationsApi } from "../../api/notificationsApi";
 import Img from "../Image/Image";
 import { Link } from "react-router";
 import { useRef, useEffect } from "react";
 
-export default function Notifications({ onClose }) {
-  const {
-    data: notifications,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: () => notificationsApi.getNotifications(),
-  });
-
+export default function Notifications({
+  onClose,
+  notifications,
+  isLoading,
+  error,
+}) {
   console.log("Notifications data:", notifications);
 
   const notificationsRef = useRef(null);
@@ -39,6 +33,9 @@ export default function Notifications({ onClose }) {
 
   return createPortal(
     <div className="notifications-dropdown" ref={notificationsRef}>
+      {notifications?.notifications?.length > 0 && (
+        <button className="delete-all-btn">Delete all</button>
+      )}
       {isLoading ? (
         <div>Loading notifications...</div>
       ) : error ? (
@@ -81,7 +78,9 @@ export default function Notifications({ onClose }) {
                           to={`/pin/${notification.pin?._id}`}
                           onClick={onClose}
                         >
-                          {!notification.isRead && <div className="notification-unread-indicator"></div>}
+                          {!notification.isRead && (
+                            <div className="notification-unread-indicator"></div>
+                          )}
                           <Img
                             src={notification.pin?.imageUrl}
                             alt="Pin"
@@ -120,7 +119,9 @@ export default function Notifications({ onClose }) {
                           to={`/pin/${notification.pin?._id}`}
                           onClick={onClose}
                         >
-                          {!notification.isRead && <div className="notification-unread-indicator"></div>}
+                          {!notification.isRead && (
+                            <div className="notification-unread-indicator"></div>
+                          )}
                           <Img
                             src={notification.pin?.imageUrl}
                             alt="Pin"
@@ -135,7 +136,14 @@ export default function Notifications({ onClose }) {
               ))}
             </div>
           ) : (
-            <div>No notifications</div>
+            <div className="empty-notifications">
+              <Img
+                src="/icons/sad.svg"
+                alt="No notifications"
+                className="empty-icon"
+              />
+              <p className="empty-text">No notifications yet</p>
+            </div>
           )}
         </div>
       )}

@@ -220,6 +220,9 @@ export const deletePin = async (req, res) => {
       }
     }
 
+    // Delete all notifications related to this pin
+    await Notification.deleteMany({ pin: req.params.id });
+    
     await Pin.findByIdAndDelete(req.params.id);
     res.json({ message: "Pin deleted successfully" });
   } catch (error) {

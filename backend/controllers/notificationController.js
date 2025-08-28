@@ -120,6 +120,25 @@ export const deleteNotification = async (req, res) => {
   }
 };
 
+export const deleteAllUserNotifications = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    const result = await Notification.deleteMany({ recipient: userId });
+    
+    res.json({
+      success: true,
+      message: 'All notifications deleted successfully',
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};
+
 export const cleanOldNotifications = async (req, res) => {
   try {
     const { daysOld = 30 } = req.query;

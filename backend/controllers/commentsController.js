@@ -71,6 +71,10 @@ export const deleteComment = async (req, res) => {
         .json({ message: "You can only delete your own comments!" });
     }
     pin.comments.pull(commentId);
+    
+    // Delete all notifications related to this comment
+    await Notification.deleteMany({ comment: commentId });
+    
     await Comment.findByIdAndDelete(commentId);
     await pin.save();
     res.json({ message: "The comment was successfully deleted!" });

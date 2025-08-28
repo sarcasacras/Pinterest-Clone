@@ -47,6 +47,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     z-index: 10000;
+}
+
+.notification-icon-wrapper {
+    position: relative;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 8px;
+    height: 8px;
+    background-color: #ff3e68;
+    border-radius: 50%;
+    pointer-events: none;
 }

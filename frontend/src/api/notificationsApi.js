@@ -12,4 +12,9 @@ export const notificationsApi = {
     apiClient
       .get("/notifications", { params: { page, limit } })
       .then((res) => res.data),
+
+  markAllAsRead: () =>
+    apiClient
+      .patch("/notifications/mark-all-read")
+      .then((res) => res.data),
 };

@@ -16,7 +16,7 @@ const notificationSchema = new mongoose.Schema({
   
   type: {
     type: String,
-    enum: ['like', 'comment', 'follow', 'save', 'pin_added_to_board'],
+    enum: ['like', 'comment', 'follow'],
     required: true
   },
   
@@ -24,17 +24,10 @@ const notificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Pin',
     required: function() {
-      return ['like', 'comment', 'save', 'pin_added_to_board'].includes(this.type);
+      return ['like', 'comment'].includes(this.type);
     }
   },
   
-  board: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Board',
-    required: function() {
-      return ['save', 'pin_added_to_board'].includes(this.type);
-    }
-  },
   
   comment: {
     type: mongoose.Schema.Types.ObjectId,
@@ -62,7 +55,7 @@ notificationSchema.index({ recipient: 1, isRead: 1, createdAt: -1 });
 notificationSchema.index({ recipient: 1, type: 1, createdAt: -1 });
 
 notificationSchema.statics.createNotification = async function(data) {
-  const { recipient, sender, type, pin, board, comment, metadata } = data;
+  const { recipient, sender, type, pin, comment, metadata } = data;
   
   if (recipient.toString() === sender.toString()) {
     return null;
@@ -73,7 +66,6 @@ notificationSchema.statics.createNotification = async function(data) {
     sender,
     type,
     ...(pin && { pin }),
-    ...(board && { board }),
     ...(comment && { comment }),
     createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }
   });
@@ -89,7 +81,6 @@ notificationSchema.statics.createNotification = async function(data) {
     sender,
     type,
     pin,
-    board,
     comment,
     metadata
   });
@@ -118,7 +109,6 @@ notificationSchema.statics.getUserNotifications = async function(userId, options
   const notifications = await this.find(filter)
     .populate('sender', 'username displayName avatar')
     .populate('pin', 'title imageUrl slug')
-    .populate('board', 'title')
     .populate('comment', 'content')
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
