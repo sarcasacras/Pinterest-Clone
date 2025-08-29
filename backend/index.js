@@ -7,6 +7,7 @@ import boardsRouter from "./routes/boards.js";
 import usersRouter from "./routes/users.js";
 import authRouter from "./routes/auth.js";
 import notificationsRouter from "./routes/notifications.js";
+import messagesRouter from "./routes/messages.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -28,6 +29,7 @@ app.use("/boards", boardsRouter);
 app.use('/auth', authRouter);
 app.use("/users", usersRouter);
 app.use("/notifications", notificationsRouter);
+app.use("/messages", messagesRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
