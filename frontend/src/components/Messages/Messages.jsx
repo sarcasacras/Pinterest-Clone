@@ -1,5 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router";
 import { messagesApi } from "../../api/messagesApi";
 import Img from "../Image/Image";
 import "./Messages.css";
@@ -18,31 +19,30 @@ const formatTimeAgo = (dateString) => {
   return new Date(dateString).toLocaleDateString();
 };
 
-const Messages = () => {
+const Messages = ({ conversations, isLoading, error }) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-
-  const {
-    data: conversations,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["conversations"],
-    queryFn: () => messagesApi.getConversations(),
-  });
+  const navigate = useNavigate();
 
   const deleteConversationMutation = useMutation({
-    mutationFn: (conversationId) => messagesApi.deleteConversation(conversationId),
+    mutationFn: (conversationId) =>
+      messagesApi.deleteConversation(conversationId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     },
   });
 
   const handleDeleteConversation = (conversationId) => {
-    const confirmed = window.confirm('Are you sure you want to delete this conversation?');
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this conversation?"
+    );
     if (confirmed) {
       deleteConversationMutation.mutate(conversationId);
     }
+  };
+
+  const handleConversationClick = (conversationId) => {
+    navigate(`/messages/${conversationId}`);
   };
 
   return (
@@ -59,7 +59,11 @@ const Messages = () => {
               );
 
               return (
-                <div key={conversation._id} className="conversation-item">
+                <div
+                  key={conversation._id}
+                  className="conversation-item"
+                  onClick={() => handleConversationClick(conversation._id)}
+                >
                   <Img
                     src={otherParticipant?.avatar || "/general/noavatar.svg"}
                     alt={otherParticipant?.displayName}
@@ -72,17 +76,20 @@ const Messages = () => {
                     <p className="conversation-preview">
                       {conversation.lastMessage?.content || "No messages yet"}
                     </p>
-                    {conversation.unreadCount > 0 && (
-                      <p>Unread: {conversation.unreadCount}</p>
-                    )}
                     <p className="conversation-time">
                       {formatTimeAgo(conversation.lastActivity)}
                     </p>
-                    <Img 
-                      src="/icons/close.svg" 
-                      alt="Delete" 
+                    {conversation.unreadCount > 0 && (
+                      <div className="unread-indicator"></div>
+                    )}
+                    <Img
+                      src="/icons/close.svg"
+                      alt="Delete"
                       className="delete-conversation"
-                      onClick={() => handleDeleteConversation(conversation._id)} 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteConversation(conversation._id);
+                      }}
                     />
                   </div>
                 </div>

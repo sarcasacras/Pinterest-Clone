@@ -38,6 +38,11 @@ createRoot(document.getElementById("root")).render(
                     <MessagesPage />
                   </ProtectedRoute>
                 } />
+                <Route path="/messages/:conversationId" element={
+                  <ProtectedRoute>
+                    <MessagesPage />
+                  </ProtectedRoute>
+                } />
                 <Route path="/board/:boardId" element={<BoardPage />} />
               </Route>
               <Route path="/login" element={<LoginPage />} />
