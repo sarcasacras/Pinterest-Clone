@@ -59,7 +59,6 @@ export default function ProfilePage() {
       setProfileUpdateError(null);
       setValidationErrors({});
       
-      // If username changed, navigate to new URL
       if (data.user.username !== username) {
         navigate(`/${data.user.username}`, { replace: true });
       }
@@ -67,7 +66,6 @@ export default function ProfilePage() {
     onError: (error) => {
       const errorMessage = error.response?.data?.error || error.response?.data?.message || "Failed to update profile";
       
-      // Handle validation errors from backend
       if (errorMessage.includes('Username can only contain') || 
           errorMessage.includes('Username must be') || 
           errorMessage.includes('Username cannot exceed')) {
@@ -146,7 +144,6 @@ export default function ProfilePage() {
   };
 
   const handleMoreClick = () => {
-    // Double-check ownership with both ID and username
     const isOwner = currentUser && user && 
       (currentUser._id === user._id || currentUser.username === user.username);
     
@@ -190,7 +187,6 @@ export default function ProfilePage() {
     const value = e.target.value;
     setEditedUsername(value);
     
-    // Real-time validation
     const error = validateUsername(value);
     setValidationErrors(prev => ({
       ...prev,
@@ -202,7 +198,6 @@ export default function ProfilePage() {
     const value = e.target.value;
     setEditedDisplayName(value);
     
-    // Real-time validation
     const error = validateDisplayName(value);
     setValidationErrors(prev => ({
       ...prev,
@@ -225,7 +220,6 @@ export default function ProfilePage() {
     setIsEditing(false);
     setValidationErrors({});
     setProfileUpdateError(null);
-    // Reset to original values
     setEditedUsername(user.username || "");
     setEditedDisplayName(user.displayName || "");
   };
