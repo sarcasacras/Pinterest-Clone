@@ -12,6 +12,7 @@ import CreatePost from "./routes/CreatePost/CreatePost";
 import LoginPage from "./routes/LoginPage/LoginPage";
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import BoardPage from "./routes/BoardPage/BoardPage";
+import MessagesPage from "./routes/MessagesPage/MessagesPage";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,11 @@ createRoot(document.getElementById("root")).render(
                 <Route path="/create" element={
                   <ProtectedRoute>
                     <CreatePost />
+                  </ProtectedRoute>
+                } />
+                <Route path="/messages" element={
+                  <ProtectedRoute>
+                    <MessagesPage />
                   </ProtectedRoute>
                 } />
                 <Route path="/board/:boardId" element={<BoardPage />} />

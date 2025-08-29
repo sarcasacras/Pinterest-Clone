@@ -80,7 +80,7 @@ const Left = () => {
                         />
                     )}
                 </button>
-                <Link to="/">
+                <Link to="/messages">
                     <Img src='icons/message.svg' alt="messages" className='menu-item' />
                 </Link>
             </div>

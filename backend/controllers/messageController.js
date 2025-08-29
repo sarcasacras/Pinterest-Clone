@@ -1,6 +1,6 @@
-import Message from '../models/Message.js';
-import Conversation from '../models/Conversation.js';
-import User from '../models/User.js';
+import Message from "../models/Message.js";
+import Conversation from "../models/Conversation.js";
+import User from "../models/User.js";
 
 export const getConversations = async (req, res) => {
   try {
@@ -9,7 +9,7 @@ export const getConversations = async (req, res) => {
 
     const conversations = await Conversation.getUserConversations(userId, {
       page: parseInt(page),
-      limit: parseInt(limit)
+      limit: parseInt(limit),
     });
 
     res.json({
@@ -17,12 +17,12 @@ export const getConversations = async (req, res) => {
       conversations,
       total: conversations.length,
       page: parseInt(page),
-      limit: parseInt(limit)
+      limit: parseInt(limit),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -36,20 +36,20 @@ export const getConversationMessages = async (req, res) => {
     // Verify user is part of this conversation
     const conversation = await Conversation.findOne({
       _id: conversationId,
-      participants: userId
+      participants: userId,
     });
 
     if (!conversation) {
       return res.status(404).json({
         success: false,
-        error: 'Conversation not found or access denied'
+        error: "Conversation not found or access denied",
       });
     }
 
     const messages = await Message.getConversationMessages(conversationId, {
       page: parseInt(page),
       limit: parseInt(limit),
-      beforeDate
+      beforeDate,
     });
 
     res.json({
@@ -57,12 +57,12 @@ export const getConversationMessages = async (req, res) => {
       messages,
       conversationId,
       page: parseInt(page),
-      limit: parseInt(limit)
+      limit: parseInt(limit),
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -76,47 +76,47 @@ export const sendMessage = async (req, res) => {
     if (!content || content.trim().length === 0) {
       return res.status(400).json({
         success: false,
-        error: 'Message content is required'
+        error: "Message content is required",
       });
     }
 
     const conversation = await Conversation.findOne({
       _id: conversationId,
-      participants: senderId
-    }).populate('participants');
+      participants: senderId,
+    }).populate("participants");
 
     if (!conversation) {
       return res.status(404).json({
         success: false,
-        error: 'Conversation not found or access denied'
+        error: "Conversation not found or access denied",
       });
     }
 
     const recipient = conversation.participants.find(
-      participant => participant._id.toString() !== senderId.toString()
+      (participant) => participant._id.toString() !== senderId.toString()
     );
 
     const message = new Message({
       conversationId,
       sender: senderId,
       recipient: recipient._id,
-      content: content.trim()
+      content: content.trim(),
     });
 
     await message.save();
 
-    await message.populate('sender', 'username displayName avatar');
+    await message.populate("sender", "username displayName avatar");
 
     await Conversation.updateLastActivity(conversationId, message._id);
 
     res.status(201).json({
       success: true,
-      message
+      message,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -129,14 +129,14 @@ export const startConversation = async (req, res) => {
     if (!recipientId) {
       return res.status(400).json({
         success: false,
-        error: 'Recipient ID is required'
+        error: "Recipient ID is required",
       });
     }
 
     if (senderId.toString() === recipientId.toString()) {
       return res.status(400).json({
         success: false,
-        error: 'Cannot start conversation with yourself'
+        error: "Cannot start conversation with yourself",
       });
     }
 
@@ -145,20 +145,23 @@ export const startConversation = async (req, res) => {
     if (!recipient) {
       return res.status(404).json({
         success: false,
-        error: 'Recipient user not found'
+        error: "Recipient user not found",
       });
     }
 
-    const conversation = await Conversation.findOrCreateConversation(senderId, recipientId);
+    const conversation = await Conversation.findOrCreateConversation(
+      senderId,
+      recipientId
+    );
 
     res.json({
       success: true,
-      conversation
+      conversation,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -170,13 +173,13 @@ export const markMessagesAsRead = async (req, res) => {
 
     const conversation = await Conversation.findOne({
       _id: conversationId,
-      participants: userId
+      participants: userId,
     });
 
     if (!conversation) {
       return res.status(404).json({
         success: false,
-        error: 'Conversation not found or access denied'
+        error: "Conversation not found or access denied",
       });
     }
 
@@ -184,12 +187,12 @@ export const markMessagesAsRead = async (req, res) => {
 
     res.json({
       success: true,
-      modifiedCount: result.modifiedCount
+      modifiedCount: result.modifiedCount,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -201,12 +204,44 @@ export const getUnreadCount = async (req, res) => {
 
     res.json({
       success: true,
-      unreadCount
+      unreadCount,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
+    });
+  }
+};
+
+export const deleteConversation = async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    const userId = req.user.id;
+
+    const conversation = await Conversation.findOne({
+      _id: conversationId,
+      participants: userId,
+    });
+
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        error: "Conversation not found or access denied",
+      });
+    }
+
+    await Message.deleteMany({ conversationId });
+    await Conversation.findByIdAndDelete(conversationId);
+
+    res.json({
+      success: true,
+      message: "Conversation deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
     });
   }
 };

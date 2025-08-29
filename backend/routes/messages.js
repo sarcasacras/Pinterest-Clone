@@ -6,7 +6,8 @@ import {
   sendMessage,
   startConversation,
   markMessagesAsRead,
-  getUnreadCount
+  getUnreadCount,
+  deleteConversation
 } from '../controllers/messageController.js';
 
 const router = express.Router();
@@ -24,5 +25,7 @@ router.get('/conversations/:conversationId/messages', getConversationMessages);
 router.post('/conversations/:conversationId/messages', sendMessage);
 
 router.patch('/conversations/:conversationId/mark-read', markMessagesAsRead);
+
+router.delete('/conversations/:conversationId', deleteConversation);
 
 export default router;
