@@ -10,6 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usersApi } from "../../api/usersApi";
 import { useAuth } from "../../contexts/AuthContext";
 import { authApi } from "../../api/authApi";
+import { messagesApi } from "../../api/messagesApi";
 import { resizeImage } from "../../utils/imageUtils";
 
 export default function ProfilePage() {
@@ -84,6 +85,19 @@ export default function ProfilePage() {
       }
     },
   });
+
+  const startConversationMutation = useMutation({
+    mutationFn: (recipientId) => messagesApi.startConversation(recipientId),
+    onSuccess: () => {
+      navigate('/messages');
+    },
+  });
+
+  const handleMessageUser = () => {
+    if (user?._id) {
+      startConversationMutation.mutate(user._id);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -314,7 +328,7 @@ export default function ProfilePage() {
             )}
             {!isOwnProfile && (
               <>
-                <button className="btn-message">Message</button>
+                <button className="btn-message" onClick={handleMessageUser}>Message</button>
                 <button className="btn-follow">Follow</button>
               </>
             )}
