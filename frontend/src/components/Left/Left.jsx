@@ -6,11 +6,13 @@ import Notifications from '../Notifications/Notifications';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { notificationsApi } from '../../api/notificationsApi';
 import { messagesApi } from '../../api/messagesApi';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Left = () => {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const queryClient = useQueryClient();
+    const { user } = useAuth();
 
     const { data: notifications, isLoading, error } = useQuery({
         queryKey: ["notifications", currentPage],
@@ -25,7 +27,6 @@ const Left = () => {
     const markAllAsReadMutation = useMutation({
         mutationFn: notificationsApi.markAllAsRead,
         onSuccess: (data) => {
-            console.log('All notifications marked as read:', data);
             queryClient.invalidateQueries(['notifications']);
         },
     });
@@ -33,10 +34,10 @@ const Left = () => {
     const deleteAllNotificationsMutation = useMutation({
         mutationFn: notificationsApi.deleteAllNotifications,
         onSuccess: (data) => {
-            console.log('All notifications deleted:', data);
             queryClient.invalidateQueries(['notifications']);
         },
     });
+
 
     const toggleNotifications = () => {
         if (!isNotificationsOpen) {
@@ -93,11 +94,6 @@ const Left = () => {
                             <div className="notification-badge"></div>
                         )}
                     </div>
-                </Link>
-            </div>
-            <div className="bottom-icon">
-                <Link to="/">
-                    <Img src='icons/settings.svg' alt="settings" className='menu-item' />
                 </Link>
             </div>
         </div>

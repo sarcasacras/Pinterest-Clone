@@ -194,6 +194,36 @@
   background-color: #b92243;
 }
 
+.btn-logout {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-logout:hover {
+  background-color: #5a6268;
+}
+
+.btn-logout:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.btn-logout img {
+  width: 20px;
+  height: 20px;
+  filter: invert(1);
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -228,12 +258,14 @@
 }
 
 .profilePageGallery {
-  width: 70vw;
+  max-width: 80vw;
+  width: 100%;
 }
 
 .created-section,
 .saved-section {
-  width: 70vw;
+  max-width: 90vw;
+  width: 90%;
 }
 
 /* Profile editing styles */
@@ -383,4 +415,97 @@
 
 .btn-confirm:disabled:hover {
   background-color: #cccccc;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 16px 12px 90px 12px; /* Extra bottom padding for mobile navbar */
+    min-height: calc(100vh - 140px); /* Account for top nav + bottom nav */
+  }
+  
+  /* Mobile editing mode fixes */
+  .profile-header.editing {
+    margin: 0 -12px; /* Compensate for page padding */
+    padding: 16px;
+    width: calc(100vw - 24px); /* Account for reduced padding */
+    max-width: none;
+    box-sizing: border-box;
+  }
+  
+  .profile-name-input {
+    font-size: 24px; /* Smaller font for mobile */
+    padding: 6px 12px;
+    margin: 16px 0 0 0;
+    width: 100%;
+    max-width: 280px; /* Prevent overflow */
+    box-sizing: border-box;
+  }
+  
+  .profile-handle-input {
+    font-size: 14px;
+    padding: 6px 12px;
+    margin: 8px 0;
+    width: 100%;
+    max-width: 280px; /* Prevent overflow */
+    box-sizing: border-box;
+  }
+  
+  .input-group {
+    width: 100%;
+    max-width: 280px; /* Match input max-width */
+  }
+  
+  .input-group .validation-error-slot {
+    max-width: 260px; /* Slightly smaller than input */
+    font-size: 11px;
+    padding: 2px 6px;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  .edit-controls {
+    position: static; /* Remove absolute positioning on mobile */
+    margin-top: 16px;
+    justify-content: center;
+  }
+  
+  .btn-confirm,
+  .btn-cancel {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .btn-confirm img,
+  .btn-cancel img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .profile-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .btn-logout {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  
+  .btn-message,
+  .btn-follow {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+  
+  .created-section,
+  .saved-section {
+    width: 100%;
+  }
+  
+  .profilePageGallery {
+    width: auto;
+    max-width: none;
+  }
 }

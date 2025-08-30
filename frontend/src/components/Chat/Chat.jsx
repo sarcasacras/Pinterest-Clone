@@ -257,7 +257,7 @@ const Chat = ({ conversationId, conversation }) => {
                       </div>
                     ) : (
                       <div className="message-content">
-                        <p>{message.content}</p>
+                        <p className="message-paragraph">{message.content}</p>
                       </div>
                     )}
                     {isOwnMessage && openDropdown === message._id && (

@@ -16,7 +16,8 @@
   border-radius: 16px;
   width: 90%;
   max-width: 480px;
-  max-height: 80vh;
+  max-height: 90vh;
+  min-height: 400px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -58,12 +59,15 @@
 .modal-content {
   padding: 24px;
   flex: 1;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for flexbox overflow */
 }
 
 .boards-selection-container {
   margin-bottom: 24px;
-  max-height: 400px;
+  flex: 1; /* Allow this to grow and shrink */
+  min-height: 0; /* Allow shrinking below content size */
   overflow-y: auto;
 }
 
@@ -71,6 +75,10 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0; /* Prevent shrinking */
+  padding-top: 16px;
+  border-top: 1px solid #f1f1f1;
+  margin-top: 16px;
 }
 
 .create-board-btn {
@@ -194,4 +202,53 @@
 .close-button-image {
   width: 20px;
   height: 20px;
+}
+
+/* Responsive improvements for small screens */
+@media (max-height: 600px) {
+  .board-selector-modal {
+    max-height: 95vh;
+    min-height: 300px;
+  }
+  
+  .modal-header {
+    padding: 16px 24px;
+  }
+  
+  .modal-content {
+    padding: 16px 24px;
+  }
+  
+  .boards-selection-container {
+    margin-bottom: 16px;
+  }
+  
+  .modal-actions {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-height: 450px) {
+  .board-selector-modal {
+    min-height: 250px;
+  }
+  
+  .modal-header {
+    padding: 12px 20px;
+  }
+  
+  .modal-header h2 {
+    font-size: 18px;
+  }
+  
+  .modal-content {
+    padding: 12px 20px;
+  }
+  
+  .create-board-btn,
+  .confirm-btn {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
 }

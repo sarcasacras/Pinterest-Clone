@@ -166,7 +166,7 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   html.post-page-open {
     scrollbar-gutter: auto !important;
   }
@@ -176,17 +176,60 @@
   }
   
   .post-page {
-    padding: 0 10px;
-    margin-top: 20px;
+    padding: 0 8px;
+    margin-top: 10px;
+    margin-bottom: 80px; /* Extra space for mobile navbar */
   }
   
   .post-container {
     width: 100%;
-    max-width: calc(100vw - 20px);
+    max-width: calc(100vw - 16px);
+    height: auto;
+    min-height: 300px;
+    flex-direction: column;
   }
 
   .back-button-wrapper {
     display: none;
+  }
+  
+  .left {
+    max-height: 60vh;
+    min-height: 250px;
+  }
+  
+  .right {
+    padding: 16px;
+    min-height: 200px;
+  }
+  
+  .pin-title {
+    font-size: 20px;
+    margin: 0 0 0.5rem 0;
+  }
+  
+  .pin-description {
+    margin-bottom: 1rem;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .post-page {
+    padding: 0 8px;
+    margin-top: 8px;
+  }
+  
+  .post-container {
+    max-width: calc(100vw - 8px);
+  }
+  
+  .right {
+    padding: 12px;
+  }
+  
+  .pin-title {
+    font-size: 18px;
   }
 }
 

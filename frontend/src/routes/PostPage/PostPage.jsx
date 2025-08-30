@@ -120,7 +120,6 @@ export default function PostPage() {
     }
   };
 
-  console.log(pin);
 
   return (
     <div className="post-page">

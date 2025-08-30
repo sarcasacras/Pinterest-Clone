@@ -91,6 +91,18 @@ export default function ProfilePage() {
     },
   });
 
+  const logoutMutation = useMutation({
+    mutationFn: () => authApi.logout(),
+    onSuccess: () => {
+      setUser(null);
+      navigate('/');
+    },
+    onError: () => {
+      setUser(null);
+      navigate('/');
+    },
+  });
+
   const handleMessageUser = () => {
     if (user?._id) {
       startConversationMutation.mutate(user._id);
@@ -311,6 +323,18 @@ export default function ProfilePage() {
                   w={24}
                   onClick={handleShareProfile}
                 />
+                <button 
+                  className="btn-logout" 
+                  onClick={() => logoutMutation.mutate()}
+                  disabled={logoutMutation.isPending}
+                >
+                  <Img 
+                    src="/icons/log-out.svg" 
+                    alt="Logout" 
+                    w={20}
+                  />
+                  Logout
+                </button>
                 <Img
                   src="/icons/profile-edit.svg"
                   alt="More"

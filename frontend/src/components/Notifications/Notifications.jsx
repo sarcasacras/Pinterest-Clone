@@ -14,7 +14,6 @@ export default function Notifications({
   totalPages,
   onPageChange,
 }) {
-  console.log("Notifications data:", notifications);
 
   const notificationsRef = useRef(null);
 
@@ -36,7 +35,9 @@ export default function Notifications({
   }, [onClose]);
 
   return createPortal(
-    <div className="notifications-dropdown" ref={notificationsRef}>
+    <>
+      <div className="notifications-backdrop" onClick={onClose}></div>
+      <div className="notifications-dropdown" ref={notificationsRef}>
       {notifications?.notifications?.length > 0 && (
         <button className="delete-all-btn" onClick={onDeleteAll}>Delete all</button>
       )}
@@ -166,7 +167,8 @@ export default function Notifications({
           ))}
         </div>
       )}
-    </div>,
+      </div>
+    </>,
     document.body
   );
 }

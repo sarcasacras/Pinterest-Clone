@@ -7,10 +7,63 @@
   flex-direction: column;
 }
 
+.message-paragraph {
+  margin: 8px 4px;
+}
+
 @media (max-width: 768px) {
   .chat-container {
-    padding: 16px 12px;
+    padding: 12px 8px;
     max-width: 100%;
+    height: calc(100vh - 140px); /* Account for top nav + bottom nav */
+  }
+  
+  .chat-header {
+    padding-bottom: 12px;
+  }
+  
+  .chat-avatar {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+  }
+  
+  .chat-user-name {
+    font-size: 18px;
+  }
+  
+  .message-input-container {
+    padding-top: 12px;
+    gap: 8px;
+  }
+  
+  .message-input {
+    padding: 8px 45px 8px 10px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .send-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  .chat-emoji-picker-container {
+    right: 8px; /* Better positioning for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-container {
+    padding: 8px 8px;
+    height: calc(100vh - 150px);
+  }
+  
+  .message-input {
+    padding: 6px 40px 6px 8px;
+  }
+  
+  .send-button {
+    padding: 6px 12px;
   }
 }
 
@@ -86,8 +139,15 @@
 
 @media (max-width: 768px) {
   .message-item {
-    max-width: 50%;
+    max-width: 65%; /* Increased from 50% for better mobile UX */
     padding: 0 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .message-item {
+    max-width: 65%; /* Even more space on very small screens */
+    padding: 0 6px;
   }
 }
 
@@ -136,7 +196,7 @@
   color: white;
   float: right;
   clear: both;
-  text-align: right;
+  text-align: left;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
 }

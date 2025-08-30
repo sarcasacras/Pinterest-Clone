@@ -176,3 +176,71 @@
 .page-number.active:hover {
   background-color: #b92243;
 }
+
+.notifications-backdrop {
+  display: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .notifications-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    display: block;
+  }
+
+  .notifications-content {
+    margin-top: 30px;
+  }
+  .notifications-dropdown {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    max-width: 400px;
+    height: 70vh;
+    max-height: 500px;
+    z-index: 10002;
+  }
+  
+  .delete-all-btn {
+    top: 8px;
+    right: 8px;
+    position: absolute;
+  }
+  
+  .notification-comment-content {
+    font-size: 13px;
+  }
+  
+  .notification-comment-nickname {
+    font-size: 13px;
+  }
+  
+  .notification-like-right {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notifications-dropdown {
+    width: 80vw;
+    height: 75vh;
+    padding: 12px;
+  }
+  
+  .notification-comment {
+    gap: 8px;
+  }
+  
+  .notification-comment-avatar {
+    width: 28px;
+    height: 28px;
+  }
+}

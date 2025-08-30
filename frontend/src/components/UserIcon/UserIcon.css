@@ -74,9 +74,3 @@ button.userOption {
 .avatar-link {
   display: flex;
 }
-
-@media (max-width: 385px) {
-  .user {
-    display: none;
-  }
-}

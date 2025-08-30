@@ -15,3 +15,33 @@
   display: flex;
   flex-direction: column;
 }
+
+.mobile-login-btn {
+  background-color: #ff3e68;
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  display: none;
+}
+
+.mobile-login-btn:hover {
+  background-color: #e6395d;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .topContainer {
+    padding: 8px 16px;
+    gap: 12px;
+    border-radius: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mobile-login-btn {
+    display: block;
+  }
+}
