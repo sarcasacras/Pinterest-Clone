@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Notifications from '../Notifications/Notifications';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { notificationsApi } from '../../api/notificationsApi';
+import { messagesApi } from '../../api/messagesApi';
 
 const Left = () => {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -14,6 +15,11 @@ const Left = () => {
     const { data: notifications, isLoading, error } = useQuery({
         queryKey: ["notifications", currentPage],
         queryFn: () => notificationsApi.getNotifications({ page: currentPage, limit: 6 }),
+    });
+
+    const { data: unreadCount } = useQuery({
+        queryKey: ["unread-messages-count"],
+        queryFn: () => messagesApi.getUnreadCount(),
     });
 
     const markAllAsReadMutation = useMutation({
@@ -81,7 +87,12 @@ const Left = () => {
                     )}
                 </button>
                 <Link to="/messages">
-                    <Img src='icons/message.svg' alt="messages" className='menu-item' />
+                    <div className="notification-icon-wrapper">
+                        <Img src='icons/message.svg' alt="messages" className='menu-item' />
+                        {unreadCount?.unreadCount > 0 && (
+                            <div className="notification-badge"></div>
+                        )}
+                    </div>
                 </Link>
             </div>
             <div className="bottom-icon">

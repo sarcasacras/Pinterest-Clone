@@ -4,6 +4,7 @@ import { messagesApi } from "../../api/messagesApi";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState, useRef, useEffect } from "react";
 import EmojiPicker from "emoji-picker-react";
+import Img from "../Image/Image";
 
 const Chat = ({ conversationId, conversation }) => {
   const { user } = useAuth();
@@ -67,6 +68,19 @@ const Chat = ({ conversationId, conversation }) => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (conversationId) {
+      messagesApi.markMessagesAsRead(conversationId).then(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["conversations"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["unread-messages-count"],
+        });
+      });
+    }
+  }, [conversationId, queryClient, messages]);
+
   const handleSendMessage = () => {
     if (messageInput.trim()) {
       sendMessageMutation.mutate(messageInput);
@@ -122,7 +136,14 @@ const Chat = ({ conversationId, conversation }) => {
               );
             })
           ) : (
-            <p>No messages yet</p>
+            <div className="empty-messages">
+              <Img
+                src="/icons/sad.svg"
+                alt="No messages"
+                className="empty-icon"
+              />
+              <p className="empty-text">No messages yet</p>
+            </div>
           )}
           <div ref={messagesEndRef} className="messages-end" />
         </div>
