@@ -7,6 +7,8 @@ import {
   startConversation,
   markMessagesAsRead,
   getUnreadCount,
+  deleteMessage,
+  editMessage,
   deleteConversation
 } from '../controllers/messageController.js';
 
@@ -25,6 +27,10 @@ router.get('/conversations/:conversationId/messages', getConversationMessages);
 router.post('/conversations/:conversationId/messages', sendMessage);
 
 router.patch('/conversations/:conversationId/mark-read', markMessagesAsRead);
+
+router.patch('/messages/:messageId', editMessage);
+
+router.delete('/messages/:messageId', deleteMessage);
 
 router.delete('/conversations/:conversationId', deleteConversation);
 

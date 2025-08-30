@@ -214,6 +214,83 @@ export const getUnreadCount = async (req, res) => {
   }
 };
 
+export const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.user.id;
+
+    // Find the message and verify the user is the sender
+    const message = await Message.findOne({
+      _id: messageId,
+      sender: userId,
+    });
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        error: "Message not found or access denied",
+      });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+
+    res.json({
+      success: true,
+      message: "Message deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+export const editMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const { content } = req.body;
+    const userId = req.user.id;
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "Message content is required",
+      });
+    }
+
+    // Find the message and verify the user is the sender
+    const message = await Message.findOne({
+      _id: messageId,
+      sender: userId,
+    });
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        error: "Message not found or access denied",
+      });
+    }
+
+    // Update the message content
+    const updatedMessage = await Message.findByIdAndUpdate(
+      messageId,
+      { content: content.trim() },
+      { new: true }
+    ).populate("sender", "username displayName avatar");
+
+    res.json({
+      success: true,
+      message: updatedMessage,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 export const deleteConversation = async (req, res) => {
   try {
     const { conversationId } = req.params;

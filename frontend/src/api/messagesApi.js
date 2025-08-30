@@ -51,4 +51,16 @@ export const messagesApi = {
     apiClient
       .delete(`/messages/conversations/${conversationId}`)
       .then((res) => res.data),
+
+  // Delete a message
+  deleteMessage: (messageId) =>
+    apiClient
+      .delete(`/messages/messages/${messageId}`)
+      .then((res) => res.data),
+
+  // Edit a message
+  editMessage: (messageId, content) =>
+    apiClient
+      .patch(`/messages/messages/${messageId}`, { content })
+      .then((res) => res.data),
 };

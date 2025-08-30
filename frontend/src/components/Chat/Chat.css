@@ -2,9 +2,16 @@
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
-  height: 80vh;
+  height: calc(100vh - 100px);
   display: flex;
   flex-direction: column;
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    padding: 16px 12px;
+    max-width: 100%;
+  }
 }
 
 .chat-header {
@@ -68,11 +75,60 @@
 }
 
 .message-item {
+  position: relative;
   margin-bottom: 4px;
   padding: 0 10px;
   border-radius: 12px;
   display: inline-block;
-  max-width: 70%;
+  max-width: 65%;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .message-item {
+    max-width: 50%;
+    padding: 0 8px;
+  }
+}
+
+.message-content {
+  transition: all 0.3s ease;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.message-content.editing-out {
+  animation: messageSlideOut 0.3s ease forwards;
+}
+
+.message-content.entering {
+  animation: messageSlideIn 0.3s ease forwards;
+}
+
+@keyframes messageSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.95);
+  }
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.message-item:has(.message-dropdown) {
+  z-index: 10000;
 }
 
 .own-message {
@@ -81,6 +137,32 @@
   float: right;
   clear: both;
   text-align: right;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.own-message:hover {
+  background: #e6395d;
+}
+
+.own-message:has(.edit-message-container) {
+  background: #ff3e68;
+  transform: none;
+  animation: messageEditPulse 0.3s ease-in-out;
+}
+
+.own-message:has(.edit-message-container):hover {
+  background: #ff3e68;
+  transform: none;
+}
+
+@keyframes messageEditPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 .other-message {
@@ -167,10 +249,6 @@
   transition: background-color 0.2s ease;
 }
 
-.chat-emoji-button:hover {
-  background-color: #f5f5f5;
-}
-
 .chat-emoji-picker-container {
   position: absolute;
   bottom: 100%;
@@ -200,4 +278,185 @@
   color: #666;
   margin: 0;
   font-weight: 500;
+}
+
+.message-dropdown {
+  position: absolute;
+  top: 0;
+  right: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  z-index: 9999;
+  min-width: 80px;
+  margin-right: 8px;
+  opacity: 0;
+  transform: translateX(10px) scale(0.9);
+  animation: dropdownAppear 0.2s ease forwards;
+}
+
+@keyframes dropdownAppear {
+  from {
+    opacity: 0;
+    transform: translateX(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.dropdown-option {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-option:hover {
+  background-color: #f5f5f5;
+}
+
+.dropdown-option:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.dropdown-option:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.edit-message-container {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 0;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: editContainerAppear 0.3s ease forwards;
+}
+
+.edit-message-container.exiting {
+  animation: editContainerExit 0.2s ease forwards;
+}
+
+@keyframes editContainerAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes editContainerExit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9) translateX(10px);
+  }
+}
+
+.edit-message-input {
+  width: 80%;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  color: inherit;
+  font-size: 14px;
+  padding: 6px;
+  outline: none;
+  margin: 2px;
+  height: 24px;
+  line-height: 20px;
+  opacity: 0;
+  transform: translateX(-20px);
+  animation: inputSlideIn 0.3s ease 0.05s forwards;
+}
+
+@keyframes inputSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 6px;
+  margin: 2px;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-buttons .save-edit-button {
+  animation-delay: 0.1s;
+  opacity: 0;
+  animation: buttonAppear 0.3s ease forwards;
+}
+
+.edit-buttons .cancel-edit-button {
+  animation-delay: 0.15s;
+  opacity: 0;
+  animation: buttonAppear 0.3s ease forwards;
+}
+
+@keyframes buttonAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.save-edit-button,
+.cancel-edit-button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  min-width: 50px;
+  transition: all 0.2s ease;
+}
+
+.save-edit-button {
+  background: white;
+  color: #333;
+  border: none;
+}
+
+.save-edit-button:hover {
+  background: #dcdcdc;
+  transform: translateY(-1px) scale(1.05);
+}
+
+.cancel-edit-button {
+  background: white;
+  color: #333;
+  border: none;
+}
+
+.cancel-edit-button:hover {
+  background: #dcdcdc;
+  transform: translateY(-1px) scale(1.05);
 }

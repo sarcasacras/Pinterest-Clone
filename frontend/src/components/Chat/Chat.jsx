@@ -5,11 +5,17 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useState, useRef, useEffect } from "react";
 import EmojiPicker from "emoji-picker-react";
 import Img from "../Image/Image";
+import CustomAlert from "../CustomAlert/CustomAlert";
 
 const Chat = ({ conversationId, conversation }) => {
   const { user } = useAuth();
   const [messageInput, setMessageInput] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [deleteAlert, setDeleteAlert] = useState(null);
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editContent, setEditContent] = useState("");
+  const [exitingEditMode, setExitingEditMode] = useState(null);
   const queryClient = useQueryClient();
   const messagesEndRef = useRef(null);
   const emojiPickerRef = useRef(null);
@@ -41,6 +47,26 @@ const Chat = ({ conversationId, conversation }) => {
     };
   }, [showEmojiPicker]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if click is outside the message items
+      if (!event.target.closest('.own-message')) {
+        setOpenDropdown(null);
+      }
+    };
+
+    if (openDropdown) {
+      // Add a small delay to avoid immediate closure
+      setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 10);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openDropdown]);
+
   const {
     data: messages,
     isLoading,
@@ -57,6 +83,29 @@ const Chat = ({ conversationId, conversation }) => {
       queryClient.invalidateQueries({
         queryKey: ["conversation-messages", conversationId],
       });
+    },
+  });
+
+  const deleteMessageMutation = useMutation({
+    mutationFn: (messageId) => messagesApi.deleteMessage(messageId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["conversation-messages", conversationId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["conversations"],
+      });
+    },
+  });
+
+  const editMessageMutation = useMutation({
+    mutationFn: ({ messageId, content }) => messagesApi.editMessage(messageId, content),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["conversation-messages", conversationId],
+      });
+      setEditingMessage(null);
+      setEditContent("");
     },
   });
 
@@ -86,6 +135,50 @@ const Chat = ({ conversationId, conversation }) => {
       sendMessageMutation.mutate(messageInput);
       setMessageInput("");
     }
+  };
+
+  const handleDeleteMessage = (messageId) => {
+    setDeleteAlert({ messageId });
+    setOpenDropdown(null);
+  };
+
+  const confirmDelete = () => {
+    if (deleteAlert?.messageId) {
+      deleteMessageMutation.mutate(deleteAlert.messageId);
+    }
+    setDeleteAlert(null);
+  };
+
+  const cancelDelete = () => {
+    setDeleteAlert(null);
+  };
+
+  const handleEditMessage = (message) => {
+    setEditingMessage(message._id);
+    setEditContent(message.content);
+    setOpenDropdown(null);
+  };
+
+  const handleSaveEdit = () => {
+    if (editContent.trim() && editingMessage) {
+      setExitingEditMode(editingMessage);
+      setTimeout(() => {
+        editMessageMutation.mutate({
+          messageId: editingMessage,
+          content: editContent.trim(),
+        });
+        setExitingEditMode(null);
+      }, 200);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setExitingEditMode(editingMessage);
+    setTimeout(() => {
+      setEditingMessage(null);
+      setEditContent("");
+      setExitingEditMode(null);
+    }, 200);
   };
 
   return (
@@ -129,8 +222,66 @@ const Chat = ({ conversationId, conversation }) => {
                     className={`message-item ${
                       isOwnMessage ? "own-message" : "other-message"
                     } ${!showSender ? "grouped-message" : ""}`}
+                    onClick={() => isOwnMessage && !editingMessage && setOpenDropdown(openDropdown === message._id ? null : message._id)}
                   >
-                    <p>{message.content}</p>
+                    {editingMessage === message._id ? (
+                      <div className={`edit-message-container ${exitingEditMode === message._id ? 'exiting' : ''}`}>
+                        <input
+                          type="text"
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              handleSaveEdit();
+                            } else if (e.key === 'Escape') {
+                              handleCancelEdit();
+                            }
+                          }}
+                          className="edit-message-input"
+                          autoFocus
+                        />
+                        <div className="edit-buttons">
+                          <button 
+                            className="save-edit-button"
+                            onClick={handleSaveEdit}
+                          >
+                            Save
+                          </button>
+                          <button 
+                            className="cancel-edit-button"
+                            onClick={handleCancelEdit}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="message-content">
+                        <p>{message.content}</p>
+                      </div>
+                    )}
+                    {isOwnMessage && openDropdown === message._id && (
+                      <div className="message-dropdown">
+                        <button 
+                          className="dropdown-option"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditMessage(message);
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          className="dropdown-option"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteMessage(message._id);
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -176,6 +327,15 @@ const Chat = ({ conversationId, conversation }) => {
           </div>
         )}
       </div>
+
+      {deleteAlert && (
+        <CustomAlert
+          title="Delete Message"
+          message="Are you sure you want to delete this message? This action cannot be undone."
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
+      )}
     </div>
   );
 };
