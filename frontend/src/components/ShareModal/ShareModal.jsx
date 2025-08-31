@@ -4,6 +4,7 @@ import Img from "../Image/Image";
 
 export default function ShareModal({ isOpen, onClose, pinId, pinSlug, profileUsername }) {
   const [copySuccess, setCopySuccess] = useState(false);
+  const [copyError, setCopyError] = useState(false);
 
   if (!isOpen) return null;
 
@@ -20,7 +21,7 @@ export default function ShareModal({ isOpen, onClose, pinId, pinSlug, profileUse
       await navigator.clipboard.writeText(shareUrl);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
+    } catch {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = shareUrl;
@@ -33,6 +34,8 @@ export default function ShareModal({ isOpen, onClose, pinId, pinSlug, profileUse
         setTimeout(() => setCopySuccess(false), 2000);
       } catch (fallbackErr) {
         console.error('Failed to copy to clipboard', fallbackErr);
+        setCopyError(true);
+        setTimeout(() => setCopyError(false), 3000);
       }
       document.body.removeChild(textArea);
     }
@@ -74,6 +77,9 @@ export default function ShareModal({ isOpen, onClose, pinId, pinSlug, profileUse
               </div>
               <p className={`copy-success-message ${copySuccess ? 'visible' : ''}`}>
                 Link copied to clipboard!
+              </p>
+              <p className={`copy-error-message ${copyError ? 'visible' : ''}`}>
+                Failed to copy link. Please copy manually.
               </p>
             </div>
           </div>

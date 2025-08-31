@@ -4,6 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { boardsApi } from "../../api/boardsApi";
 import { pinsApi } from "../../api/pinsApi";
 import Collections from "../Collections/Collections";
+import CustomError from "../CustomError/CustomError";
 import "./BoardSelector.css";
 import Img from "../Image/Image";
 
@@ -28,9 +29,10 @@ export default function BoardSelector({
     description: ""
   });
   const [tempSelectedBoard, setTempSelectedBoard] = useState(selectedBoard);
+  const [error, setError] = useState(null);
 
   // Prefetch boards when modal opens
-  const { data: boards } = useQuery({
+  useQuery({
     queryKey: ["boards", userId],
     queryFn: () => boardsApi.getBoardsByUser(userId),
     enabled: isOpen && !!userId,
@@ -56,8 +58,8 @@ export default function BoardSelector({
         setShowCreateForm(false);
       }
     },
-    onError: (error) => {
-      alert("Error creating board");
+    onError: () => {
+      setError("Error creating board");
     },
   });
 
@@ -70,7 +72,7 @@ export default function BoardSelector({
       onClose();
     },
     onError: (error) => {
-      alert(`Failed to save pin: ${error.response?.data?.error || error.message}`);
+      setError(`Failed to save pin: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -111,7 +113,14 @@ export default function BoardSelector({
   if (!isOpen) return null;
 
   return (
-    <div className="board-selector-overlay" onClick={onClose}>
+    <>
+      {error && (
+        <CustomError 
+          message={error} 
+          close={() => setError(null)} 
+        />
+      )}
+      <div className="board-selector-overlay" onClick={onClose}>
       <div className="board-selector-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>{mode === "save" ? "Save to board" : "Choose board"}</h2>
@@ -208,5 +217,6 @@ export default function BoardSelector({
         </div>
       </div>
     </div>
+    </>
   );
 }

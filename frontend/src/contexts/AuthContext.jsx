@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authApi.getProfile();
       setUser(response.user);
-    } catch (error) {
+    } catch {
       setUser(null);
     } finally {
       setLoading(false);

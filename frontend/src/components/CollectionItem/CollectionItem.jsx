@@ -17,12 +17,6 @@ export default function CollectionItem({
   canDelete = false,
 }) {
 
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = src;
-    link.download = `${name || "image"}.jpg`;
-    link.click()
-  }
 
   return (
     <div
@@ -37,15 +31,7 @@ export default function CollectionItem({
         {selectionMode ? (
           <div className="selection-overlay"></div>
         ) : (
-          <>
-            <Link to={`/board/${boardId}`} className="overlay"></Link>
-            <div className="overlayButtons">
-              <button className="overlayButton">
-                <Img src="/icons/menu.svg" alt="" className="buttonImage" />
-              </button>
-              
-            </div>
-          </>
+          <Link to={`/board/${boardId}`} className="overlay"></Link>
         )}
 
         {canDelete && (

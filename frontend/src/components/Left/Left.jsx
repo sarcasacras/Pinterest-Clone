@@ -22,18 +22,24 @@ const Left = () => {
     const { data: unreadCount } = useQuery({
         queryKey: ["unread-messages-count"],
         queryFn: () => messagesApi.getUnreadCount(),
+        staleTime: 5 * 60 * 1000, // 5 minutes - consider data fresh for 5 minutes
+        cacheTime: 10 * 60 * 1000, // 10 minutes - keep in cache for 10 minutes
+        refetchOnWindowFocus: false, // Don't refetch on window focus
+        refetchOnReconnect: false, // Don't refetch on network reconnect
+        refetchInterval: 2 * 60 * 1000, // Refetch every 2 minutes automatically
+        enabled: !!user, // Only run query if user is logged in
     });
 
     const markAllAsReadMutation = useMutation({
         mutationFn: notificationsApi.markAllAsRead,
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(['notifications']);
         },
     });
 
     const deleteAllNotificationsMutation = useMutation({
         mutationFn: notificationsApi.deleteAllNotifications,
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries(['notifications']);
         },
     });

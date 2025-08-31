@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const [editedUsername, setEditedUsername] = useState("");
   const [editedDisplayName, setEditedDisplayName] = useState("");
   const [profileUpdateError, setProfileUpdateError] = useState(null);
+  const [avatarUpdateError, setAvatarUpdateError] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const authData = useAuth();
   const { user: currentUser, setUser } = authData;
@@ -45,7 +46,7 @@ export default function ProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["user", username] });
     },
     onError: (error) => {
-      alert("Failed to update avatar");
+      setAvatarUpdateError(`Failed to update avatar: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -146,7 +147,7 @@ export default function ProfilePage() {
     try {
       const resizedFile = await resizeImage(file, 400, 400, 0.9);
       updateAvatarMutation.mutate(resizedFile);
-    } catch (error) {
+    } catch {
       updateAvatarMutation.mutate(file);
     }
   };
@@ -398,6 +399,13 @@ export default function ProfilePage() {
         <CustomError 
           message={profileUpdateError} 
           close={() => setProfileUpdateError(null)} 
+        />
+      )}
+
+      {avatarUpdateError && (
+        <CustomError 
+          message={avatarUpdateError} 
+          close={() => setAvatarUpdateError(null)} 
         />
       )}
     </div>

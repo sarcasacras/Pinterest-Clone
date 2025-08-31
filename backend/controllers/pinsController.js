@@ -166,7 +166,31 @@ export const updatePin = async (req, res) => {
       return res.status(403).json({ error: "Access denied" });
     }
 
-    let updateData = { ...req.body };
+    // Build update data, preserving existing fields if not provided
+    let updateData = {};
+    
+    // Only update fields that are provided in the request
+    if (req.body.title !== undefined) {
+      const title = req.body.title.trim();
+      if (title.length === 0) {
+        return res.status(400).json({ error: "Title cannot be empty" });
+      }
+      updateData.title = title;
+    }
+    if (req.body.description !== undefined) updateData.description = req.body.description;
+    if (req.body.tags !== undefined) {
+      updateData.tags = req.body.tags.split(",").map(tag => tag.trim()).filter(tag => tag);
+    }
+    if (req.body.slug !== undefined) {
+      const slug = req.body.slug.trim();
+      if (slug && slug !== pin.slug) {
+        const existingSlugPin = await Pin.findOne({ slug, _id: { $ne: req.params.id } });
+        if (existingSlugPin) {
+          return res.status(400).json({ error: "There is another pin with this slug" });
+        }
+      }
+      updateData.slug = slug || null;
+    }
 
     if (req.file) {
       // Delete old image from ImageKit if it exists
@@ -327,16 +351,6 @@ export const savePinToBoard = async (req, res) => {
 
     board.pins.push(pinId);
     await board.save();
-
-    if (pin.owner._id.toString() !== userId.toString()) {
-      await Notification.createNotification({
-        recipient: pin.owner._id,
-        sender: userId,
-        type: 'save',
-        pin: pin._id,
-        board: board._id
-      });
-    }
 
     res.json({
       message: "Pin saved to board successfully",

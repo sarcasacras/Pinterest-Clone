@@ -30,7 +30,7 @@ export default function CreatePost() {
   const [error, setError] = useState(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
-  const { data: boards } = useQuery({
+  useQuery({
     queryKey: ["boards", user?._id],
     queryFn: () => boardsApi.getBoardsByUser(user._id),
     enabled: !!user?._id,
@@ -42,8 +42,8 @@ export default function CreatePost() {
       navigate("/");
     },
     onError: (error) => {
-      console.log(error);
-      setError(error.response.data.error);
+      const errorMessage = error.response?.data?.error || error.message || 'Failed to create pin';
+      setError(errorMessage);
       setIsError(true);
     },
   });

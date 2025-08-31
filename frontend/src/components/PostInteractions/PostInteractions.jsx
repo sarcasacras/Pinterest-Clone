@@ -31,7 +31,7 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
       setOptimisticLiked(isLiked);
       setOptimisticCount(pin.likes?.length || 0);
     }
-  }, [pin?._id]);
+  }, [pin?._id, isLiked, pin]);
 
   const likeMutation = useMutation({
     mutationFn: () => pinsApi.toggleLike(pin._id),
@@ -41,7 +41,7 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
       }
       queryClient.invalidateQueries({ queryKey: ["pins"] });
     },
-    onError: (err) => {
+    onError: () => {
       setOptimisticLiked(!optimisticLiked);
       setOptimisticCount(optimisticLiked ? optimisticCount + 1 : optimisticCount - 1);
     },
@@ -81,7 +81,6 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
   const updateImageMutation = useMutation({
     mutationFn: (imageFile) => pinsApi.updatePinImage(pin._id, imageFile),
     onSuccess: (data) => {
-      console.log("Update response:", data);
       if (data?.pin) {
         queryClient.setQueryData(["pin", pin._id], data.pin);
       }
@@ -90,8 +89,8 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
       setIsImageEditorOpen(false);
     },
     onError: (err) => {
-      console.error("Failed to update pin image:", err);
-      setImageUpdateError(`Failed to update image: ${err.response?.data?.error || err.message}`);
+      const errorMessage = err.response?.data?.error || err.message || "Failed to update image. Please try again.";
+      setImageUpdateError(errorMessage);
     },
   });
 

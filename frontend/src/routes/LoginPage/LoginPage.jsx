@@ -1,5 +1,6 @@
 import "./LoginPage.css";
 import Img from "../../components/Image/Image";
+import CustomError from "../../components/CustomError/CustomError";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
@@ -173,7 +174,12 @@ export default function LoginPage() {
           </>
         )}
 
-        {error && <p className="error-message">{error}</p>}
+        {error && (
+          <CustomError
+            message={error}
+            close={() => setError("")}
+          />
+        )}
       </div>
     </div>
   );

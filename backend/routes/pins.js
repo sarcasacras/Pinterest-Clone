@@ -54,8 +54,7 @@ router.put("/:id",
   authenticateToken, 
   validateIdOrSlug('id'), 
   upload.single('image'), 
-  validateContent, 
-  validateFileUpload, 
+  // Skip content validation for updates - handled in controller
   handleValidationErrors, 
   updatePin
 );

@@ -18,6 +18,7 @@ export default function PostPage() {
   const queryClient = useQueryClient();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   const {
     data: pin,
@@ -85,7 +86,7 @@ export default function PostPage() {
       navigate("/");
     },
     onError: (error) => {
-      alert("Failed to delete pin");
+      setDeleteError(`Failed to delete pin: ${error.response?.data?.error || error.message}`);
     },
   });
 
@@ -195,6 +196,13 @@ export default function PostPage() {
           message="Are you sure you want to delete this pin? This action cannot be undone."
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
+        />
+      )}
+
+      {deleteError && (
+        <CustomError
+          message={deleteError}
+          close={() => setDeleteError(null)}
         />
       )}
     </div>

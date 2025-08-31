@@ -60,7 +60,7 @@ export const useImagesLoaded = (pins) => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [pins.length]);
+  }, [pins]);
 
   return { imagesLoaded, loadedCount, totalImages: pins?.length || 0 };
 };

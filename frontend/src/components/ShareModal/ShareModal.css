@@ -132,6 +132,20 @@
   opacity: 1;
 }
 
+.copy-error-message {
+  font-size: 14px;
+  color: #dc3545;
+  margin: 0;
+  font-weight: 500;
+  opacity: 0;
+  height: 20px;
+  transition: opacity 0.2s ease;
+}
+
+.copy-error-message.visible {
+  opacity: 1;
+}
+
 .close-button-image {
   width: 20px;
   height: 20px;

@@ -12,7 +12,6 @@ import { pinsApi } from "../../api/pinsApi";
 
 export default function GalleryImg({
   item,
-  variant,
   boardId,
   onRemoveFromBoard,
   canRemoveFromBoard,

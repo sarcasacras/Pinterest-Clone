@@ -211,12 +211,21 @@ const interactionOnlyLimiter = (req, res, next) => {
   return interactionLimiter(req, res, next);
 };
 
-// Message rate limiter
+// Message rate limiter for write operations only
 const messageLimiter = createRateLimiter(
   60 * 1000, // 1 minute
   15, // 15 messages per minute per IP (increased from 10)
   'Too many messages sent, please wait before sending more'
 );
+
+// Middleware to apply message limits only to non-GET requests
+const messageOnlyLimiter = (req, res, next) => {
+  // Skip message limiting for GET requests (they use readOnlyLimiter)
+  if (req.method === 'GET') {
+    return next();
+  }
+  return messageLimiter(req, res, next);
+};
 
 // Apply read-only rate limiting to all routes (generous for browsing)
 app.use(readOnlyLimiter);
@@ -231,7 +240,7 @@ app.use("/boards", uploadOnlyLimiter, boardsRouter);
 app.use('/auth', authLimiter, authRouter);
 app.use("/users", writeOperationsLimiter, usersRouter);
 app.use("/notifications", writeOperationsLimiter, notificationsRouter);
-app.use("/messages", messageLimiter, messagesRouter);
+app.use("/messages", messageOnlyLimiter, messagesRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
