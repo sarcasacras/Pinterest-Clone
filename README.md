@@ -196,8 +196,7 @@ Visit: **http://localhost:5173**
 
 ## 📱 Screenshots
 
-<!-- Add your actual screenshots here -->
-*Screenshots will be added after deployment*
+*Coming Soon!*
 
 ### **Key Pages:**
 - **Home Feed** - Infinite scroll of pins
