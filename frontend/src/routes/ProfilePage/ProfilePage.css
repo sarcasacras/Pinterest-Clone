@@ -78,12 +78,6 @@
   white-space: nowrap;
 }
 
-.profile-stats {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
-  font-weight: 600;
-}
 
 .profile-buttons {
   display: flex;
@@ -179,20 +173,6 @@
   background-color: #d0d0d0;
 }
 
-.btn-follow {
-  background-color: #ff3e68;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 20px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.btn-follow:hover {
-  background-color: #b92243;
-}
 
 .btn-logout {
   background-color: #6c757d;
@@ -493,8 +473,7 @@
     font-size: 14px;
   }
   
-  .btn-message,
-  .btn-follow {
+  .btn-message {
     padding: 10px 16px;
     font-size: 14px;
   }

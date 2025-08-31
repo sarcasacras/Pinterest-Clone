@@ -304,13 +304,6 @@ export default function ProfilePage() {
         ) : (
           <p className="profile-handle">@{user.username}</p>
         )}
-        {!isEditing && (
-          <div className="profile-stats">
-            <span>{user.followers?.length || 0} followers</span>
-            <span>•</span>
-            <span>{user.following?.length || 0} following</span>
-          </div>
-        )}
 
         {!isEditing && (
           <div className="profile-buttons">
@@ -345,10 +338,7 @@ export default function ProfilePage() {
               </>
             )}
             {!isOwnProfile && (
-              <>
-                <button className="btn-message" onClick={handleMessageUser}>Message</button>
-                <button className="btn-follow">Follow</button>
-              </>
+              <button className="btn-message" onClick={handleMessageUser}>Message</button>
             )}
           </div>
         )}

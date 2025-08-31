@@ -2,7 +2,7 @@ import "./Comments.css";
 import Img from "../Image/Image";
 import EmojiPicker from "emoji-picker-react";
 import { useState, useRef, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router";
+import { useParams, useNavigate, useLocation, Link } from "react-router";
 import { commentsApi } from "../../api/commentsApi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../contexts/AuthContext";
@@ -115,17 +115,21 @@ export default function Comments({ pin }) {
           pin.comments.map((comment) => (
             <div className="comment" key={comment._id}>
               <div className="comment-left">
-                <Img
-                  src={comment.author?.avatar || "/general/noavatar.svg"}
-                  alt="User Avatar"
-                  className="comment-avatar"
-                />
+                <Link to={`/${comment.author?.username || ''}`} className="comment-author-link">
+                  <Img
+                    src={comment.author?.avatar || "/general/noavatar.svg"}
+                    alt="User Avatar"
+                    className="comment-avatar"
+                  />
+                </Link>
               </div>
               <div className="comment-right">
                 <div className="comment-nickname">
-                  {comment.author?.displayName ||
-                    comment.author?.username ||
-                    "Unknown User"}
+                  <Link to={`/${comment.author?.username || ''}`} className="comment-nickname-link">
+                    {comment.author?.displayName ||
+                      comment.author?.username ||
+                      "Unknown User"}
+                  </Link>
                 </div>
                 <div className="comment-content">{comment.content}</div>
                 <div className="comment-timestamp">

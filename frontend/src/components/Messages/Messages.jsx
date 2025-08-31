@@ -3,6 +3,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router";
 import { messagesApi } from "../../api/messagesApi";
 import Img from "../Image/Image";
+import Loader from "../Loader/Loader";
 import "./Messages.css";
 
 const formatTimeAgo = (dateString) => {
@@ -48,7 +49,7 @@ const Messages = ({ conversations, isLoading, error }) => {
   return (
     <div className="messages-container">
       <h1 className="messages-title">Messages</h1>
-      {isLoading && <p>Loading conversations...</p>}
+      {isLoading && <Loader text="Loading conversations..." />}
       {error && <p>Error: {error.message}</p>}
       {!isLoading && !error && (
         <div className="conversations-list">

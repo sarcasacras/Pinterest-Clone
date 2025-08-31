@@ -132,25 +132,27 @@ export default function PostInteractions({ pin, onDeletePin, isOwner, isDeleting
           id="shareButton"
           onClick={handleShareClick}
         />
-        <div className="moreButtonContainer" ref={dropdownRef}>
-          <Img
-            src="/icons/more.svg"
-            alt="More"
-            className="buttonIcon"
-            id="moreButton"
-            onClick={handleMoreClick}
-          />
-          {isOpen && isOwner && (
-            <div className="dropdown">
-              <button onClick={handleEditImageClick}>
-                Edit Image
-              </button>
-              <button onClick={onDeletePin} disabled={isDeleting}>
-                {isDeleting ? "Deleting..." : "Delete Pin"}
-              </button>
-            </div>
-          )}
-        </div>
+        {isOwner && (
+          <div className="moreButtonContainer" ref={dropdownRef}>
+            <Img
+              src="/icons/more.svg"
+              alt="More"
+              className="buttonIcon"
+              id="moreButton"
+              onClick={handleMoreClick}
+            />
+            {isOpen && (
+              <div className="dropdown">
+                <button onClick={handleEditImageClick}>
+                  Edit Image
+                </button>
+                <button onClick={onDeletePin} disabled={isDeleting}>
+                  {isDeleting ? "Deleting..." : "Delete Pin"}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <div className="saveButtonDiv">
         <button className="savePost" onClick={handleSaveClick}>Save</button>

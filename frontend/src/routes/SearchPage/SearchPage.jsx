@@ -1,5 +1,6 @@
 import Gallery from "../../components/Gallery/Gallery";
 import CustomError from "../../components/CustomError/CustomError";
+import Loader from "../../components/Loader/Loader";
 import { useSearchParams } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { pinsApi } from "../../api/pinsApi";
@@ -45,7 +46,7 @@ export default function SearchPage() {
         </div>
       )}
 
-      {isLoading && <div style={{ textAlign: 'center', padding: '40px' }}>Searching...</div>}
+      {isLoading && <Loader text="Searching..." />}
       {error && <CustomError message={`Error: ${error.message}`} close={() => window.location.href = '/'} />}
 
       {pins.length > 0 && (
@@ -72,7 +73,16 @@ export default function SearchPage() {
       )}
 
       {isFetchingNextPage && (
-        <div style={{ textAlign: "center", margin: "40px 0", color: "#666" }}>
+        <div style={{ textAlign: "center", margin: "40px 0", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px", color: "#666" }}>
+          <div style={{
+            width: "20px", 
+            aspectRatio: "1", 
+            borderRadius: "50%", 
+            background: "radial-gradient(farthest-side,#999 94%,#0000) top/3px 3px no-repeat, conic-gradient(#0000 30%,#999)",
+            WebkitMask: "radial-gradient(farthest-side,#0000 calc(100% - 3px),#000 0)",
+            mask: "radial-gradient(farthest-side,#0000 calc(100% - 3px),#000 0)",
+            animation: "spin 1s infinite linear"
+          }}></div>
           Loading more results...
         </div>
       )}

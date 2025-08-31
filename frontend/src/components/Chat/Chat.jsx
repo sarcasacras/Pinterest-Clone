@@ -3,9 +3,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { messagesApi } from "../../api/messagesApi";
 import { useAuth } from "../../contexts/AuthContext";
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router";
 import EmojiPicker from "emoji-picker-react";
 import Img from "../Image/Image";
 import CustomAlert from "../CustomAlert/CustomAlert";
+import Loader from "../Loader/Loader";
 
 const Chat = ({ conversationId, conversation }) => {
   const { user } = useAuth();
@@ -185,18 +187,20 @@ const Chat = ({ conversationId, conversation }) => {
     <div className="chat-container">
       <div className="chat-header">
         <div className="chat-user-info">
-          <div className="chat-avatar">
-            <img
-              src={otherParticipant?.avatar || "/general/noavatar.svg"}
-              alt={otherParticipant?.displayName}
-            />
-          </div>
-          <h2 className="chat-user-name">
-            {otherParticipant?.displayName || "Unknown User"}
-          </h2>
+          <Link to={`/${otherParticipant?.username || ''}`} className="chat-user-link">
+            <div className="chat-avatar">
+              <img
+                src={otherParticipant?.avatar || "/general/noavatar.svg"}
+                alt={otherParticipant?.displayName}
+              />
+            </div>
+            <h2 className="chat-user-name">
+              {otherParticipant?.displayName || "Unknown User"}
+            </h2>
+          </Link>
         </div>
       </div>
-      {isLoading && <p>Loading messages...</p>}
+      {isLoading && <Loader text="Loading messages..." />}
       {error && <p>Error: {error.message}</p>}
       {!isLoading && !error && (
         <div className="messages-list">
@@ -215,7 +219,9 @@ const Chat = ({ conversationId, conversation }) => {
                         isOwnMessage ? "own-sender" : "other-sender"
                       }`}
                     >
-                      {message.sender.displayName}
+                      <Link to={`/${message.sender.username || ''}`} className="message-sender-link">
+                        {message.sender.displayName}
+                      </Link>
                     </div>
                   )}
                   <div

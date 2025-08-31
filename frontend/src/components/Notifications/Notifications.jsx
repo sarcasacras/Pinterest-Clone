@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import Img from "../Image/Image";
 import { Link } from "react-router";
 import { useRef, useEffect } from "react";
+import Loader from "../Loader/Loader";
 
 export default function Notifications({
   onClose,
@@ -43,7 +44,10 @@ export default function Notifications({
       )}
       <div className="notifications-content">
         {isLoading ? (
-          <div>Loading notifications...</div>
+          <div className="notifications-loading">
+            <div className="loader"></div>
+            <span>Loading notifications...</span>
+          </div>
         ) : error ? (
           <div>Error loading notifications</div>
         ) : (

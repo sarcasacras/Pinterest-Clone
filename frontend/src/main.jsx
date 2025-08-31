@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { validateEnvironment } from "./utils/validateEnv";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -14,6 +15,9 @@ import MainLayout from "./layouts/MainLayout/MainLayout";
 import BoardPage from "./routes/BoardPage/BoardPage";
 import MessagesPage from "./routes/MessagesPage/MessagesPage";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+
+// Validate environment variables before starting the app
+validateEnvironment();
 
 const queryClient = new QueryClient();
 

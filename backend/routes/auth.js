@@ -1,6 +1,12 @@
 import express from "express";
 import { register, login, getProfile, logout, updateAvatar, updateProfile } from "../controllers/authController.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { 
+  validateAuth, 
+  validateRegistration, 
+  validateFileUpload, 
+  handleValidationErrors 
+} from "../middleware/validation.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -20,11 +26,23 @@ const upload = multer({
   },
 });
 
-router.post('/register', register);
-router.post('/login', login);
+// Apply security validation to auth routes
+router.post('/register', validateRegistration, handleValidationErrors, register);
+router.post('/login', validateAuth, handleValidationErrors, login);
 router.post('/logout', logout);
 
 router.get('/profile', authenticateToken, getProfile);
-router.put('/avatar', authenticateToken, upload.single('avatar'), updateAvatar);
-router.put('/profile', authenticateToken, updateProfile);
+router.put('/avatar', 
+  authenticateToken, 
+  upload.single('avatar'), 
+  validateFileUpload, 
+  handleValidationErrors, 
+  updateAvatar
+);
+router.put('/profile', 
+  authenticateToken, 
+  validateRegistration, 
+  handleValidationErrors, 
+  updateProfile
+);
 export default router;

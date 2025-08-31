@@ -13,7 +13,7 @@ const Top = () => {
             {user ? (
                 <UserIcon />
             ) : (
-                <Link to="/login" className="mobile-login-btn">
+                <Link to="/login" className="login-btn-top">
                     Log In
                 </Link>
             )}

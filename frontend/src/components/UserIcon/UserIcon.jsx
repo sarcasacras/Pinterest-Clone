@@ -7,7 +7,11 @@ export default function UserIcon() {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="user-loading">
+        <div className="user-loader"></div>
+      </div>
+    );
   }
 
   if (user) {

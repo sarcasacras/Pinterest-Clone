@@ -39,7 +39,6 @@ export default function CollectionItem({
         ) : (
           <>
             <Link to={`/board/${boardId}`} className="overlay"></Link>
-            <button className="saveButton">Save</button>
             <div className="overlayButtons">
               <button className="overlayButton">
                 <Img src="/icons/menu.svg" alt="" className="buttonImage" />
