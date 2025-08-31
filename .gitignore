@@ -129,8 +129,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-# Claude Code documentation
+# Claude Code documentation and cache
 CLAUDE.md
+.claude/
 
 # Security files - never commit
 owner_cookies.txt
