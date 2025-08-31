@@ -131,3 +131,12 @@ dist
 
 # Claude Code documentation
 CLAUDE.md
+
+# Security files - never commit
+owner_cookies.txt
+*cookies*.txt
+*cookie*.txt
+session*.txt
+auth*.txt
+*.cookie
+cookies/
