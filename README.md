@@ -196,13 +196,13 @@ Visit: **http://localhost:5173**
 
 ## 📱 Screenshots
 
-<img width="1425" height="810" alt="Screenshot 2025-09-01 at 12 07 47" src="https://github.com/user-attachments/assets/01cd3117-0030-4295-b01f-043a35bc4325" />
-<img width="317" height="688" alt="Screenshot 2025-09-01 at 12 42 03" src="https://github.com/user-attachments/assets/b43153a5-e551-46e4-ae37-9c55270ec3e1" />
-<img width="1440" height="810" alt="Screenshot 2025-09-01 at 12 07 59" src="https://github.com/user-attachments/assets/31fedecd-d987-43c5-a091-5e5393699d9d" />
-<img width="1427" height="810" alt="Screenshot 2025-09-01 at 12 08 17" src="https://github.com/user-attachments/assets/41319b7c-d725-4beb-9c32-4649165e62e5" />
-<img width="305" height="688" alt="Screenshot 2025-09-01 at 12 42 28" src="https://github.com/user-attachments/assets/27d07dd9-5346-40aa-87e0-1e5987e81047" />
-<img width="1440" height="810" alt="Screenshot 2025-09-01 at 12 11 22" src="https://github.com/user-attachments/assets/acd8b2c8-de7b-4683-bcdd-b7b1ccb13b70" />
-<img width="1427" height="810" alt="Screenshot 2025-09-01 at 12 10 20" src="https://github.com/user-attachments/assets/197c8be0-3665-49b5-81e7-f923da7dee6d" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 07 47" src="https://github.com/user-attachments/assets/01cd3117-0030-4295-b01f-043a35bc4325" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 42 03" src="https://github.com/user-attachments/assets/b43153a5-e551-46e4-ae37-9c55270ec3e1" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 07 59" src="https://github.com/user-attachments/assets/31fedecd-d987-43c5-a091-5e5393699d9d" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 08 17" src="https://github.com/user-attachments/assets/41319b7c-d725-4beb-9c32-4649165e62e5" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 42 28" src="https://github.com/user-attachments/assets/27d07dd9-5346-40aa-87e0-1e5987e81047" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 11 22" src="https://github.com/user-attachments/assets/acd8b2c8-de7b-4683-bcdd-b7b1ccb13b70" />
+<img width="800" alt="Screenshot 2025-09-01 at 12 10 20" src="https://github.com/user-attachments/assets/197c8be0-3665-49b5-81e7-f923da7dee6d" />
 
 ### **Key Pages:**
 - **Home Feed** - Infinite scroll of pins
