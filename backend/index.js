@@ -86,30 +86,20 @@ const allowedOrigins = [
   'https://pinterest-clone-nine-nu.vercel.app',
 ].filter(Boolean);
 
-// Debug logging for CORS configuration
-console.log('🌍 CORS Configuration:');
-console.log('- FRONTEND_URL env var:', process.env.FRONTEND_URL);
-console.log('- Allowed origins:', allowedOrigins);
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin && process.env.NODE_ENV === 'development') {
       return callback(null, true);
     }
     
-    // Check if origin is in allowed list
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
-    // Log blocked origins for debugging
-    console.log(`🚫 CORS blocked origin: ${origin}`);
-    console.log(`📋 Allowed origins:`, allowedOrigins);
-    
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true, // Essential for Safari cookie handling
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type', 
@@ -126,30 +116,20 @@ const corsOptions = {
     'Cross-Origin-Opener-Policy',
     'Cross-Origin-Embedder-Policy'
   ],
-  maxAge: 86400, // 24 hours preflight cache
-  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  maxAge: 86400,
+  optionsSuccessStatus: 200,
   preflightContinue: false
 };
 
 app.use(cors(corsOptions));
 
-// Safari-specific middleware for better cookie handling
 app.use((req, res, next) => {
-  // Detect Safari browser
   const userAgent = req.headers['user-agent'] || '';
   const isSafari = /Safari\//.test(userAgent) && !/Chrome\/|Chromium\//.test(userAgent);
   
   if (isSafari && process.env.NODE_ENV === 'production') {
-    // Add Safari-specific headers
     res.header('Vary', 'Origin, Cookie');
     res.header('Cache-Control', 'no-cache="Set-Cookie"');
-    
-    // Log Safari requests for debugging
-    console.log('🦁 Safari browser detected:', {
-      origin: req.headers.origin,
-      userAgent: userAgent.substring(0, 100),
-      cookies: req.headers.cookie ? 'Present' : 'None'
-    });
   }
   
   next();
