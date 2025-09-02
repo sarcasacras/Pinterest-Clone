@@ -25,21 +25,24 @@ export const register = async (req, res) => {
 
     const token = generateToken(user._id);
     
-    // Enhanced cookie configuration for Safari compatibility
+    // Enhanced cookie configuration for cross-browser compatibility
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/', // Explicit path for better compatibility
+      path: '/',
     };
 
-    // Add domain for production to ensure Safari compatibility
-    if (process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN) {
-      cookieOptions.domain = process.env.COOKIE_DOMAIN;
-    }
+    // Note: Using sameSite "none" without domain for cross-site compatibility
 
     res.cookie("authToken", token, cookieOptions);
+
+    // Debug logging for production
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🍪 Setting cookie with options:', cookieOptions);
+      console.log('🌍 Request origin:', req.headers.origin);
+    }
 
     res.status(201).json({
       message: "User registered successfully!",
@@ -83,21 +86,25 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    // Enhanced cookie configuration for Safari compatibility
+    // Enhanced cookie configuration for cross-browser compatibility
     const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/', // Explicit path for better compatibility
+      path: '/',
     };
 
-    // Add domain for production to ensure Safari compatibility
-    if (process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN) {
-      cookieOptions.domain = process.env.COOKIE_DOMAIN;
-    }
+    // Note: Using sameSite "none" without domain for cross-site compatibility
 
     res.cookie("authToken", token, cookieOptions);
+
+    // Debug logging for production
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🍪 Setting cookie with options:', cookieOptions);
+      console.log('🌍 Request origin:', req.headers.origin);
+    }
+
     res.json({
       message: "Login successful!",
       user: {
@@ -115,18 +122,15 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  // Enhanced clear cookie configuration for Safari compatibility
+  // Enhanced clear cookie configuration for cross-browser compatibility
   const clearOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
-    path: '/', // Explicit path for better compatibility
+    path: '/',
   };
 
-  // Add domain for production to ensure Safari compatibility
-  if (process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN) {
-    clearOptions.domain = process.env.COOKIE_DOMAIN;
-  }
+  // Note: Using sameSite "none" without domain for cross-site compatibility
 
   res.clearCookie('authToken', clearOptions);
 
