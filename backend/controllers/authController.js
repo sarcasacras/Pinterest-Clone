@@ -3,15 +3,28 @@ import User from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
 import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
 
-// Utility function to get uniform cookie options for all browsers
+// Utility function to get Safari-compatible cookie options
 const getCookieOptions = (maxAge = 7 * 24 * 60 * 60 * 1000) => {
-  return {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
+    secure: isProduction, // Must be true for SameSite=None in production
     maxAge,
     path: '/',
   };
+
+  if (isProduction) {
+    // Production: Safari-compatible cross-site settings
+    cookieOptions.sameSite = 'none';
+    // Add partitioned attribute for Safari ITP compatibility
+    cookieOptions.partitioned = true;
+  } else {
+    // Development: Use strict for localhost
+    cookieOptions.sameSite = 'lax'; // Changed from strict to lax for better compatibility
+  }
+
+  return cookieOptions;
 };
 
 
@@ -38,6 +51,12 @@ export const register = async (req, res) => {
     const cookieOptions = getCookieOptions();
 
     res.cookie("authToken", token, cookieOptions);
+
+    // Add Safari-specific headers for better cookie handling
+    if (process.env.NODE_ENV === 'production') {
+      res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+      res.header('Cross-Origin-Embedder-Policy', 'credentialless');
+    }
 
     res.status(201).json({
       message: "User registered successfully!",
@@ -84,10 +103,13 @@ export const login = async (req, res) => {
 
     res.cookie("authToken", token, cookieOptions);
 
-    // Debug logging for production
+    // Add Safari-specific headers for better cookie handling
     if (process.env.NODE_ENV === 'production') {
+      res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+      res.header('Cross-Origin-Embedder-Policy', 'credentialless');
       console.log('🍪 Setting cookie with options:', cookieOptions);
       console.log('🌍 Request origin:', req.headers.origin);
+      console.log('🧭 User-Agent:', req.headers['user-agent']);
     }
 
     res.json({
@@ -111,6 +133,14 @@ export const logout = (req, res) => {
   delete clearOptions.maxAge; // Remove maxAge for clearing
 
   res.clearCookie('authToken', clearOptions);
+
+  // Add Safari-specific headers for better cookie clearing
+  if (process.env.NODE_ENV === 'production') {
+    res.header('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.header('Cross-Origin-Embedder-Policy', 'credentialless');
+    console.log('🍪 Clearing cookie with options:', clearOptions);
+    console.log('🌍 Request origin:', req.headers.origin);
+  }
 
   res.json({
     message: "Logout successful"

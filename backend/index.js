@@ -64,8 +64,10 @@ app.use(helmet({
   xssFilter: true,
   // Referrer Policy
   referrerPolicy: { policy: "strict-origin-when-cross-origin" },
-  // Cross-Origin Opener Policy - prevents cross-origin attacks
-  crossOriginOpenerPolicy: { policy: "same-origin" },
+  // Cross-Origin Opener Policy - Safari-friendly setting
+  crossOriginOpenerPolicy: { 
+    policy: process.env.NODE_ENV === 'production' ? "same-origin-allow-popups" : "same-origin" 
+  },
   // Permissions Policy - restrict dangerous features
   permissionsPolicy: {
     geolocation: [],
@@ -107,7 +109,7 @@ const corsOptions = {
     
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true,
+  credentials: true, // Essential for Safari cookie handling
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type', 
@@ -115,15 +117,43 @@ const corsOptions = {
     'X-Requested-With',
     'Accept',
     'Origin',
-    'Cookie'
+    'Cookie',
+    'Cache-Control',
+    'Pragma'
   ],
-  exposedHeaders: ['Set-Cookie'],
+  exposedHeaders: [
+    'Set-Cookie',
+    'Cross-Origin-Opener-Policy',
+    'Cross-Origin-Embedder-Policy'
+  ],
   maxAge: 86400, // 24 hours preflight cache
   optionsSuccessStatus: 200, // Some legacy browsers choke on 204
   preflightContinue: false
 };
 
 app.use(cors(corsOptions));
+
+// Safari-specific middleware for better cookie handling
+app.use((req, res, next) => {
+  // Detect Safari browser
+  const userAgent = req.headers['user-agent'] || '';
+  const isSafari = /Safari\//.test(userAgent) && !/Chrome\/|Chromium\//.test(userAgent);
+  
+  if (isSafari && process.env.NODE_ENV === 'production') {
+    // Add Safari-specific headers
+    res.header('Vary', 'Origin, Cookie');
+    res.header('Cache-Control', 'no-cache="Set-Cookie"');
+    
+    // Log Safari requests for debugging
+    console.log('🦁 Safari browser detected:', {
+      origin: req.headers.origin,
+      userAgent: userAgent.substring(0, 100),
+      cookies: req.headers.cookie ? 'Present' : 'None'
+    });
+  }
+  
+  next();
+});
 
 // Rate Limiting Configuration
 const createRateLimiter = (windowMs, max, message, skipSuccessfulRequests = false, method = null) => {
