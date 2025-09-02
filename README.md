@@ -9,7 +9,7 @@ A feature-rich Pinterest clone built with modern web technologies, showcasing ad
 
 ## 🌟 Live Demo
 
-🔗 **[View Live Demo](Coming Soon!)**  
+🔗 **[View Live Demo](https://pinterest-clone-nine-nu.vercel.app)**  
 
 ## ✨ Features
 
