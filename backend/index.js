@@ -76,9 +76,8 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173', // Default Vite port
   'http://localhost:5174', // Alternative port when 5173 is busy
-  // Add production domains here when deploying
-  // 'https://yourpinterestclone.com',
-  // 'https://www.yourpinterestclone.com'
+  // Production domains
+  'https://pinterest-clone-nine-nu.vercel.app',
 ].filter(Boolean);
 
 const corsOptions = {

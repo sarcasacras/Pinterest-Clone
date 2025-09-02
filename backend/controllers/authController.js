@@ -24,12 +24,22 @@ export const register = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    res.cookie("authToken", token, {
+    
+    // Enhanced cookie configuration for Safari compatibility
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+      path: '/', // Explicit path for better compatibility
+    };
+
+    // Add domain for production to ensure Safari compatibility
+    if (process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN) {
+      cookieOptions.domain = process.env.COOKIE_DOMAIN;
+    }
+
+    res.cookie("authToken", token, cookieOptions);
 
     res.status(201).json({
       message: "User registered successfully!",
@@ -73,12 +83,21 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    res.cookie("authToken", token, {
+    // Enhanced cookie configuration for Safari compatibility
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+      path: '/', // Explicit path for better compatibility
+    };
+
+    // Add domain for production to ensure Safari compatibility
+    if (process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN) {
+      cookieOptions.domain = process.env.COOKIE_DOMAIN;
+    }
+
+    res.cookie("authToken", token, cookieOptions);
     res.json({
       message: "Login successful!",
       user: {
@@ -96,15 +115,24 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie('authToken', {
+  // Enhanced clear cookie configuration for Safari compatibility
+  const clearOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict"
-  })
+    sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
+    path: '/', // Explicit path for better compatibility
+  };
+
+  // Add domain for production to ensure Safari compatibility
+  if (process.env.NODE_ENV === 'production' && process.env.COOKIE_DOMAIN) {
+    clearOptions.domain = process.env.COOKIE_DOMAIN;
+  }
+
+  res.clearCookie('authToken', clearOptions);
 
   res.json({
     message: "Logout successful"
-  })
+  });
 }
 
 export const getProfile = (req, res) => {
