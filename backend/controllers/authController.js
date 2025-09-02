@@ -49,15 +49,6 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    // Debug logging for production
-    console.log('🔍 Login attempt:', {
-      origin: req.headers.origin,
-      nodeEnv: process.env.NODE_ENV,
-      frontendUrl: process.env.FRONTEND_URL,
-      userAgent: req.headers['user-agent'],
-      method: req.method
-    });
-
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -82,15 +73,12 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    const cookieOptions = {
+    res.cookie("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    };
-
-    console.log('🍪 Setting cookie with options:', cookieOptions);
-    res.cookie("authToken", token, cookieOptions);
+    });
     res.json({
       message: "Login successful!",
       user: {
