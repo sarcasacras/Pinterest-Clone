@@ -24,7 +24,7 @@ export default function SearchPage() {
     queryFn: ({pageParam = 1}) => {
       return pinsApi.getPins({
         page: pageParam,
-        limit: 10,
+        limit: 20,
         search: searchQuery
       });
     },

@@ -26,9 +26,9 @@ export default function Gallery({
     queryKey: ["pins", userId],
     queryFn: ({ pageParam = 1 }) => {
       if (userId) {
-        return pinsApi.getPinsByUser({ userId, page: pageParam, limit: 10 });
+        return pinsApi.getPinsByUser({ userId, page: pageParam, limit: 20 });
       }
-      return pinsApi.getPins({ page: pageParam, limit: 10 });
+      return pinsApi.getPins({ page: pageParam, limit: 20 });
     },
     getNextPageParam: (lastPage, loadedPages) =>
       lastPage.hasMore ? loadedPages.length + 1 : undefined,

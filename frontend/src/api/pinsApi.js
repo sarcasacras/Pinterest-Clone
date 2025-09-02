@@ -13,7 +13,7 @@ export const pinsApi = {
       .get("/pins", { params: { page, limit, ...(search && { search }) } })
       .then((res) => res.data),
 
-  getPinsByUser: ({ userId, page = 1, limit = 10 }) =>
+  getPinsByUser: ({ userId, page = 1, limit = 20 }) =>
     apiClient
       .get(`/pins/user/${userId}`, { params: { page, limit } })
       .then((res) => res.data),
