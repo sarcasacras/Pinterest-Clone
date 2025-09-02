@@ -84,6 +84,11 @@ const allowedOrigins = [
   'https://pinterest-clone-nine-nu.vercel.app',
 ].filter(Boolean);
 
+// Debug logging for CORS configuration
+console.log('🌍 CORS Configuration:');
+console.log('- FRONTEND_URL env var:', process.env.FRONTEND_URL);
+console.log('- Allowed origins:', allowedOrigins);
+
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.)
@@ -96,10 +101,9 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    // Log blocked origins in development for debugging
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🚫 CORS blocked origin: ${origin}`);
-    }
+    // Log blocked origins for debugging
+    console.log(`🚫 CORS blocked origin: ${origin}`);
+    console.log(`📋 Allowed origins:`, allowedOrigins);
     
     callback(new Error('Not allowed by CORS'));
   },
