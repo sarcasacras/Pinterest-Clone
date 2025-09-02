@@ -1,11 +1,20 @@
 {
-  "name": "pinterest-clone",
+  "name": "pinterest-clone-backend",
   "version": "1.0.0",
+  "description": "Backend API for Pinterest Clone - Full-stack social media platform",
   "type": "module",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "node --watch --env-file=.env index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "echo 'No build step needed for Node.js'",
+    "test": "echo 'No tests specified'",
+    "postinstall": "echo 'Backend dependencies installed successfully'",
+    "health": "curl -f http://localhost:3000/health || exit 1"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -20,5 +29,20 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.1",
     "multer": "^2.0.2"
+  },
+  "keywords": [
+    "pinterest",
+    "social-media",
+    "nodejs",
+    "express",
+    "mongodb",
+    "api",
+    "backend"
+  ],
+  "author": "sarcasacras",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sarcasacras/pinterest-clone.git"
   }
 }
