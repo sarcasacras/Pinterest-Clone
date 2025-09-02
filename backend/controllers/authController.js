@@ -3,30 +3,15 @@ import User from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
 import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
 
-// Utility function to get browser-specific cookie options
-const getCookieOptions = (req, maxAge = 7 * 24 * 60 * 60 * 1000) => {
-  const userAgent = req.headers['user-agent'] || '';
-  const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
-  
-  const options = {
+// Utility function to get uniform cookie options for all browsers
+const getCookieOptions = (maxAge = 7 * 24 * 60 * 60 * 1000) => {
+  return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
     maxAge,
     path: '/',
   };
-
-  if (process.env.NODE_ENV === 'production') {
-    // Safari: no sameSite attribute (let browser decide)
-    // Other browsers: sameSite "none" for cross-site
-    if (!isSafari) {
-      options.sameSite = "none";
-    }
-    // Note: Safari gets no sameSite attribute at all
-  } else {
-    options.sameSite = "strict";
-  }
-
-  return options;
 };
 
 
@@ -50,16 +35,9 @@ export const register = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    const cookieOptions = getCookieOptions(req);
+    const cookieOptions = getCookieOptions();
 
     res.cookie("authToken", token, cookieOptions);
-
-    // Debug logging for production
-    if (process.env.NODE_ENV === 'production') {
-      console.log('🍪 Setting cookie with options:', cookieOptions);
-      console.log('🌍 Request origin:', req.headers.origin);
-      console.log('🔍 User-Agent:', req.headers['user-agent']);
-    }
 
     res.status(201).json({
       message: "User registered successfully!",
@@ -102,7 +80,7 @@ export const login = async (req, res) => {
     }
 
     const token = generateToken(user._id);
-    const cookieOptions = getCookieOptions(req);
+    const cookieOptions = getCookieOptions();
 
     res.cookie("authToken", token, cookieOptions);
 
@@ -110,7 +88,6 @@ export const login = async (req, res) => {
     if (process.env.NODE_ENV === 'production') {
       console.log('🍪 Setting cookie with options:', cookieOptions);
       console.log('🌍 Request origin:', req.headers.origin);
-      console.log('🔍 User-Agent:', req.headers['user-agent']);
     }
 
     res.json({
@@ -130,7 +107,7 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  const clearOptions = getCookieOptions(req, 0);
+  const clearOptions = getCookieOptions(0);
   delete clearOptions.maxAge; // Remove maxAge for clearing
 
   res.clearCookie('authToken', clearOptions);
