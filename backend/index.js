@@ -19,6 +19,10 @@ validateEnvironment();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for Railway.app and other cloud providers
+// This allows express-rate-limit to properly identify users behind proxies
+app.set('trust proxy', process.env.NODE_ENV === 'production' ? 1 : false);
+
 connectDB();
 
 // Security headers with helmet
