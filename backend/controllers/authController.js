@@ -16,7 +16,12 @@ const getCookieOptions = (req, maxAge = 7 * 24 * 60 * 60 * 1000) => {
   };
 
   if (process.env.NODE_ENV === 'production') {
-    options.sameSite = isSafari ? "lax" : "none";
+    // Safari: no sameSite attribute (let browser decide)
+    // Other browsers: sameSite "none" for cross-site
+    if (!isSafari) {
+      options.sameSite = "none";
+    }
+    // Note: Safari gets no sameSite attribute at all
   } else {
     options.sameSite = "strict";
   }
