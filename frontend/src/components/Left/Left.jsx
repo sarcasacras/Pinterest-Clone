@@ -1,6 +1,6 @@
 import './Left.css';
 import Img from '../Image/Image';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useState } from 'react';
 import Notifications from '../Notifications/Notifications';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
@@ -13,10 +13,12 @@ const Left = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const queryClient = useQueryClient();
     const { user } = useAuth();
+    const navigate = useNavigate();
 
     const { data: notifications, isLoading, error } = useQuery({
         queryKey: ["notifications", currentPage],
         queryFn: () => notificationsApi.getNotifications({ page: currentPage, limit: 6 }),
+        enabled: !!user,
     });
 
     const { data: unreadCount } = useQuery({
@@ -46,6 +48,11 @@ const Left = () => {
 
 
     const toggleNotifications = () => {
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+        
         if (!isNotificationsOpen) {
             markAllAsReadMutation.mutate();
         }
