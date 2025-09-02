@@ -3,6 +3,27 @@ import User from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
 import { uploadToImageKit, deleteFromImageKit } from "../utils/imagekit.js";
 
+// Utility function to get browser-specific cookie options
+const getCookieOptions = (req, maxAge = 7 * 24 * 60 * 60 * 1000) => {
+  const userAgent = req.headers['user-agent'] || '';
+  const isSafari = /Safari/.test(userAgent) && !/Chrome/.test(userAgent);
+  
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    maxAge,
+    path: '/',
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    options.sameSite = isSafari ? "lax" : "none";
+  } else {
+    options.sameSite = "strict";
+  }
+
+  return options;
+};
+
 
 export const register = async (req, res) => {
   try {
@@ -24,17 +45,7 @@ export const register = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    
-    // Enhanced cookie configuration for cross-browser compatibility
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/',
-    };
-
-    // Note: Using sameSite "none" without domain for cross-site compatibility
+    const cookieOptions = getCookieOptions(req);
 
     res.cookie("authToken", token, cookieOptions);
 
@@ -42,6 +53,7 @@ export const register = async (req, res) => {
     if (process.env.NODE_ENV === 'production') {
       console.log('🍪 Setting cookie with options:', cookieOptions);
       console.log('🌍 Request origin:', req.headers.origin);
+      console.log('🔍 User-Agent:', req.headers['user-agent']);
     }
 
     res.status(201).json({
@@ -85,17 +97,7 @@ export const login = async (req, res) => {
     }
 
     const token = generateToken(user._id);
-
-    // Enhanced cookie configuration for cross-browser compatibility
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/',
-    };
-
-    // Note: Using sameSite "none" without domain for cross-site compatibility
+    const cookieOptions = getCookieOptions(req);
 
     res.cookie("authToken", token, cookieOptions);
 
@@ -103,6 +105,7 @@ export const login = async (req, res) => {
     if (process.env.NODE_ENV === 'production') {
       console.log('🍪 Setting cookie with options:', cookieOptions);
       console.log('🌍 Request origin:', req.headers.origin);
+      console.log('🔍 User-Agent:', req.headers['user-agent']);
     }
 
     res.json({
@@ -122,15 +125,8 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  // Enhanced clear cookie configuration for cross-browser compatibility
-  const clearOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? "none" : "strict",
-    path: '/',
-  };
-
-  // Note: Using sameSite "none" without domain for cross-site compatibility
+  const clearOptions = getCookieOptions(req, 0);
+  delete clearOptions.maxAge; // Remove maxAge for clearing
 
   res.clearCookie('authToken', clearOptions);
 
