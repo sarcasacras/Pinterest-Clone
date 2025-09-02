@@ -83,6 +83,9 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin, callback) => {
+    // Log all CORS requests in production for debugging
+    console.log('🌍 CORS request from:', origin, 'Allowed origins:', allowedOrigins);
+    
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin && process.env.NODE_ENV === 'development') {
       return callback(null, true);
@@ -90,14 +93,12 @@ const corsOptions = {
     
     // Check if origin is in allowed list
     if (allowedOrigins.includes(origin)) {
+      console.log('✅ CORS allowed for:', origin);
       return callback(null, true);
     }
     
-    // Log blocked origins in development for debugging
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🚫 CORS blocked origin: ${origin}`);
-    }
-    
+    // Log blocked origins
+    console.log(`🚫 CORS blocked origin: ${origin}`);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -107,11 +108,13 @@ const corsOptions = {
     'Authorization',
     'X-Requested-With',
     'Accept',
-    'Origin'
+    'Origin',
+    'Cookie'
   ],
   exposedHeaders: ['Set-Cookie'],
   maxAge: 86400, // 24 hours preflight cache
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  preflightContinue: false
 };
 
 app.use(cors(corsOptions));
